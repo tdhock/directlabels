@@ -1,3 +1,7 @@
 exportPattern("^[[:alpha:]]+")
 S3method("direct.label", "trellis")
 S3method("direct.label", "ggplot")
+import(grid)
+import(quadprog)
+S3method("drawDetails", "dlgrob")
+import(proto)

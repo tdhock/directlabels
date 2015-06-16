@@ -19,14 +19,12 @@ geom_dl <- structure(function
  show_guide=FALSE
 ### show legend? default FALSE since direct labels replace a legend.
  ){
-  require(ggplot2)
-  require(proto)
   ## Geom for direct labeling that creates dlgrobs in the draw()
   ## method.
-  GeomDirectLabel <- proto(ggplot2:::Geom, {
+  GeomDirectLabel <- proto::proto(ggplot2:::Geom, {
     draw_groups <- function(., ...) .$draw(...)
     draw <- function(., data, scales, coordinates,
-                     method=NULL,debug=FALSE, ...) {
+      method=NULL,debug=FALSE, ...) {
       data$rot <- as.integer(data$angle)
       data$groups <- data$label
       axes2native <- function(data){
@@ -35,19 +33,21 @@ geom_dl <- structure(function
       converted <- axes2native(data)
       dldata <- converted[,names(converted)!="group"]
       dlgrob(dldata,
-             method,debug=debug,
-             axes2native=axes2native)
+        method,debug=debug,
+        axes2native=axes2native)
     }
     draw_legend <- function(.,data,...){
-      nullGrob()
+      grid::nullGrob()
     }
     objname <- "dl"
     desc <- "Direct labels"
     default_stat <- function(.) ggplot2:::StatIdentity
     required_aes <- c("x", "y", "label")
     default_aes <- function(.)
-      aes(colour="black", size=5 , angle=0, hjust=0.5, vjust=0.5, alpha = 1)
+      ggplot2::aes(colour="black", size=5 , angle=0, hjust=0.5, vjust=0.5, alpha = 1)
   })
+
+
   GeomDirectLabel$new(mapping, method=method, show_guide=show_guide, ...)
 ### Layer that will plot direct labels.
 },ex=function(){
@@ -114,7 +114,6 @@ direct.label.ggplot <- function
  debug=FALSE
 ### Show debug output?
  ){
-  require(ggplot2)
   getData <- function(colour.or.fill){
     for(L in p$layers){
       m <- p$mapping
@@ -143,7 +142,7 @@ direct.label.ggplot <- function
   }else{
     NULL
   }
-  a <- aes_string(label=colvar, colour=colvar)
+  a <- ggplot2::aes_string(label=colvar, colour=colvar)
   a2 <- structure(c(L$mapping, a), class="uneval")
   dlgeom <- geom_dl(a2,method,
                     stat=L$stat,debug=debug,data=data)
@@ -153,7 +152,7 @@ direct.label.ggplot <- function
   guide.args <- as.list(rep("none", length(leg.info$hide)))
   names(guide.args) <- leg.info$hide
   guide.args$colour <- "none"
-  guide <- do.call(guides, guide.args)
+  guide <- do.call(ggplot2::guides, guide.args)
   p+dlgeom+guide
 ### The ggplot object with direct labels added.
 }
@@ -169,7 +168,7 @@ legends2hide <- function(p){
   position <- theme$legend.position
   # by default, guide boxes are vertically aligned
   theme$legend.box <- if(is.null(theme$legend.box)) "vertical" else theme$legend.box
-  
+
   # size of key (also used for bar in colorbar guide)
   theme$legend.key.width <- if(is.null(theme$legend.key.width)) theme$legend.key.size
   theme$legend.key.height <- if(is.null(theme$legend.key.height)) theme$legend.key.size
@@ -187,8 +186,8 @@ legends2hide <- function(p){
         switch(position, bottom =, top = c("center", "top"), left =, right = c("left", "top"))
       else
         c("center", "center")
-    } 
-  
+    }
+
   position <- theme$legend.position
   defaults <- function (x, y) {
     c(x, y[setdiff(names(y), names(x))])
@@ -232,9 +231,9 @@ getLegendVariables <- function(mb){
     ## old code above.
     data <- data.frame(orig, key)
     ## if there are no labels, return an empty df.
-    if(!".label"%in%names(data)) return(data.frame()); 
+    if(!".label"%in%names(data)) return(data.frame());
     ## remove cols that are entirely na
-    results[[length(results)+1]] <- data[,which(colSums(!is.na(data))>0)] 
+    results[[length(results)+1]] <- data[,which(colSums(!is.na(data))>0)]
   }
   results <- results[which(sapply(results, nrow)>0)]
   df <- merge_recurse(results)
@@ -262,7 +261,7 @@ merge_recurse <- function (dfs, ...) {
     merge(dfs[[1]], dfs[[2]], all.x = TRUE, sort = FALSE, ...)
   }
   else {
-    merge(dfs[[1]], Recall(dfs[-1]), all.x = TRUE, sort = FALSE, 
+    merge(dfs[[1]], Recall(dfs[-1]), all.x = TRUE, sort = FALSE,
           ...)
   }
 }
