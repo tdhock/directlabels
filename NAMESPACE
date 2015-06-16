@@ -1,0 +1,3 @@
+exportPattern("^[[:alpha:]]+")
+S3method("direct.label", "trellis")
+S3method("direct.label", "ggplot")
