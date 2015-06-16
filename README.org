@@ -1,4 +1,4 @@
-[[https://travis-ci.org/tdhock/directlabels.svg]]
+[[https://travis-ci.org/tdhock/directlabels][https://travis-ci.org/tdhock/directlabels.svg]]
 
 ** Installation from GitHub
 
