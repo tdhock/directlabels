@@ -3,7 +3,7 @@
 \docType{data}
 \title{lasso labels}
 \description{Label points at the zero before the first nonzero y value.}
-\usage{lasso.labels}
+\usage{"lasso.labels"}
 
 
 

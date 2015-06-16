@@ -3,7 +3,7 @@
 \docType{data}
 \title{first polygons}
 \description{Draw a speech polygon to the first point.}
-\usage{first.polygons}
+\usage{"first.polygons"}
 
 
 

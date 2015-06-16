@@ -3,7 +3,7 @@
 \docType{data}
 \title{chull grid}
 \description{Label the closest point on the convex hull of the data.}
-\usage{chull.grid}
+\usage{"chull.grid"}
 
 
 

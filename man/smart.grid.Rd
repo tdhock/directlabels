@@ -4,7 +4,7 @@
 \title{smart grid}
 \description{Search the plot region for a label position near the center of
 each point cloud.}
-\usage{smart.grid}
+\usage{"smart.grid"}
 
 
 

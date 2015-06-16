@@ -1,5 +1,3 @@
-direct labels instead of confusing legends in R + lattice or ggplot2
-
 ** Installation from GitHub
 
 CRAN and R-Forge versions of directlabels are deprecated since 16
@@ -13,3 +11,27 @@ devtools::install_github("tdhock/directlabels")
 
 Please see [[http://directlabels.r-forge.r-project.org/][the directlabels page on R-Forge]].
 
+** Development and documentation
+
+Documentation in [[file:R/][R/*.R]] files is used to make [[file:man/][man/*.Rd]] files using
+[[https://github.com/tdhock/inlinedocs][inlinedocs]]:
+
+#+BEGIN_SRC R
+devtools::install_github("tdhock/inlinedocs")
+inlinedocs::package.skeleton.dx("path/to/directlabels")
+#+END_SRC
+
+The [[http://directlabels.r-forge.r-project.org/docs/index.html][directlabels documentation examples web site]] can be generated
+using
+
+#+BEGIN_SRC R
+directlabels::dldoc("~/R/directlabels/pkg/directlabels")
+#+END_SRC
+
+Be careful about what you put in each of the R code files -- they are
+used to generate the documentation. For example, [[file:R/dotplot.R][R/dotplot.R]] defines
+just two R objects: angled.endpoints and top.qp. Don't add anything to
+this file unless you want it to show up in the docs as another
+Positioning Method for dotplots. Miscellaneous functions that could be
+helpful for constructing Positioning Methods should be put in
+[[file:R/utility.function.R][R/utility.function.R]].
