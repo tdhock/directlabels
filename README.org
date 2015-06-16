@@ -1,0 +1,15 @@
+direct labels instead of confusing legends in R + lattice or ggplot2
+
+** Installation from GitHub
+
+CRAN and R-Forge versions of directlabels are deprecated since 16
+June 2015. Please install directlabels from GitHub instead:
+
+#+BEGIN_SRC R
+devtools::install_github("tdhock/directlabels")
+#+END_SRC
+
+** Usage examples
+
+Please see [[http://directlabels.r-forge.r-project.org/][the directlabels page on R-Forge]].
+
