@@ -54,12 +54,12 @@ for(L in to.test){
   ## Visual check: in the direct labeled plot on the right, is the
   ## colour legend missing? Is the other legend still there?
   
-  ##dlcompare(list(L$plot), list("legend", "get.means"))
-  
   result <- legends2hide(L$plot)
   if(is.null(result$hide) && is.null(L$hide)){
     ##negative control, ok!
   }else{
+    dlcompare(list(L$plot), list("legend", "get.means"))
+  
     stopifnot(result$hide %in% L$hide)
     stopifnot(length(result$hide) == length(L$hide))
     stopifnot(L$colour == result$colour)

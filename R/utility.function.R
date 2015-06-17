@@ -67,7 +67,6 @@ label.endpoints <- function
   stopifnot(is.numeric(HJUST))
   stopifnot(is.finite(HJUST))
   function(d,...)gapply(d,function(d,...){
-    browser()
     i <- FUN(d$x)==d$x
     if(length(i)==0){
       data.frame()
