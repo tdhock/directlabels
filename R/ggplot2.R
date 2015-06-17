@@ -23,33 +23,32 @@ geom_dl <- structure(function
   ## method.
   GeomDirectLabel <- proto::proto(ggplot2:::Geom, {
     draw_groups <- function(., ...) .$draw(...)
-    draw <- function(., data, scales, coordinates,
-      method=NULL,debug=FALSE, ...) {
+    draw <- function(., data, scales, coordinates, method = NULL, debug = FALSE, ...) {
       data$rot <- as.integer(data$angle)
       data$groups <- data$label
       axes2native <- function(data){
-        ggplot2:::coord_transform(coordinates,data,scales)
+        coord_transform(coordinates,data,scales)
       }
       converted <- axes2native(data)
-      dldata <- converted[,names(converted)!="group"]
-      dlgrob(dldata,
-        method,debug=debug,
-        axes2native=axes2native)
+      dldata <- converted[, names(converted) != "group"]
+      directlabels::dlgrob(dldata, method, debug = debug, axes2native = axes2native)
     }
-    draw_legend <- function(.,data,...){
+    draw_legend <- function(., data, ...) {
       grid::nullGrob()
     }
     objname <- "dl"
     desc <- "Direct labels"
-    default_stat <- function(.) ggplot2:::StatIdentity
+    default_stat <- function(.) StatIdentity
     required_aes <- c("x", "y", "label")
-    default_aes <- function(.)
-      ggplot2::aes(colour="black", size=5 , angle=0, hjust=0.5, vjust=0.5, alpha = 1)
+    default_aes <- function(.) {
+      aes(
+        colour = "black", size = 5, angle = 0, hjust = 0.5,
+        vjust = 0.5, alpha = 1)
+    }
   })
 
-
-  GeomDirectLabel$new(mapping, method=method, show_guide=show_guide, ...)
-### Layer that will plot direct labels.
+  GeomDirectLabel$new(mapping, method = method, show_guide = show_guide, ...)
+  ### ggplot2 layer
 },ex=function(){
   library(ggplot2)
   vad <- as.data.frame.table(VADeaths)

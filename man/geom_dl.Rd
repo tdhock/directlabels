@@ -10,7 +10,7 @@
   \item{show_guide}{show legend? default FALSE since direct labels replace a legend.}
 }
 
-\value{Layer that will plot direct labels.}
+\value{ggplot2 layer}
 
 \author{Toby Dylan Hocking}
 
