@@ -46,7 +46,7 @@ kplot <- ggplot(err.df,aes(segments,cost))+
   scale_colour_manual(values=fp.fn.colors)+
   scale_size_manual(values=fp.fn.sizes)+
   scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
-  theme_bw()+theme(panel.margin=unit(0,"lines"))
+  theme_bw()+theme(panel.margin=grid::unit(0,"lines"))
 
   ## The usual ggplot without direct labels.
   print(kplot)

@@ -1,7 +1,7 @@
 Package: directlabels
 Maintainer: Toby Dylan Hocking <toby@sg.cs.titech.ac.jp>
 Author: Toby Dylan Hocking
-Version: 2014.6.13
+Version: 2015.6.17
 License: GPL-3
 Title: Direct labels for multicolor plots in lattice or ggplot2
 Description: An extensible framework
@@ -10,13 +10,13 @@ Description: An extensible framework
  Label positions are described using Positioning Methods
  which can be re-used across several different plots.
  There are heuristics for examining "trellis" and "ggplot" objects
- and inferring an appropriate Positioning Method. 
+ and inferring an appropriate Positioning Method.
 URL: http://directlabels.r-forge.r-project.org/
 LazyData: true
-Suggests: MASS, inlinedocs, ggplot2 (>= 0.9.1), 
+Suggests: MASS, inlinedocs, ggplot2 (>= 0.9.1),
 	  lattice, alphahull, reshape2, nlme,
-	  ElemStatLearn, proto, lars, latticeExtra
-Depends: grid, quadprog
-Collate: utility.function.R compare.R dotplot.R lineplot.R 
-	 densityplot.R  ggplot2.R  positioning.functions.R 
+	  ElemStatLearn, lars, latticeExtra, proto (>= 1.0.0)
+Imports: grid, quadprog
+Collate: utility.function.R compare.R dotplot.R lineplot.R
+	 densityplot.R ggplot2.R positioning.functions.R
 	 doc.R lattice.R scatterplot.R contourplot.R

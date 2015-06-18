@@ -6,3 +6,6 @@ notifications:
   email:
     on_success: change
     on_failure: change
+
+r_github_packages:
+  - hadley/proto

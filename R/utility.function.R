@@ -100,7 +100,7 @@ dl.combine <- structure(function # Combine output of several methods
       if(!"cex"%in%names(df)){
         df$cex <- 1
       }
-      
+
       ## we need to do merge to keep all the columns around.
       if(nrow(res))res <- merge(df,res,all=TRUE)
       else res <- df
@@ -150,7 +150,7 @@ dl.combine <- structure(function # Combine output of several methods
     j <- which.max(ycor) # variables in active set, starts with most correlated
     alpha.total <- 0
     out <- data.frame()
-    
+
     while(1){## lar loop
       xak <- xscale[,j] # current variables
       r <- y-xscale%*%b # current residual
@@ -171,7 +171,7 @@ dl.combine <- structure(function # Combine output of several methods
 
       if(sum(abs(intercept)) < epsilon)#corr==0 so we are done
         return(transform(out,s=arclength/max(arclength)))
-      
+
       ## If there are more variables we can enter into the regression,
       ## then see which one will cross the highest correlation line
       ## first, and record the alpha value of where the lines cross.
@@ -185,7 +185,7 @@ dl.combine <- structure(function # Combine output of several methods
       subd <- subd[which.min(subd$alpha),]
       nextvar <- subd$variable
       alpha <- if(nrow(subd))subd$alpha else 1
-      
+
       ## If one of the coefficients would hit 0 at a smaller alpha
       ## value, take it out of the regression and continue.
       hit0 <- xor(b[j]>0,delta>0)&b[j]!=0
@@ -195,7 +195,7 @@ dl.combine <- structure(function # Combine output of several methods
         i <- which.min(alpha0)
         alpha <- alpha0[i]
       }
-      
+
       b[j] <- b[j]+alpha*delta ## evolve parameters
       alpha.total <- alpha.total+alpha
       ## add or remove a variable from the active set
@@ -417,7 +417,7 @@ draw.polygons <- function(d,...){
   }
   for(i in 1:nrow(d)){
     with(d[i,], {
-      L <- 
+      L <-
         list(x=c(left.x, left, right, right.x, right, left),
              y=c(left.y, top, top, right.y, bottom, bottom))
       for(xy.name in names(L)){
@@ -611,7 +611,7 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
         d <- calc.boxes(d)
       }
     }
-    
+
     ## These are the standard form matrices described in the
     ## directlabels poster.
     target <- d[,target.var]
@@ -666,7 +666,7 @@ kplot <- ggplot(err.df,aes(segments,cost))+
   scale_colour_manual(values=fp.fn.colors)+
   scale_size_manual(values=fp.fn.sizes)+
   scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
-  theme_bw()+theme(panel.margin=unit(0,"lines"))
+  theme_bw()+theme(panel.margin=grid::unit(0,"lines"))
 
   ## The usual ggplot without direct labels.
   print(kplot)
@@ -924,9 +924,8 @@ default.ahull <- function(d,...){
 
 ### Calculate the points on the ashape.
 ahull.points <- function(d,...,ahull=default.ahull(d)){
-  require(alphahull)
   xy <- unique(d[,c("x","y")])
-  as <- ashape(xy,alpha=ahull)
+  as <- alphahull::ashape(xy,alpha = ahull)
   as.data.frame(as$edges)
 }
 
@@ -1160,7 +1159,7 @@ empty.grid <- function
       expand <- expand+1 ## look further out if we can't find any labels inside
     }
     if(debug)draw(boxes)
-    
+
     ## TDH 29 Aug 2012. For every box, figure out the class of the
     ## point which is its nearest neighbor.
     no.points$nearest <- NA
