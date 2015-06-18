@@ -55,7 +55,7 @@ mylars <- function
   j <- which.max(ycor) # variables in active set, starts with most correlated
   alpha.total <- 0
   out <- data.frame()
-  
+
   while(1){## lar loop
     xak <- xscale[,j] # current variables
     r <- y-xscale\%*\%b # current residual
@@ -76,7 +76,7 @@ mylars <- function
 
     if(sum(abs(intercept)) < epsilon)#corr==0 so we are done
       return(transform(out,s=arclength/max(arclength)))
-    
+
     ## If there are more variables we can enter into the regression,
     ## then see which one will cross the highest correlation line
     ## first, and record the alpha value of where the lines cross.
@@ -90,7 +90,7 @@ mylars <- function
     subd <- subd[which.min(subd$alpha),]
     nextvar <- subd$variable
     alpha <- if(nrow(subd))subd$alpha else 1
-    
+
     ## If one of the coefficients would hit 0 at a smaller alpha
     ## value, take it out of the regression and continue.
     hit0 <- xor(b[j]>0,delta>0)&b[j]!=0
@@ -100,7 +100,7 @@ mylars <- function
       i <- which.min(alpha0)
       alpha <- alpha0[i]
     }
-    
+
     b[j] <- b[j]+alpha*delta ## evolve parameters
     alpha.total <- alpha.total+alpha
     ## add or remove a variable from the active set

@@ -4,8 +4,8 @@
 \description{Call panel.superpose for the data points and then for the direct
 labels. This is a proper lattice panel function that behaves much
 like panel.superpose.}
-\usage{panel.superpose.dl(x, y = NULL, subscripts, groups, 
-    panel.groups, method = NULL, .panel.superpose = panel.superpose, 
+\usage{panel.superpose.dl(x, y = NULL, subscripts, groups, panel.groups, 
+    method = NULL, .panel.superpose = lattice::panel.superpose, 
     type = "p", debug = FALSE, ...)}
 \arguments{
   \item{x}{Vector of x values.}
@@ -39,7 +39,7 @@ print(direct.label( ## most user-friendly
                    ))
 print(direct.label( ## exactly the same as above but with specific panel fns
                    densityplot(~ppp,loci,groups=type,n=500,
-                               panel=panel.superpose,
+                               panel=lattice::panel.superpose,
                                panel.groups="panel.densityplot")
                    ))
 ## using panel.superpose.dl as the panel function automatically adds
@@ -83,7 +83,7 @@ panel.model <- function(x,subscripts,col.line,...){
   panel.xyplot(x=x,subscripts=subscripts,col.line=col.line,...)
   llines(x,bw[subscripts,".fitted"],col=col.line,lty=2)
 }
-pg <- ratxy(panel=panel.superpose,panel.groups=panel.model)
+pg <- ratxy(panel=lattice::panel.superpose,panel.groups=panel.model)
 print(pg)
 ## If you use panel.superpose.dl with a custom panel.groups function,
 ## you need to manually specify the Positioning Method, since the
@@ -93,7 +93,7 @@ print(ratxy(panel=panel.superpose.dl,panel.groups="panel.model",
             method="first.qp"))
 
 ## Custom panel function that draws a box around values:
-panel.line1 <- function(ps=panel.superpose){
+panel.line1 <- function(ps=lattice::panel.superpose){
   function(y,...){
     panel.abline(h=range(y))
     ps(y=y,...)
