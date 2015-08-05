@@ -8,6 +8,25 @@ uselegend.ggplot <- function
   p
 }
 
+GeomDl <- ggplot2::ggproto("GeomDl", ggplot2::Geom,
+  draw_group = function(data, scales, coord, method = NULL, debug = FALSE, ...) {
+    data$rot <- as.integer(data$angle)
+    data$groups <- data$label
+    axes2native <- function(data){
+      coord$transform(data, scales)
+    }
+    converted <- axes2native(data)
+    dldata <- converted[, names(converted) != "group"]
+
+    directlabels::dlgrob(dldata, method, debug = debug, axes2native = axes2native)
+  },
+  draw_legend = ggplot2::draw_key_blank,
+  required_aes = c("x", "y", "label"),
+  default_aes = ggplot2::aes(
+    colour = "black", size = 5, angle = 0, hjust = 0.5,
+    vjust = 0.5, alpha = 1)
+)
+
 geom_dl <- structure(function
 ### Geom that will plot direct labels.
 (mapping=NULL,
@@ -16,39 +35,22 @@ geom_dl <- structure(function
 ### Positioning Method.
  ...,
 ### passed to GeomDirectLabel$new. ie stat= position= debug=
- show_guide=FALSE
+ show.legend=FALSE
 ### show legend? default FALSE since direct labels replace a legend.
  ){
   ## Geom for direct labeling that creates dlgrobs in the draw()
   ## method.
-  GeomDirectLabel <- proto::proto(ggplot2:::Geom, {
-    draw_groups <- function(., ...) .$draw(...)
-    draw <- function(., data, scales, coordinates, method = NULL, debug = FALSE, ...) {
-      data$rot <- as.integer(data$angle)
-      data$groups <- data$label
-      axes2native <- function(data){
-        coord_transform(coordinates,data,scales)
-      }
-      converted <- axes2native(data)
-      dldata <- converted[, names(converted) != "group"]
-      directlabels::dlgrob(dldata, method, debug = debug, axes2native = axes2native)
-    }
-    draw_legend <- function(., data, ...) {
-      grid::nullGrob()
-    }
-    objname <- "dl"
-    desc <- "Direct labels"
-    default_stat <- function(.) StatIdentity
-    required_aes <- c("x", "y", "label")
-    default_aes <- function(.) {
-      aes(
-        colour = "black", size = 5, angle = 0, hjust = 0.5,
-        vjust = 0.5, alpha = 1)
-    }
-  })
 
-  GeomDirectLabel$new(mapping, method = method, show_guide = show_guide, ...)
-  ### ggplot2 layer
+  layer(
+    mapping = mapping,
+    stat = ggplot2::StatIdentity,
+    geom = GeomDl,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = TRUE,
+    geom_params = list(method = method),
+    params = list(...)
+  )
 },ex=function(){
   library(ggplot2)
   vad <- as.data.frame.table(VADeaths)
