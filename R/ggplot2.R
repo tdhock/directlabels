@@ -9,7 +9,7 @@ uselegend.ggplot <- function
 }
 
 GeomDl <- ggplot2::ggproto("GeomDl", ggplot2::Geom,
-  draw_group = function(data, scales, coord, method = NULL, debug = FALSE, ...) {
+  draw = function(data, scales, coord, method = NULL, debug = FALSE, ...) {
     data$rot <- as.integer(data$angle)
     data$groups <- data$label
     axes2native <- function(data){
