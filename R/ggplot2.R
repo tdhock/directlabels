@@ -9,11 +9,11 @@ uselegend.ggplot <- function
 }
 
 GeomDl <- ggplot2::ggproto("GeomDl", ggplot2::Geom,
-  draw_panel = function(data, scales, coord, method = NULL, debug = FALSE, ...) {
+  draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE) {
     data$rot <- as.integer(data$angle)
     data$groups <- data$label
     axes2native <- function(data){
-      coord$transform(data, scales)
+      coord$transform(data, panel_scales)
     }
     converted <- axes2native(data)
     dldata <- converted[, names(converted) != "group"]
@@ -48,8 +48,7 @@ geom_dl <- structure(function
     position = PositionIdentity,
     show.legend = show.legend,
     inherit.aes = TRUE,
-    geom_params = list(method = method),
-    params = list(...)
+    params = list(..., method = method)
   )
 },ex=function(){
   library(ggplot2)
