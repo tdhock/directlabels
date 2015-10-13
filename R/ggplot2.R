@@ -48,7 +48,7 @@ geom_dl <- structure(function
     position = PositionIdentity,
     show.legend = show.legend,
     inherit.aes = TRUE,
-    params = list(..., method = method)
+    params = list(na.rm = TRUE, ..., method = method)
   )
 },ex=function(){
   library(ggplot2)
