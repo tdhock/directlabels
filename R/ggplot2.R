@@ -41,7 +41,7 @@ geom_dl <- structure(function
 ### data.frame to start with for direct label computation.
  stat = ggplot2::StatIdentity,
 ### stat passed to layer().
- position = PositionIdentity,
+ position = ggplot2::PositionIdentity,
 ### position passed to layer().
  parse = FALSE,
 ### parse text labels as plotmath expressions? not yet supported, but
@@ -60,7 +60,7 @@ geom_dl <- structure(function
  ){
   ## Geom for direct labeling that creates dlgrobs in the draw()
   ## method.
-  layer(
+  ggplot2::layer(
     data = data,
     mapping = mapping,
     stat = stat,
@@ -182,6 +182,12 @@ direct.label.ggplot <- function
 ### The ggplot object with direct labels added.
 }
 
+### https://github.com/tdhock/directlabels/issues/2 CRAN won't
+### complain about this version of :::
+pkgFun <- function(fun, pkg="ggplot2") {
+  get(fun, envir = asNamespace(pkg))
+}
+
 ### Extract guides to hide from a ggplot.
 legends2hide <- function(p){
   plistextra <- ggplot2::ggplot_build(p)
@@ -189,7 +195,8 @@ legends2hide <- function(p){
   scales = plot$scales
   layers = plot$layers
   default_mapping = plot$mapping
-  theme <- ggplot2:::plot_theme(plot)
+  plot_theme <- pkgFun("plot_theme")
+  theme <- plot_theme(plot)
   position <- theme$legend.position
   # by default, guide boxes are vertically aligned
   theme$legend.box <- if(is.null(theme$legend.box)) "vertical" else theme$legend.box
@@ -220,12 +227,15 @@ legends2hide <- function(p){
 
   guides <- defaults(plot$guides, guides(colour="legend", fill="legend"))
   labels <- plot$labels
-  gdefs <- ggplot2:::guides_train(scales = scales, theme = theme,
-                                  guides = guides, labels = labels)
+  guides_train <- pkgFun("guides_train")
+  gdefs <- guides_train(scales = scales, theme = theme,
+                        guides = guides, labels = labels)
   if (length(gdefs) != 0) {
-    gdefs <- ggplot2:::guides_merge(gdefs)
-    gdefs <- ggplot2:::guides_geom(gdefs, layers, default_mapping)
-  } else (ggplot2:::zeroGrob())
+    guides_merge <- pkgFun("guides_merge")
+    gdefs <- guides_merge(gdefs)
+    guides_geom <- pkgFun("guides_geom")
+    gdefs <- guides_geom(gdefs, layers, default_mapping)
+  } else (ggplot2::zeroGrob())
   var.list <- lapply(gdefs, getLegendVariables)
   for(v in c("colour", "fill")){
     for(L in var.list){
