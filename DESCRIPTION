@@ -15,7 +15,7 @@ URL: http://directlabels.r-forge.r-project.org/
 LazyData: true
 Suggests: MASS, inlinedocs, ggplot2 (>= 1.0.1.9003),
 	  lattice, alphahull, reshape2, nlme,
-	  ElemStatLearn, lars, latticeExtra, proto (>= 1.0.0)
+	  ElemStatLearn, lars, latticeExtra
 Imports: grid, quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
 	 densityplot.R ggplot2.R positioning.functions.R
