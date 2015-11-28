@@ -2,12 +2,23 @@
 \alias{geom_dl}
 \title{geom dl}
 \description{Geom that will plot direct labels.}
-\usage{geom_dl(mapping = NULL, method, ..., show.legend = FALSE)}
+\usage{geom_dl(mapping = NULL, data = NULL, stat = ggplot2::StatIdentity, 
+    position = PositionIdentity, parse = FALSE, ..., 
+    method = stop("must specify geom_dl(method=A_Positioning_Method), see apply.method for details"), 
+    debug = FALSE, na.rm = TRUE, inherit.aes = TRUE)}
 \arguments{
   \item{mapping}{aes(label=variable_that_will_be_used_as_groups_in_Positioning_Methods).}
-  \item{method}{Positioning Method.}
-  \item{\dots}{passed to GeomDirectLabel$new. ie stat= position= debug=}
-  \item{show.legend}{show legend? default FALSE since direct labels replace a legend.}
+  \item{data}{data.frame to start with for direct label computation.}
+  \item{stat}{stat passed to layer().}
+  \item{position}{position passed to layer().}
+  \item{parse}{parse text labels as plotmath expressions? not yet supported, but
+I would be open to accepting a PR if somebody wants to implement
+that.}
+  \item{\dots}{passed to params.}
+  \item{method}{Positioning Method for direct label placement, passed to apply.method.}
+  \item{debug}{Show directlabels debugging output?}
+  \item{na.rm}{passed to params.}
+  \item{inherit.aes}{inherit aes from global ggplot definition?}
 }
 
 
@@ -28,7 +39,7 @@ leg <- ggplot(vad,aes(deaths,age,colour=demographic))+
 print(direct.label(leg,list("last.points",rot=30)))
 ## this is what direct.label is doing internally:
 labeled <- leg+
-  geom_dl(aes(label=demographic),list("last.points",rot=30))+
+  geom_dl(aes(label=demographic), method=list("last.points",rot=30))+
   scale_colour_discrete(guide="none")
 print(labeled)
 ## no color, just direct labels!
