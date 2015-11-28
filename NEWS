@@ -27,6 +27,11 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2015.11.28
+
+Works with new ggplot2 >= 1.0.1.9003 internals. (and no longer works
+with older ggplot2 internals!)
+
 2015.6.17
 
 Namespaces fixes to ensure that R CMD check runs cleanly, 
