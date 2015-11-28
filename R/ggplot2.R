@@ -8,8 +8,14 @@ uselegend.ggplot <- function
   p
 }
 
+### ggproto object implementing direct labels.
 GeomDl <- ggplot2::ggproto("GeomDl", ggplot2::Geom,
-  draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE) {
+  draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE, parse=FALSE) {
+    stopifnot(is.logical(parse))
+    stopifnot(length(parse) == 1)
+    if(parse){
+      stop("parse=TRUE is not yet supported in directlabels, but if you want to do that, why don't you fork tdhock/directlabels and submit me a PR?")
+    }
     data$rot <- as.integer(data$angle)
     data$groups <- data$label
     axes2native <- function(data){
@@ -20,7 +26,7 @@ GeomDl <- ggplot2::ggproto("GeomDl", ggplot2::Geom,
 
     directlabels::dlgrob(dldata, method, debug = debug, axes2native = axes2native)
   },
-  draw_legend = ggplot2::draw_key_blank,
+  draw_legend = ggplot2::draw_key_text,
   required_aes = c("x", "y", "label"),
   default_aes = ggplot2::aes(
     colour = "black", size = 5, angle = 0, hjust = 0.5,
@@ -31,24 +37,45 @@ geom_dl <- structure(function
 ### Geom that will plot direct labels.
 (mapping=NULL,
 ### aes(label=variable_that_will_be_used_as_groups_in_Positioning_Methods).
- method,
-### Positioning Method.
+ data=NULL,
+### data.frame to start with for direct label computation.
+ stat = ggplot2::StatIdentity,
+### stat passed to layer().
+ position = PositionIdentity,
+### position passed to layer().
+ parse = FALSE,
+### parse text labels as plotmath expressions? not yet supported, but
+### I would be open to accepting a PR if somebody wants to implement
+### that.
  ...,
-### passed to GeomDirectLabel$new. ie stat= position= debug=
- show.legend=FALSE
+### passed to params.
+ method=stop("must specify geom_dl(method=A_Positioning_Method), see apply.method for details"),
+### Positioning Method for direct label placement, passed to apply.method.
+ debug=FALSE,
+### Show directlabels debugging output?
+ na.rm = TRUE,
+### passed to params.
+ show.legend=FALSE,
 ### show legend? default FALSE since direct labels replace a legend.
+ inherit.aes = TRUE
+### inherit aes from global ggplot definition?
  ){
   ## Geom for direct labeling that creates dlgrobs in the draw()
   ## method.
-
   layer(
+    data = data,
     mapping = mapping,
-    stat = ggplot2::StatIdentity,
+    stat = stat,
     geom = GeomDl,
-    position = PositionIdentity,
+    position = position,
     show.legend = show.legend,
-    inherit.aes = TRUE,
-    params = list(na.rm = TRUE, ..., method = method)
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      na.rm = na.rm,
+      method = method,
+      debug = debug,
+      ...)
   )
 },ex=function(){
   library(ggplot2)
@@ -135,7 +162,7 @@ direct.label.ggplot <- function
   L <- dl.info$layer
   colvar <- dl.info$colvar
   ## Try to figure out a good default based on the colored geom
-  geom <- L$geom$objname
+  geom <- tolower(sub("^Geom", "", class(L$geom)[1]))
   if(is.null(method))method <- default.picker("ggplot")
   data <- if( (!is.null(L$data)) && (length(L$data) > 0) ){
     L$data
@@ -144,7 +171,7 @@ direct.label.ggplot <- function
   }
   a <- ggplot2::aes_string(label=colvar, colour=colvar)
   a2 <- structure(c(L$mapping, a), class="uneval")
-  dlgeom <- geom_dl(a2,method,
+  dlgeom <- geom_dl(mapping=a2,method=method,
                     stat=L$stat,debug=debug,data=data)
   dlgeom$stat_params <- L$stat_params
   ## Look through legends for a colour/fill legend.
