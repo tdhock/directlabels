@@ -55,8 +55,6 @@ geom_dl <- structure(function
 ### Show directlabels debugging output?
  na.rm = TRUE,
 ### passed to params.
- show.legend=FALSE,
-### show legend? default FALSE since direct labels replace a legend.
  inherit.aes = TRUE
 ### inherit aes from global ggplot definition?
  ){
@@ -68,7 +66,7 @@ geom_dl <- structure(function
     stat = stat,
     geom = GeomDl,
     position = position,
-    show.legend = show.legend,
+    show.legend = FALSE, # since direct labels replace a legend.
     inherit.aes = inherit.aes,
     params = list(
       parse = parse,
@@ -88,7 +86,7 @@ geom_dl <- structure(function
   print(direct.label(leg,list("last.points",rot=30)))
   ## this is what direct.label is doing internally:
   labeled <- leg+
-    geom_dl(aes(label=demographic),list("last.points",rot=30))+
+    geom_dl(aes(label=demographic), method=list("last.points",rot=30))+
     scale_colour_discrete(guide="none")
   print(labeled)
   ## no color, just direct labels!
