@@ -3,7 +3,7 @@ Maintainer: Toby Dylan Hocking <tdhock5@gmail.com>
 Author: Toby Dylan Hocking
 Version: 2015.11.28
 License: GPL-3
-Title: Direct labels for multicolor plots in lattice or ggplot2
+Title: Direct Labels for Multicolor Plots
 Description: An extensible framework
  for automatically placing direct labels onto multicolor lattice or
  ggplot2 plots.
