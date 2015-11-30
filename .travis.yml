@@ -8,4 +8,4 @@ notifications:
     on_failure: change
 
 r_github_packages:
-  - hadley/proto
+  - hadley/ggplot2
