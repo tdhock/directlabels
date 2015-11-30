@@ -8,14 +8,15 @@ install.packages("directlabels")
 
 ** Install development version from GitHub
 
-The R-Forge version of directlabels is deprecated since 16
-June 2015. Please install the development version directlabels from
-GitHub instead:
+Development of directlabels on R-Forge stopped on 16 June 2015. Please
+install the development version from GitHub instead:
 
 #+BEGIN_SRC R
 if(!require(devtools))install.packages("devtools")
 devtools::install_github(c("hadley/ggplot2", "tdhock/directlabels"))
 #+END_SRC
+
+Changes are listed in [[file:NEWS]].
 
 ** Usage examples
 
