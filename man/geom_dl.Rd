@@ -4,8 +4,9 @@
 \description{Geom that will plot direct labels.}
 \usage{geom_dl(mapping = NULL, data = NULL, stat = ggplot2::StatIdentity, 
     position = ggplot2::PositionIdentity, parse = FALSE, 
-    ..., method = stop("must specify geom_dl(method=A_Positioning_Method), see apply.method for details"), 
-    debug = FALSE, na.rm = TRUE, inherit.aes = TRUE)}
+    ..., method = stop(paste("must specify geom_dl(method=A_Positioning_Method),", 
+        "see apply.method for details")), debug = FALSE, 
+    na.rm = TRUE, inherit.aes = TRUE)}
 \arguments{
   \item{mapping}{aes(label=variable_that_will_be_used_as_groups_in_Positioning_Methods).}
   \item{data}{data.frame to start with for direct label computation.}

@@ -50,8 +50,8 @@ geom_dl <- structure(function
  ...,
 ### passed to params.
  method=stop(paste("must specify geom_dl(method=A_Positioning_Method),",
-   "see apply.method for details")),
 ### Positioning Method for direct label placement, passed to apply.method.
+   "see apply.method for details")),
  debug=FALSE,
 ### Show directlabels debugging output?
  na.rm = TRUE,
