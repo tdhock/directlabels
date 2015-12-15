@@ -154,11 +154,11 @@ panel.superpose.dl <- structure(function
                     panel=panel.superpose.dl,panel.groups="panel.densityplot"))
 
   ## Exploring custom panel and panel.groups functions
-  library(ggplot2)
   library(nlme)
   ## Say we want to use a simple linear model to explain rat body weight:
   fit <- lm(weight~Time+Diet+Rat,BodyWeight)
-  bw <- fortify(fit,BodyWeight)
+  bw <- BodyWeight
+  bw$.fitted <- predict(fit,BodyWeight)
   ## lots of examples to come, all with these arguments:
   ratxy <- function(...){
     xyplot(weight~Time|Diet,bw,groups=Rat,type="l",layout=c(3,1),...)

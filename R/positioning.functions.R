@@ -110,13 +110,14 @@ direct.label <- structure(function # Direct labels for color decoding
     UseMethod("direct.label")
 ### A plot with direct labels and no color legend.
 },ex=function(){
-  ## Add direct labels to a ggplot2 scatterplot, making sure that each
-  ## label is close to its point cloud, and doesn't overlap points or
-  ## other labels.
-  library(ggplot2)
-  scatter <- qplot(jitter(hwy),jitter(cty),data=mpg,colour=class,
-                   main="Fuel efficiency depends on car size")
-  print(direct.label(scatter))
+  if(require(ggplot2)){
+    ## Add direct labels to a ggplot2 scatterplot, making sure that each
+    ## label is close to its point cloud, and doesn't overlap points or
+    ## other labels.
+    scatter <- qplot(jitter(hwy),jitter(cty),data=mpg,colour=class,
+                     main="Fuel efficiency depends on car size")
+    print(direct.label(scatter))
+  }
 
   ## direct labels for lineplots that do not overlap and do not go off
   ## the plot.

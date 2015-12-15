@@ -1,7 +1,7 @@
 Package: directlabels
 Maintainer: Toby Dylan Hocking <tdhock5@gmail.com>
 Author: Toby Dylan Hocking
-Version: 2015.12.14
+Version: 2015.12.15
 License: GPL-3
 Title: Direct Labels for Multicolor Plots
 Description: An extensible framework
@@ -14,7 +14,7 @@ Description: An extensible framework
 URL: http://directlabels.r-forge.r-project.org/
 LazyData: true
 Suggests: MASS, inlinedocs, ggplot2 (>= 2.0),
-	  lattice, alphahull, reshape2, nlme,
+	  lattice, alphahull, nlme,
 	  ElemStatLearn, lars, latticeExtra
 Imports: grid, quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R

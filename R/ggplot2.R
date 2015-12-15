@@ -8,64 +8,67 @@ uselegend.ggplot <- function
   p
 }
 
-### ggproto object implementing direct labels.
-GeomDl <- ggplot2::ggproto("GeomDl", ggplot2::Geom,
-  draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE, parse=FALSE) {
-    stopifnot(is.logical(parse))
-    stopifnot(length(parse) == 1)
-    if(parse){
-      stop("parse=TRUE is not yet supported in directlabels, but if you want to do that, why don't you fork tdhock/directlabels and submit me a PR?")
-    }
-    data$rot <- as.integer(data$angle)
-    data$groups <- data$label
-    axes2native <- function(data){
-      coord$transform(data, panel_scales)
-    }
-    converted <- axes2native(data)
-    dldata <- converted[, names(converted) != "group"]
-
-    directlabels::dlgrob(dldata, method, debug = debug, axes2native = axes2native)
-  },
-  draw_legend = ggplot2::draw_key_text,
-  required_aes = c("x", "y", "label"),
-  default_aes = ggplot2::aes(
-    colour = "black", size = 5, angle = 0, hjust = 0.5,
-    vjust = 0.5, alpha = 1)
-)
-
 geom_dl <- structure(function
 ### Geom that will plot direct labels.
 (mapping=NULL,
 ### aes(label=variable_that_will_be_used_as_groups_in_Positioning_Methods).
  data=NULL,
 ### data.frame to start with for direct label computation.
- stat = ggplot2::StatIdentity,
-### stat passed to layer().
- position = ggplot2::PositionIdentity,
-### position passed to layer().
- parse = FALSE,
-### parse text labels as plotmath expressions? not yet supported, but
-### I would be open to accepting a PR if somebody wants to implement
-### that.
  ...,
 ### passed to params.
- method=stop(paste("must specify geom_dl(method=A_Positioning_Method),",
+ method=stop("must specify method= argument"),
 ### Positioning Method for direct label placement, passed to apply.method.
-   "see apply.method for details")),
  debug=FALSE,
 ### Show directlabels debugging output?
  na.rm = TRUE,
 ### passed to params.
+ parse = FALSE,
+### parse text labels as plotmath expressions? not yet supported, but
+### I would be open to accepting a PR if somebody wants to implement
+### that.
+ stat = "identity",
+### passed to layer.
+ position = "identity",
+### passed to layer.
  inherit.aes = TRUE
 ### inherit aes from global ggplot definition?
  ){
+### ggproto object implementing direct labels.
+  GeomDl <- ggplot2::ggproto(
+    "GeomDl", ggplot2::Geom,
+    draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE, parse=FALSE) {
+      stopifnot(is.logical(parse))
+      stopifnot(length(parse) == 1)
+      if(parse){
+        stop("parse=TRUE is not yet supported in directlabels, ",
+             "but if you want to do that, ",
+             "why don't you fork tdhock/directlabels and submit me a PR?")
+      }
+      data$rot <- as.integer(data$angle)
+      data$groups <- data$label
+      axes2native <- function(data){
+        coord$transform(data, panel_scales)
+      }
+      converted <- axes2native(data)
+      dldata <- converted[, names(converted) != "group"]
+
+      directlabels::dlgrob(
+        dldata, method, debug = debug, axes2native = axes2native)
+    },
+    draw_legend = ggplot2::draw_key_text,
+    required_aes = c("x", "y", "label"),
+    default_aes = ggplot2::aes(
+      colour = "black", size = 5, angle = 0, hjust = 0.5,
+      vjust = 0.5, alpha = 1)
+    )
+
   ## Geom for direct labeling that creates dlgrobs in the draw()
   ## method.
   ggplot2::layer(
     data = data,
     mapping = mapping,
-    stat = stat,
     geom = GeomDl,
+    stat = stat,
     position = position,
     show.legend = FALSE, # since direct labels replace a legend.
     inherit.aes = inherit.aes,
@@ -77,57 +80,58 @@ geom_dl <- structure(function
       ...)
   )
 },ex=function(){
-  library(ggplot2)
-  vad <- as.data.frame.table(VADeaths)
-  names(vad) <- c("age","demographic","deaths")
-  ## color + legend
-  leg <- ggplot(vad,aes(deaths,age,colour=demographic))+
-    geom_line(aes(group=demographic))+
-    xlim(8,80)
-  print(direct.label(leg,list("last.points",rot=30)))
-  ## this is what direct.label is doing internally:
-  labeled <- leg+
-    geom_dl(aes(label=demographic), method=list("last.points",rot=30))+
-    scale_colour_discrete(guide="none")
-  print(labeled)
-  ## no color, just direct labels!
-  p <- ggplot(vad,aes(deaths,age))+
-    geom_line(aes(group=demographic))+
-    geom_dl(aes(label=demographic),method="top.qp")
-  print(p)
-  ## add color:
-  p+aes(colour=demographic)+
-    scale_colour_discrete(guide="none")
-  ## add linetype:
-  p+aes(linetype=demographic)+
-    scale_linetype(guide="none")
-  ## no color, just direct labels
-  library(nlme)
-  bwbase <- ggplot(BodyWeight,aes(Time,weight,label=Rat))+
-    geom_line(aes(group=Rat))+
-    facet_grid(.~Diet)
-  bw <- bwbase+geom_dl(method="last.qp")
-  print(bw)
-  ## add some more direct labels
-  bw2 <- bw+geom_dl(method="first.qp")
-  print(bw2)
-  ## add color
-  colored <- bw2+aes(colour=Rat)+
-    scale_colour_discrete(guide="none")
-  print(colored)
-  ## or just use direct.label if you use color:
-  direct.label(bwbase+aes(colour=Rat),dl.combine("first.qp","last.qp"))
+  if(require(ggplot2)){
+    vad <- as.data.frame.table(VADeaths)
+    names(vad) <- c("age","demographic","deaths")
+    ## color + legend
+    leg <- ggplot(vad,aes(deaths,age,colour=demographic))+
+      geom_line(aes(group=demographic))+
+      xlim(8,80)
+    print(direct.label(leg,list("last.points",rot=30)))
+    ## this is what direct.label is doing internally:
+    labeled <- leg+
+      geom_dl(aes(label=demographic), method=list("last.points",rot=30))+
+      scale_colour_discrete(guide="none")
+    print(labeled)
+    ## no color, just direct labels!
+    p <- ggplot(vad,aes(deaths,age))+
+      geom_line(aes(group=demographic))+
+      geom_dl(aes(label=demographic),method="top.qp")
+    print(p)
+    ## add color:
+    p+aes(colour=demographic)+
+      scale_colour_discrete(guide="none")
+    ## add linetype:
+    p+aes(linetype=demographic)+
+      scale_linetype(guide="none")
+    ## no color, just direct labels
+    library(nlme)
+    bwbase <- ggplot(BodyWeight,aes(Time,weight,label=Rat))+
+      geom_line(aes(group=Rat))+
+      facet_grid(.~Diet)
+    bw <- bwbase+geom_dl(method="last.qp")
+    print(bw)
+    ## add some more direct labels
+    bw2 <- bw+geom_dl(method="first.qp")
+    print(bw2)
+    ## add color
+    colored <- bw2+aes(colour=Rat)+
+      scale_colour_discrete(guide="none")
+    print(colored)
+    ## or just use direct.label if you use color:
+    direct.label(bwbase+aes(colour=Rat),dl.combine("first.qp","last.qp"))
 
-  ## iris data example
-  giris <- ggplot(iris,aes(Petal.Length,Sepal.Length))+
-    geom_point(aes(shape=Species))
-  giris.labeled <- giris+
-    geom_dl(aes(label=Species),method="smart.grid")+
-    scale_shape_manual(values=c(setosa=1,virginica=6,versicolor=3),
-                       guide="none")
-  ##png("~/R/directlabels/www/scatter-bw-ggplot2.png",h=503,w=503)
-  print(giris.labeled)
-  ##dev.off()
+    ## iris data example
+    giris <- ggplot(iris,aes(Petal.Length,Sepal.Length))+
+      geom_point(aes(shape=Species))
+    giris.labeled <- giris+
+      geom_dl(aes(label=Species),method="smart.grid")+
+      scale_shape_manual(values=c(setosa=1,virginica=6,versicolor=3),
+                         guide="none")
+    ##png("~/R/directlabels/www/scatter-bw-ggplot2.png",h=503,w=503)
+    print(giris.labeled)
+    ##dev.off()
+  }
 })
 
 direct.label.ggplot <- function

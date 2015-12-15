@@ -27,6 +27,10 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2015.12.15
+
+ggplot2 does not need to be installed for package checks to pass.
+
 2015.12.14
 
 suggest ggplot2 >= 2.0.

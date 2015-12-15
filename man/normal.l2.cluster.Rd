@@ -43,12 +43,13 @@ clusterpath article
 }
 \examples{
 data(normal.l2.cluster)
-library(ggplot2)
-p <- ggplot(normal.l2.cluster$path,aes(x,y))+
-  geom_path(aes(group=row),colour="grey")+
-  geom_point(aes(size=lambda),colour="grey")+
-  geom_point(aes(colour=class),data=normal.l2.cluster$pts)+
-  coord_equal()
-print(direct.label(p))
+if(require(ggplot2)){
+  p <- ggplot(normal.l2.cluster$path,aes(x,y))+
+    geom_path(aes(group=row),colour="grey")+
+    geom_point(aes(size=lambda),colour="grey")+
+    geom_point(aes(colour=class),data=normal.l2.cluster$pts)+
+    coord_equal()
+  print(direct.label(p))
+}
 }
 \keyword{datasets}

@@ -129,10 +129,11 @@ dl.combine <- structure(function # Combine output of several methods
   ##   grid.edit(gPath("panel-3-5",".*","GRID.dlgrob.first.points"),
   ##             method=list(cex=2,fontfamily="bold","both"),
   ##             grep=TRUE)
-  library(ggplot2)
-  rp2 <- qplot(Time,weight,data=BodyWeight,geom="line",facets=.~Diet,colour=Rat)
-  print(direct.label(direct.label(rp2,"last.points"),"first.points"))
-  print(direct.label(rp2,"both"))
+  if(require(ggplot2)){
+    rp2 <- qplot(Time,weight,data=BodyWeight,geom="line",facets=.~Diet,colour=Rat)
+    print(direct.label(direct.label(rp2,"last.points"),"first.points"))
+    print(direct.label(rp2,"both"))
+  }
 
   mylars <- function
   ## Least angle regression algorithm for calculating lasso solutions.
@@ -150,7 +151,6 @@ dl.combine <- structure(function # Combine output of several methods
     j <- which.max(ycor) # variables in active set, starts with most correlated
     alpha.total <- 0
     out <- data.frame()
-
     while(1){## lar loop
       xak <- xscale[,j] # current variables
       r <- y-xscale%*%b # current residual
@@ -168,10 +168,8 @@ dl.combine <- structure(function # Combine output of several methods
                                   alpha=alpha.total,
                                   arclength=sum(abs(b)),
                                   coef.unscaled=b/attr(xscale,"scaled:scale")))
-
       if(sum(abs(intercept)) < epsilon)#corr==0 so we are done
         return(transform(out,s=arclength/max(arclength)))
-
       ## If there are more variables we can enter into the regression,
       ## then see which one will cross the highest correlation line
       ## first, and record the alpha value of where the lines cross.
@@ -185,7 +183,6 @@ dl.combine <- structure(function # Combine output of several methods
       subd <- subd[which.min(subd$alpha),]
       nextvar <- subd$variable
       alpha <- if(nrow(subd))subd$alpha else 1
-
       ## If one of the coefficients would hit 0 at a smaller alpha
       ## value, take it out of the regression and continue.
       hit0 <- xor(b[j]>0,delta>0)&b[j]!=0
@@ -195,17 +192,17 @@ dl.combine <- structure(function # Combine output of several methods
         i <- which.min(alpha0)
         alpha <- alpha0[i]
       }
-
       b[j] <- b[j]+alpha*delta ## evolve parameters
       alpha.total <- alpha.total+alpha
       ## add or remove a variable from the active set
       j <- if(takeout)j[j!=which(names(i)==colnames(x))]
-      else c(j,which(nextvar==colnames(x)))
+           else c(j,which(nextvar==colnames(x)))
     }
   }
-
+  
   ## Calculate lasso path, plot and label
-  mylasso <- dl.combine(lasso.labels,last.qp)
+  mylasso <- dl.combine(lasso.labels, last.qp)
+  
   if(require(ElemStatLearn)){
     pros <- subset(prostate,select=-train,train==TRUE)
     ycol <- which(names(pros)=="lpsa")
@@ -214,9 +211,11 @@ dl.combine <- structure(function # Combine output of several methods
     res <- mylars(x,y)
     P <- xyplot(coef~arclength,res,groups=variable,type="l")
     plot(direct.label(P,"mylasso"))
-    p <- ggplot(res,aes(arclength,coef,colour=variable))+
-      geom_line(aes(group=variable))
-    direct.label(p,"mylasso")
+    if(require(ggplot2)){
+      p <- ggplot(res,aes(arclength,coef,colour=variable))+
+        geom_line(aes(group=variable))
+      direct.label(p,"mylasso")
+    }
   }
 
   if(require(lars)){
@@ -308,19 +307,19 @@ dl.move <- structure(function # Manually move a direct label
   pf
 ### A Positioning Function that moves a label into a good spot.
 },ex=function(){
-  library(ggplot2)
-  library(lattice)
-  scatter <- xyplot(jitter(cty)~jitter(hwy),mpg,groups=class,aspect=1)
-  dlcompare(list(scatter),
-            list("extreme.grid",
-                 `+dl.move`=list(extreme.grid,dl.move("suv",15,15))))
-
-  p <- qplot(log10(gamma),rate,data=svmtrain,group=data,colour=data,
-             geom="line",facets=replicate~nu)
-  adjust.kif <- dl.move("KIF11",-0.9,hjust=1,vjust=1)
-  dlcompare(list(p+xlim(-8,7)),
-            list("last.points",
-                 `+dl.move`=list(last.points,adjust.kif)))
+  if(require(ggplot2)){
+    library(lattice)
+    scatter <- xyplot(jitter(cty)~jitter(hwy),mpg,groups=class,aspect=1)
+    dlcompare(list(scatter),
+              list("extreme.grid",
+                   `+dl.move`=list(extreme.grid,dl.move("suv",15,15))))
+    p <- qplot(log10(gamma),rate,data=svmtrain,group=data,colour=data,
+               geom="line",facets=replicate~nu)
+    adjust.kif <- dl.move("KIF11",-0.9,hjust=1,vjust=1)
+    dlcompare(list(p+xlim(-8,7)),
+              list("last.points",
+                   `+dl.move`=list(last.points,adjust.kif)))
+  }
 })
 
 ### Jitter the label positions.
@@ -510,19 +509,25 @@ reduce.cex.lr <- structure(function(d,...){
   d$cex <- (w-right)/w * (w-left)/w * d$cex
   calc.boxes(d)
 },ex=function(){
-  if(require(ElemStatLearn)){
+  if(require(ElemStatLearn) && require(lars) && require(ggplot2)){
     pros <- subset(prostate,select=-train,train==TRUE)
     ycol <- which(names(pros)=="lpsa")
     x <- as.matrix(pros[-ycol])
     y <- pros[[ycol]]
-    library(lars)
     fit <- lars(x,y,type="lasso")
     beta <- scale(coef(fit),FALSE,1/fit$normx)
     arclength <- rowSums(abs(beta))
-    library(reshape2)
-    path <- data.frame(melt(beta),arclength)
-    names(path)[1:3] <- c("step","variable","standardized.coef")
-    library(ggplot2)
+
+    path.list <- list()
+    for(variable in colnames(beta)){
+      standardized.coef <- beta[, variable]
+      path.list[[variable]] <-
+        data.frame(step=seq_along(standardized.coef),
+                   arclength,
+                   variable,
+                   standardized.coef)
+    }
+    path <- do.call(rbind, path.list)
     p <- ggplot(path,aes(arclength,standardized.coef,colour=variable))+
       geom_line(aes(group=variable))
 
@@ -651,75 +656,73 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
 ### lower.var.
 },ex=function(){
   SegCost$error <- factor(SegCost$error,c("FP","FN","E","I"))
-  library(ggplot2)
-  fp.fn.colors <- c(FP="skyblue",FN="#E41A1C",I="black",E="black")
-  fp.fn.sizes <- c(FP=2.5,FN=2.5,I=1,E=1)
-  fp.fn.linetypes <- c(FP="solid",FN="solid",I="dashed",E="solid")
-  err.df <- subset(SegCost,type!="Signal")
-  if(!"theme"%in%ls("package:ggplot2")){
-    theme <- opts
+  if(require(ggplot2)){
+    fp.fn.colors <- c(FP="skyblue",FN="#E41A1C",I="black",E="black")
+    fp.fn.sizes <- c(FP=2.5,FN=2.5,I=1,E=1)
+    fp.fn.linetypes <- c(FP="solid",FN="solid",I="dashed",E="solid")
+    err.df <- subset(SegCost,type!="Signal")
+
+    kplot <- ggplot(err.df,aes(segments,cost))+
+      geom_line(aes(colour=error,size=error,linetype=error))+
+      facet_grid(type~bases.per.probe)+
+      scale_linetype_manual(values=fp.fn.linetypes)+
+      scale_colour_manual(values=fp.fn.colors)+
+      scale_size_manual(values=fp.fn.sizes)+
+      scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
+      theme_bw()+theme(panel.margin=grid::unit(0,"lines"))
+
+    ## The usual ggplot without direct labels.
+    print(kplot)
+
+    ## Get rid of legend for direct labels.
+    no.leg <- kplot+guides(colour="none",linetype="none",size="none")
+
+    ## Default direct labels.
+    direct.label(no.leg)
+
+    ## Explore several options for tiebreaking and limits. First let's
+    ## make a qp.labels Positioning Method that does not tiebreak.
+    no.tiebreak <- list("first.points",
+                        "calc.boxes",
+                        qp.labels("y","bottom","top"))
+    direct.label(no.leg, no.tiebreak)
+
+    ## Look at the weird labels in the upper left panel. The E curve is
+    ## above the FN curve, but the labels are the opposite! This is
+    ## because they have the same y value on the first points, which are
+    ## the targets for qp.labels. We need to tiebreak.
+    qp.break <- qp.labels("y","bottom","top",make.tiebreaker("x","y"))
+    tiebreak <- list("first.points",
+                     "calc.boxes",
+                     "qp.break")
+    direct.label(no.leg, tiebreak)
+
+    ## Enlarge the text size and spacing.
+    tiebreak.big <- list("first.points",
+                         cex=2,
+                         "calc.boxes",
+                         dl.trans(h=1.25*h),
+                         "calc.borders",
+                         "qp.break")
+    direct.label(no.leg, tiebreak.big)
+
+    ## Even on my big monitor, the FP runs off the bottom of the screen
+    ## in the top panels. To avoid that you can specify a limits
+    ## function.
+
+    ## Below, the ylimits function uses the limits of each panel, so
+    ## labels appear inside the plot region. Also, if you resize your
+    ## window so that it is small, you can see that the text size of the
+    ## labels is decreased until they all fit in the plotting region.
+    qp.limited <-  qp.labels("y","bottom","top",make.tiebreaker("x","y"),ylimits)
+    tiebreak.lim <- list("first.points",
+                         cex=2,
+                         "calc.boxes",
+                         dl.trans(h=1.25*h),
+                         "calc.borders",
+                         "qp.limited")
+    direct.label(no.leg, tiebreak.lim)
   }
-kplot <- ggplot(err.df,aes(segments,cost))+
-  geom_line(aes(colour=error,size=error,linetype=error))+
-  facet_grid(type~bases.per.probe)+
-  scale_linetype_manual(values=fp.fn.linetypes)+
-  scale_colour_manual(values=fp.fn.colors)+
-  scale_size_manual(values=fp.fn.sizes)+
-  scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
-  theme_bw()+theme(panel.margin=grid::unit(0,"lines"))
-
-  ## The usual ggplot without direct labels.
-  print(kplot)
-
-  ## Get rid of legend for direct labels.
-  no.leg <- kplot+guides(colour="none",linetype="none",size="none")
-
-  ## Default direct labels.
-  direct.label(no.leg)
-
-  ## Explore several options for tiebreaking and limits. First let's
-  ## make a qp.labels Positioning Method that does not tiebreak.
-  no.tiebreak <- list("first.points",
-                      "calc.boxes",
-                      qp.labels("y","bottom","top"))
-  direct.label(no.leg, no.tiebreak)
-
-  ## Look at the weird labels in the upper left panel. The E curve is
-  ## above the FN curve, but the labels are the opposite! This is
-  ## because they have the same y value on the first points, which are
-  ## the targets for qp.labels. We need to tiebreak.
-  qp.break <- qp.labels("y","bottom","top",make.tiebreaker("x","y"))
-  tiebreak <- list("first.points",
-                   "calc.boxes",
-                   "qp.break")
-  direct.label(no.leg, tiebreak)
-
-  ## Enlarge the text size and spacing.
-  tiebreak.big <- list("first.points",
-                       cex=2,
-                       "calc.boxes",
-                       dl.trans(h=1.25*h),
-                       "calc.borders",
-                       "qp.break")
-  direct.label(no.leg, tiebreak.big)
-
-  ## Even on my big monitor, the FP runs off the bottom of the screen
-  ## in the top panels. To avoid that you can specify a limits
-  ## function.
-
-  ## Below, the ylimits function uses the limits of each panel, so
-  ## labels appear inside the plot region. Also, if you resize your
-  ## window so that it is small, you can see that the text size of the
-  ## labels is decreased until they all fit in the plotting region.
-  qp.limited <-  qp.labels("y","bottom","top",make.tiebreaker("x","y"),ylimits)
-  tiebreak.lim <- list("first.points",
-                       cex=2,
-                       "calc.boxes",
-                       dl.trans(h=1.25*h),
-                       "calc.borders",
-                       "qp.limited")
-  direct.label(no.leg, tiebreak.lim)
-
 })
 
 

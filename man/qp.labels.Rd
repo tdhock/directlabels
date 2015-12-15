@@ -30,23 +30,21 @@ lower.var.}
 
 
 \examples{
-  SegCost$error <- factor(SegCost$error,c("FP","FN","E","I"))
-  library(ggplot2)
+SegCost$error <- factor(SegCost$error,c("FP","FN","E","I"))
+if(require(ggplot2)){
   fp.fn.colors <- c(FP="skyblue",FN="#E41A1C",I="black",E="black")
   fp.fn.sizes <- c(FP=2.5,FN=2.5,I=1,E=1)
   fp.fn.linetypes <- c(FP="solid",FN="solid",I="dashed",E="solid")
   err.df <- subset(SegCost,type!="Signal")
-  if(!"theme"\%in\%ls("package:ggplot2")){
-    theme <- opts
-  }
-kplot <- ggplot(err.df,aes(segments,cost))+
-  geom_line(aes(colour=error,size=error,linetype=error))+
-  facet_grid(type~bases.per.probe)+
-  scale_linetype_manual(values=fp.fn.linetypes)+
-  scale_colour_manual(values=fp.fn.colors)+
-  scale_size_manual(values=fp.fn.sizes)+
-  scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
-  theme_bw()+theme(panel.margin=grid::unit(0,"lines"))
+
+  kplot <- ggplot(err.df,aes(segments,cost))+
+    geom_line(aes(colour=error,size=error,linetype=error))+
+    facet_grid(type~bases.per.probe)+
+    scale_linetype_manual(values=fp.fn.linetypes)+
+    scale_colour_manual(values=fp.fn.colors)+
+    scale_size_manual(values=fp.fn.sizes)+
+    scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
+    theme_bw()+theme(panel.margin=grid::unit(0,"lines"))
 
   ## The usual ggplot without direct labels.
   print(kplot)
@@ -99,5 +97,5 @@ kplot <- ggplot(err.df,aes(segments,cost))+
                        "calc.borders",
                        "qp.limited")
   direct.label(no.leg, tiebreak.lim)
-
+}
 }
