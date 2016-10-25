@@ -584,6 +584,8 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
     ## do, so just return it.
     if(nrow(d)==1)return(d)
 
+    ##browser()
+
     ## Reality checks.
     for(v in essential){
       if(! v %in% names(d)){

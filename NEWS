@@ -27,6 +27,10 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2016.10.25
+
+delete browser() in qp.labels
+
 2015.12.16
 
 importFrom non-base packages.
