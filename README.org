@@ -13,7 +13,7 @@ install the development version from GitHub instead:
 
 #+BEGIN_SRC R
 if(!require(devtools))install.packages("devtools")
-devtools::install_github(c("hadley/ggplot2", "tdhock/directlabels"))
+devtools::install_github("tdhock/directlabels")
 #+END_SRC
 
 Changes are listed in [[file:NEWS]].
