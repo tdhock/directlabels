@@ -1045,15 +1045,17 @@ apply.method <- function # Apply a Positioning Method
       to.restore <- Reduce(intersect,lapply(group.specific,names))
       d <- method[[1]](d,debug=debug,...)
       check.for.columns(d,columns.to.check)
-      ## do not restore if they are present in the returned list!
-      to.restore <- to.restore[!to.restore %in% names(d)]
-      for(N in to.restore){
-        d[[N]] <- NA
-        group.vec <- paste(unique(d$groups))
-        for(g in group.vec){
-          old.val <- group.specific[[g]][,N]
-          if(is.factor(old.val))old.val <- paste(old.val)
-          d[d$groups==g,N] <- old.val
+      if("groups" %in% names(d)){
+        ## do not restore if they are present in the returned list!
+        to.restore <- to.restore[!to.restore %in% names(d)]
+        for(N in to.restore){
+          d[[N]] <- NA
+          group.vec <- paste(unique(d$groups))
+          for(g in group.vec){
+            old.val <- group.specific[[g]][,N]
+            if(is.factor(old.val))old.val <- paste(old.val)
+            d[d$groups==g,N] <- old.val
+          }
         }
       }
       attr(d,"orig.data") <-
