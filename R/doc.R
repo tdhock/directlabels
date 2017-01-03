@@ -73,11 +73,8 @@ dldoc <- function # Make directlabels documentation
   ggplot2::theme_set(ggplot2::theme_grey())
 
   version <- read.dcf("DESCRIPTION")[,"Version"]
-  info.lines <- system("svn info -R",intern=TRUE)
-  rev.lines <- grep("Revision",info.lines,value=TRUE)
-  revs <- sub("Revision: ","",rev.lines)
-  latest <- max(as.integer(revs))
-  foot.info <- list(version=version,svn=as.character(latest))
+  git.line <- system('git log -1 --pretty=format:"%h %aD"', intern=TRUE)
+  foot.info <- list(version=version,git=as.character(git.line))
   setwd(file.path("..","..","www","docs"))
   foot <- filltemplate(foot.info,"templates/foot.html")
   makehtml <- function # Make HTML documentation
