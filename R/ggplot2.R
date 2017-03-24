@@ -230,7 +230,8 @@ legends2hide <- function(p){
     c(x, y[setdiff(names(y), names(x))])
   }
 
-  guides <- defaults(plot$guides, guides(colour="legend", fill="legend"))
+  guides <- defaults(
+    plot$guides, ggplot2::guides(colour="legend", fill="legend"))
   labels <- plot$labels
   guides_train <- pkgFun("guides_train")
   gdefs <- guides_train(scales = scales, theme = theme,
