@@ -34,6 +34,12 @@ attached to the global namespace. this happens if directlabels is used
 in a ggplot in a package that imports ggplot2 but does not attach it,
 e.g. https://github.com/tdhock/penaltyLearning/blob/master/R/IntervalRegression.R
 
+2017.01.03
+
+Test and bugfix for angled.boxes -- there was some problem with the
+colour column (one of the columns to.restore after applying
+far.from.others.borders) being treated as a factor.
+
 2016.10.25
 
 delete browser() in qp.labels
