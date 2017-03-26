@@ -27,6 +27,13 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2017.03.24
+
+test case and bugfix for using directlabels when ggplot2 is not
+attached to the global namespace. this happens if directlabels is used
+in a ggplot in a package that imports ggplot2 but does not attach it,
+e.g. https://github.com/tdhock/penaltyLearning/blob/master/R/IntervalRegression.R
+
 2017.01.03
 
 Test and bugfix for angled.boxes -- there was some problem with the
