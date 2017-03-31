@@ -5,8 +5,10 @@ lasso.labels <-
          d <- d[order(d$x),]
          zero <- d$y[1]
          i <- which(d$y!=zero)[1]
-         just <- as.integer(d[i,"y"]>zero)
-         transform(d[i-1,],hjust=just,vjust=just)
+         if(!is.na(i)){
+           just <- as.integer(d[i,"y"]>zero)
+           transform(d[i-1,],hjust=just,vjust=just)
+         }
        }),
        "calc.boxes",
        ## calculate how wide the tilted box is
@@ -16,16 +18,16 @@ lasso.labels <-
        function(d,...){
          solver <- qp.labels("x","left","right")
          ## apply the solver independently for top and bottom labels.
-         solution <- data.frame()
+         solution.list <- list()
          for(vj in c(0,1)){
            these <- d$vjust == vj
            if(any(these)){
              one.side <- d[these,]
              solved <- solver(one.side)
-             solution <- rbind(solution,solved)
+             solution.list[[paste(vj)]] <- solved
            }
          }
-         solution
+         do.call(rbind, solution.list)
        })
 
 ### Positioning Method for the first of a group of points.

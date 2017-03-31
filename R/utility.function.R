@@ -337,11 +337,11 @@ calc.boxes <- function
   convert <- function(worh){
     conv <- get(paste("convert",worh,sep=""))
     stri <- get(paste("string",worh,sep=""))
-    with(d,sapply(seq_along(groups),function(i){
-      if("cex"%in%names(d))vp$gp <- gpar(cex=cex[i])
+    as.numeric(sapply(seq_along(d$groups),function(i){
+      if("cex"%in%names(d))vp$gp <- gpar(cex=d$cex[i])
       pushViewport(vp)
       if(debug)grid.rect() ##highlight current viewport
-      w <- conv(stri(as.character(groups[i])),"cm")
+      w <- conv(stri(as.character(d$groups[i])),"cm")
       popViewport()
       w
     }))
@@ -804,7 +804,9 @@ gapply <- function
   dfs <- split(d,as.character(d[[groups]]))
   f <- function(d,...){
     res <- apply.method(method,d,columns.to.check=c("x","y"),...)
-    res[[groups]] <- d[[groups]][1]
+    if(nrow(res)){
+      res[[groups]] <- d[[groups]][1]
+    }
     res
   }
   results <- lapply(dfs,f,...)
@@ -1044,17 +1046,21 @@ apply.method <- function # Apply a Positioning Method
       group.specific <- lapply(group.dfs,only.unique.vals)
       to.restore <- Reduce(intersect,lapply(group.specific,names))
       d <- method[[1]](d,debug=debug,...)
-      check.for.columns(d,columns.to.check)
-      if("groups" %in% names(d)){
-        ## do not restore if they are present in the returned list!
-        to.restore <- to.restore[!to.restore %in% names(d)]
-        for(N in to.restore){
-          d[[N]] <- NA
-          group.vec <- paste(unique(d$groups))
-          for(g in group.vec){
-            old.val <- group.specific[[g]][,N]
-            if(is.factor(old.val))old.val <- paste(old.val)
-            d[d$groups==g,N] <- old.val
+      if(length(d)==0){#NULL or list()
+        return(data.frame())
+      }else{
+        check.for.columns(d,columns.to.check)
+        if("groups" %in% names(d)){
+          ## do not restore if they are present in the returned list!
+          to.restore <- to.restore[!to.restore %in% names(d)]
+          for(N in to.restore){
+            d[[N]] <- NA
+            group.vec <- paste(unique(d$groups))
+            for(g in group.vec){
+              old.val <- group.specific[[g]][,N]
+              if(is.factor(old.val))old.val <- paste(old.val)
+              d[d$groups==g,N] <- old.val
+            }
           }
         }
       }
