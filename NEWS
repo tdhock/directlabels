@@ -27,6 +27,10 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2017.03.31
+
+test case and bugfix for lasso.labels with a constant line.
+
 2017.03.24
 
 test case and bugfix for using directlabels when ggplot2 is not
