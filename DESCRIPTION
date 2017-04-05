@@ -5,8 +5,8 @@ Version: 2017.03.31
 License: GPL-3
 Title: Direct Labels for Multicolor Plots
 Description: An extensible framework
- for automatically placing direct labels onto multicolor lattice or
- ggplot2 plots.
+ for automatically placing direct labels onto multicolor 'lattice' or
+ 'ggplot2' plots.
  Label positions are described using Positioning Methods
  which can be re-used across several different plots.
  There are heuristics for examining "trellis" and "ggplot" objects
