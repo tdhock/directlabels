@@ -151,7 +151,13 @@ direct.label.ggplot <- function
       ## TODO: what if this is an expression and not a variable name?
       colvar <- m[[colour.or.fill]]
       if(!is.null(colvar)){
-        return(list(layer=L, colvar=as.character(colvar)))
+          ## attempt to extract colvar in a way that's stable
+          ## across ggplot 2.2.1 / 2.2.1.9000
+          ## "name" vs. ~name
+          ## FIXME/query: principled/safe way to do this?
+          cv <- as.character(colvar)
+          cv <- cv[[length(cv)]]
+        return(list(layer=L, colvar=cv))
       }
     }
   }
@@ -173,6 +179,8 @@ direct.label.ggplot <- function
     NULL
   }
   a <- ggplot2::aes_string(label=colvar, colour=colvar)
+  ## remove duplicates (??)
+  a <- a[setdiff(names(a),names(L$mapping))]
   a2 <- structure(c(L$mapping, a), class="uneval")
   dlgeom <- geom_dl(mapping=a2,method=method,
                     stat=L$stat,debug=debug,data=data)
