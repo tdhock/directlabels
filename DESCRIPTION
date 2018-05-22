@@ -13,7 +13,8 @@ Description: An extensible framework
  and inferring an appropriate Positioning Method.
 URL: http://directlabels.r-forge.r-project.org/
 LazyData: true
-Suggests: MASS, inlinedocs, ggplot2 (>= 2.0),
+Suggests: MASS, inlinedocs,
+	  ggplot2 (>= 2.2.1.9000), rlang,
 	  lattice, alphahull, nlme,
 	  ElemStatLearn, lars, latticeExtra
 Imports: grid, quadprog
