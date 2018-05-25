@@ -150,7 +150,7 @@ direct.label.ggplot <- function
       m[names(L$mapping)] <- L$mapping
       ## TODO: what if this is an expression and not a variable name?
       colvar <- m[[colour.or.fill]]
-      colvar.str <- if(is.null(colvar) || packageVersion("ggplot2") <= "2.2.1"){
+      colvar.str <- if(is.null(colvar) || utils::packageVersion("ggplot2") <= "2.2.1"){
         paste(colvar)
       }else{
         rlang::quo_name(colvar)
