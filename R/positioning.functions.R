@@ -103,7 +103,7 @@ direct.label <- structure(function # Direct labels for color decoding
  debug=FALSE
 ### Show debug output?
  ){
-  ##alias < < directlabels #disabled
+  ##alias<< directlabels
   if(is.character(method)&&method[1]=="legend")
     UseMethod("uselegend")
   else

@@ -150,8 +150,13 @@ direct.label.ggplot <- function
       m[names(L$mapping)] <- L$mapping
       ## TODO: what if this is an expression and not a variable name?
       colvar <- m[[colour.or.fill]]
+      colvar.str <- if(is.null(colvar) || utils::packageVersion("ggplot2") <= "2.2.1"){
+        paste(colvar)
+      }else{
+        rlang::quo_name(colvar)
+      }
       if(!is.null(colvar)){
-        return(list(layer=L, colvar=as.character(colvar)))
+        return(list(layer=L, colvar=colvar.str))
       }
     }
   }
@@ -173,7 +178,8 @@ direct.label.ggplot <- function
     NULL
   }
   a <- ggplot2::aes_string(label=colvar, colour=colvar)
-  a2 <- structure(c(L$mapping, a), class="uneval")
+  not.label.colour <- L$mapping[!names(L$mapping) %in% names(a)]
+  a2 <- structure(c(not.label.colour, a), class="uneval")
   dlgeom <- geom_dl(mapping=a2,method=method,
                     stat=L$stat,debug=debug,data=data)
   dlgeom$stat_params <- L$stat_params

@@ -1,5 +1,6 @@
 \name{direct.label}
 \alias{direct.label}
+\alias{directlabels}
 \title{Direct labels for color decoding}
 \description{Add direct labels to a plot, and hide the color legend. Modern
 plotting packages like lattice and ggplot2 show automatic legends
