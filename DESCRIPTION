@@ -14,7 +14,7 @@ Description: An extensible framework
 URL: http://directlabels.r-forge.r-project.org/
 LazyData: true
 Suggests: MASS, inlinedocs,
-	  ggplot2 (>= 2.2.1.9000), rlang,
+	  ggplot2 (>= 2.0), rlang,
 	  lattice, alphahull, nlme,
 	  ElemStatLearn, lars, latticeExtra
 Imports: grid, quadprog
