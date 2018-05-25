@@ -16,6 +16,7 @@ LazyData: true
 Suggests: MASS, inlinedocs,
 	  ggplot2 (>= 2.0), rlang,
 	  lattice, alphahull, nlme,
+	  dplyr, #not used but error in tests otherwise
 	  ElemStatLearn, lars, latticeExtra
 Imports: grid, quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
