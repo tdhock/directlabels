@@ -17,7 +17,8 @@ Suggests: MASS, inlinedocs,
 	  ggplot2 (>= 2.0), rlang,
 	  lattice, alphahull, nlme,
 	  ElemStatLearn, lars, latticeExtra,
-	  dplyr
+	  dplyr,
+    testthat
 NoteAbove: dplyr is not used but suggested to avoid error in tests
 Imports: grid, quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
