@@ -177,7 +177,7 @@ direct.label.ggplot <- function
   }else{
     NULL
   }
-  a <- ggplot2::aes_string(label=colvar, colour=colvar)
+  a <- ggplot2::aes_string(label=paste0("`", colvar, "`"), colour=paste0("`", colvar, "`"))
   not.label.colour <- L$mapping[!names(L$mapping) %in% names(a)]
   a2 <- structure(c(not.label.colour, a), class="uneval")
   dlgeom <- geom_dl(mapping=a2,method=method,
