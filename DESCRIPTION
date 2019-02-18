@@ -11,7 +11,7 @@ Description: An extensible framework
  which can be re-used across several different plots.
  There are heuristics for examining "trellis" and "ggplot" objects
  and inferring an appropriate Positioning Method.
-URL: http://directlabels.r-forge.r-project.org/
+URL: https://github.com/tdhock/directlabels
 LazyData: true
 Suggests: MASS, inlinedocs,
 	  ggplot2 (>= 2.0), rlang,
