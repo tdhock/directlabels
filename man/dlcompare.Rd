@@ -1,22 +1,22 @@
 \name{dlcompare}
 \alias{dlcompare}
 \title{Direct label comparison plot}
-\description{Compare several plots and/or label placement methods. This creates
+\description{Compare several \code{plots} and/or label placement methods. This creates
 a custom grid graphics display based on lattice and/or ggplot2
 output. Plots will be on the columns and positioning methods will
 be on the rows.}
 \usage{dlcompare(plots, pos.funs, rects = TRUE, row.items = "plots", 
     debug = FALSE)}
 \arguments{
-  \item{plots}{List of ggplot2 or lattice plots. List names will be used to
+  \item{plots}{List of ggplot2 or lattice \code{plots}. List names will be used to
 annotate the plot.}
   \item{pos.funs}{List of label placement methods to apply to each plot. List names,
 or function names if specified as character strings, will be used
 to annotate the plot.}
   \item{rects}{Draw rectangles around each plot, creating a grid?}
-  \item{row.items}{If "plots" then put plots on the rows and method on the
+  \item{row.items}{If "plots" then put \code{plots} on the rows and method on the
 columns. Otherwise, do the opposite.}
-  \item{debug}{Show debug output?}
+  \item{debug}{Show \code{debug} output?}
 }
 
 

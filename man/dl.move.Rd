@@ -8,9 +8,9 @@ that label in a good spot.}
 \arguments{
   \item{group}{Group to change.}
   \item{x}{Horizontal position of the new label.}
-  \item{y}{Vertical position of the new label. If missing(y) and !missing(x)
-then we will calculate a new y value using linear interpolation.}
-  \item{\dots}{Variables to change for the specified group}
+  \item{y}{Vertical position of the new label. If missing(\code{y}) and !missing(\code{x})
+then we will calculate a new \code{y} value using linear interpolation.}
+  \item{\dots}{Variables to change for the specified \code{group}}
 }
 
 \value{A Positioning Function that moves a label into a good spot.}

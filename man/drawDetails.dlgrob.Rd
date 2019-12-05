@@ -6,7 +6,7 @@ resulting direct labels. This is called for every panel with
 direct labels, every time the plot window is resized.}
 \usage{\method{drawDetails}{dlgrob}(x, recording)}
 \arguments{
-  \item{x}{The dlgrob list object. x$method should be a Positioning Method
+  \item{x}{The \code{\link{dlgrob}} list object. x$method should be a Positioning Method
 list and x$data should be a data.frame with the following
 variables: \describe{
 \item{x,y}{numeric horizontal and vertical positions of direct

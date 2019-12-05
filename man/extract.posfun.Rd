@@ -11,7 +11,7 @@ the same name.}
 }
 
 \value{List of lists, each of which describes one Positioning Method
-defined in f.}
+defined in \code{f}.}
 
 \author{Toby Dylan Hocking}
 

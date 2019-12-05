@@ -1,7 +1,7 @@
 Package: directlabels
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Author: Toby Dylan Hocking
-Version: 2018.10.5
+Version: 2019.12.5
 BugReports: https://github.com/tdhock/directlabels/issues
 License: GPL-3
 Title: Direct Labels for Multicolor Plots
@@ -14,13 +14,13 @@ Description: An extensible framework
  and inferring an appropriate Positioning Method.
 URL: https://github.com/tdhock/directlabels
 LazyData: true
-Suggests: MASS, inlinedocs,
+Suggests: MASS,
+	  inlinedocs,
 	  ggplot2 (>= 2.0), rlang,
 	  lattice, alphahull, nlme,
 	  ElemStatLearn, lars, latticeExtra,
-	  dplyr,
-    testthat
-NoteAbove: dplyr is not used but suggested to avoid error in tests
+	  testthat
+Remotes: tdhock/inlinedocs
 Imports: grid, quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
 	 densityplot.R ggplot2.R positioning.functions.R
