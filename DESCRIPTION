@@ -20,7 +20,6 @@ Suggests: MASS,
 	  lattice, alphahull, nlme,
 	  ElemStatLearn, lars, latticeExtra,
 	  testthat
-Remotes: tdhock/inlinedocs
 Imports: grid, quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
 	 densityplot.R ggplot2.R positioning.functions.R
