@@ -27,6 +27,10 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2019.12.5
+
+update for new testing software.
+
 2018.10.5
 
 Non-syntactic variable names supported, e.g. aes(color=`car class`)

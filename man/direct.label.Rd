@@ -14,10 +14,10 @@ plots.}
 colors.}
   \item{method}{Positioning Method, which determines the positions of the direct
 labels as a function of the plotted data. If NULL, we examine the
-plot p and try to choose an appropriate default. See
+plot \code{p} and try to choose an appropriate default. See
 \code{\link{apply.method}} for more information about Positioning
 Methods.}
-  \item{debug}{Show debug output?}
+  \item{debug}{Show \code{debug} output?}
 }
 
 \value{A plot with direct labels and no color legend.}
