@@ -27,6 +27,12 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2020.1.31
+
+remove Suggest ElemStatLearn.
+
+
+
 2019.12.5
 
 update for new testing software.
