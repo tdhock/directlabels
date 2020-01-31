@@ -2,7 +2,8 @@
 \alias{calc.boxes}
 \title{calc boxes}
 \description{Calculate boxes around labels, for collision detection.}
-\usage{calc.boxes(d, debug = FALSE, ...)}
+\usage{calc.boxes(d, debug = FALSE, 
+    ...)}
 \arguments{
   \item{d}{
 }

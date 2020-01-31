@@ -3,8 +3,11 @@
 \title{Make a Positioning Method for non-overlapping lineplot labels}
 \description{Use a QP solver to find the best places to put the points on a
 line, subject to the constraint that they should not overlap.}
-\usage{qp.labels(target.var, lower.var, upper.var, order.labels = function(d) order(d[, 
-    target.var]), limits = NULL)}
+\usage{qp.labels(target.var, 
+    lower.var, upper.var, 
+    order.labels = function(d) order(d[, 
+        target.var]), 
+    limits = NULL)}
 \arguments{
   \item{target.var}{Variable name of the label target.}
   \item{lower.var}{Variable name of the lower limit of each label bounding box.}

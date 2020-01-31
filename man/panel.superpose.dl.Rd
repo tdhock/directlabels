@@ -4,9 +4,12 @@
 \description{Call panel.superpose for the data points and then for the direct
 labels. This is a proper lattice panel function that behaves much
 like panel.superpose.}
-\usage{panel.superpose.dl(x, y = NULL, subscripts, groups, 
-    panel.groups, method = NULL, .panel.superpose = lattice::panel.superpose, 
-    type = "p", debug = FALSE, ...)}
+\usage{panel.superpose.dl(x, 
+    y = NULL, subscripts, 
+    groups, panel.groups, 
+    method = NULL, .panel.superpose = lattice::panel.superpose, 
+    type = "p", debug = FALSE, 
+    ...)}
 \arguments{
   \item{x}{Vector of \code{x} values.}
   \item{y}{Vector of \code{y} values.}

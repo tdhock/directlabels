@@ -3,7 +3,9 @@
 \title{polygon method}
 \description{Make a Positioning Method that places non-overlapping speech
 polygons at the first or last points.}
-\usage{polygon.method(method, space, data.col, na.col)}
+\usage{polygon.method(method, 
+    space, data.col, 
+    na.col)}
 \arguments{
   \item{method}{
 }

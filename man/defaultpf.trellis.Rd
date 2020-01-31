@@ -6,7 +6,8 @@ function. The idea is that this is called with all the variables
 in the environment of \code{\link{panel.superpose.dl}}, and this can be
 user-customizable by setting the directlabels.defaultpf.lattice
 option to a function like this.}
-\usage{defaultpf.trellis(lattice.fun.name, groups, type, ...)}
+\usage{defaultpf.trellis(lattice.fun.name, 
+    groups, type, ...)}
 \arguments{
   \item{lattice.fun.name}{
 }

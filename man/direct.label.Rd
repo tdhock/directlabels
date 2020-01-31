@@ -8,7 +8,8 @@ based on the variable specified for color, but these legends can
 be confusing if there are too many colors. Direct labels are a
 useful and clear alternative to a confusing legend in many common
 plots.}
-\usage{direct.label(p, method = NULL, debug = FALSE)}
+\usage{direct.label(p, method = NULL, 
+    debug = FALSE)}
 \arguments{
   \item{p}{The "trellis" or "ggplot" object with things drawn in different
 colors.}

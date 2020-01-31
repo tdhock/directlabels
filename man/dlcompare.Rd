@@ -5,7 +5,8 @@
 a custom grid graphics display based on lattice and/or ggplot2
 output. Plots will be on the columns and positioning methods will
 be on the rows.}
-\usage{dlcompare(plots, pos.funs, rects = TRUE, row.items = "plots", 
+\usage{dlcompare(plots, pos.funs, 
+    rects = TRUE, row.items = "plots", 
     debug = FALSE)}
 \arguments{
   \item{plots}{List of ggplot2 or lattice \code{plots}. List names will be used to

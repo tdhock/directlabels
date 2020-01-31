@@ -2,9 +2,13 @@
 \alias{geom_dl}
 \title{geom dl}
 \description{Geom that will plot direct labels.}
-\usage{geom_dl(mapping = NULL, data = NULL, ..., method = stop("must specify method= argument"), 
-    debug = FALSE, na.rm = TRUE, parse = FALSE, stat = "identity", 
-    position = "identity", inherit.aes = TRUE)}
+\usage{geom_dl(mapping = NULL, 
+    data = NULL, ..., 
+    method = stop("must specify method= argument"), 
+    debug = FALSE, na.rm = TRUE, 
+    parse = FALSE, stat = "identity", 
+    position = "identity", 
+    inherit.aes = TRUE)}
 \arguments{
   \item{mapping}{aes(label=variable_that_will_be_used_as_groups_in_Positioning_Methods).}
   \item{data}{data.frame to start with for direct label computation.}
