@@ -27,6 +27,17 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
+2020.6.7
+
+TODO top.qp with one point error for tiebreaker.
+
+TODO example/test for geom_dl with same text, but different group and
+color.
+
+TODO draw.polygons supports top/bottom as well as first/last.
+
+TODO test for text with descent inside polygon.
+
 2020.1.31
 
 remove Suggest ElemStatLearn.
