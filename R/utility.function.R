@@ -321,21 +321,22 @@ calc.boxes <- function
  ...
  ){
   vp <- current.viewport()
-  convert <- function(worh){
+  convert <- function(str.prop, worh=str.prop){
     conv <- get(paste("convert",worh,sep=""))
-    stri <- get(paste("string",worh,sep=""))
+    stri <- get(paste("string", str.prop, sep=""))
     as.numeric(sapply(seq_along(d$groups),function(i){
       if("cex"%in%names(d))vp$gp <- gpar(cex=d$cex[i])
       pushViewport(vp)
       if(debug)grid.rect() ##highlight current viewport
-      w <- conv(stri(as.character(d$label[i])),"cm")
+      cm <- conv(stri(as.character(d$label[i])),"cm")
       popViewport()
-      w
+      cm
     }))
   }
   ## abs since we have a weird bug with ggplot2 sometimes
   d$w <- abs(convert("Width"))
   d$h <- abs(convert("Height"))
+  d$descent <- abs(convert("Descent", "Height"))
   calc.borders(d)
 }
 
@@ -369,7 +370,7 @@ calc.borders <- function
     }
   }
   d$top <- d$y+(1-d$vjust)*d$h
-  d$bottom <- d$y-d$vjust*d$h
+  d$bottom <- d$y-d$vjust*d$h - d$descent
   d$right <- d$x+(1-d$hjust)*d$w
   d$left <- d$x-d$hjust*d$w
   d
