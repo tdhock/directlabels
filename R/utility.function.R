@@ -328,7 +328,7 @@ calc.boxes <- function
       if("cex"%in%names(d))vp$gp <- gpar(cex=d$cex[i])
       pushViewport(vp)
       if(debug)grid.rect() ##highlight current viewport
-      w <- conv(stri(as.character(d$groups[i])),"cm")
+      w <- conv(stri(as.character(d$label[i])),"cm")
       popViewport()
       w
     }))

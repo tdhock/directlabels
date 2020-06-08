@@ -36,16 +36,15 @@ geom_dl <- structure(function
 ### ggproto object implementing direct labels.
   GeomDl <- ggplot2::ggproto(
     "GeomDl", ggplot2::Geom,
-    draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE, parse=FALSE) {
-      stopifnot(is.logical(parse))
-      stopifnot(length(parse) == 1)
-      if(parse){
+    draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE, parse=FALSE, panel_params) {
+      if(isTRUE(parse)){
         stop("parse=TRUE is not yet supported in directlabels, ",
              "but if you want to do that, ",
              "why don't you fork tdhock/directlabels and submit me a PR?")
       }
-      data$rot <- as.integer(data$angle)
-      data$groups <- data$label
+      data$rot <- as.numeric(data$angle)
+      groups.col <- if("group" %in% names(data))"group" else "label"
+      data$groups <- data[[groups.col]]
       axes2native <- function(data){
         coord$transform(data, panel_scales)
       }
