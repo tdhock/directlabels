@@ -24,3 +24,6 @@ $RCMD INSTALL $PKG_TGZ
 
 echo Checking $PKG_TGZ
 $RCMD check --as-cran $PKG_TGZ
+
+echo Checking without any Suggests
+R -e "if('check_without_suggests' %in% ls())check_without_suggests('$PKG_TGZ')"
