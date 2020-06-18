@@ -7,11 +7,15 @@ far.from.others.borders <- function(all.groups,...,debug=FALSE){
     ## Run linear interpolation to get a set of points on which we
     ## could place the label (this is useful for e.g. the lasso path
     ## where there are only a few points plotted).
-    approx.list <- with(group.data[[groups]], approx(x, y))
+    one.group <- group.data[[groups]]
+    approx.list <- with(one.group, approx(x, y))
     if(debug){
       with(approx.list, grid.points(x, y, default.units="cm"))
     }
-    group.list[[groups]] <- data.frame(approx.list, groups)
+    group.list[[groups]] <- data.frame(
+      approx.list,
+      groups,
+      label=one.group$label[1])
   }
   output.list <- list()
   for(group.i in seq_along(group.list)){
@@ -286,7 +290,7 @@ dl.move <- structure(function # Manually move a direct label
     ## maybe generalize this to be symmetric on x and y one day?
     if("x" %in% names(L) && (!"y" %in% names(L))){
       orig <- attr(d,"orig.data")
-      orig <- orig[orig$groups==group,]
+      orig <- orig[orig$label==group,]
       ## do linear interpolation to find a good y-value
       f <- with(orig,approxfun(x,y))
       d[v,"y"] <- f(L$x)
@@ -368,6 +372,9 @@ calc.borders <- function
     if(!just %in% names(d)){
       d[,just] <- 0.5
     }
+  }
+  if(!"descent" %in% names(d)){
+    d$descent <- 0
   }
   d$top <- d$y+(1-d$vjust)*d$h
   d$bottom <- d$y-d$vjust*d$h - d$descent
@@ -986,7 +993,7 @@ apply.method <- function # Apply a Positioning Method
 ### columns should be in centimeters (cm), so that Positioning Methods
 ### can easily calculate the L2/Euclidean/visual distance between
 ### pairs of points.
- columns.to.check=c("x","y","groups"),
+ columns.to.check=c("x","y","groups","label"),
 ### After applying each Positioning Method list element, we check for
 ### the presence of these columns, and if not found we stop with an
 ### error.

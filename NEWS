@@ -27,16 +27,32 @@ in r-source/src/main/plot3d.c
 
 other contourplots, see etc/contour.R
 
-2020.6.7
+2020.6.17
+
+fix test failures that showed up with new code.
 
 TODO top.qp with one point error for tiebreaker.
 
-TODO example/test for geom_dl with same text, but different group and
-color.
+TODO example/test for geom_dl with same aes(label), but different
+aes(groups, color).
 
 TODO draw.polygons supports top/bottom as well as first/last.
 
 TODO test for text with descent inside polygon.
+
+2020.6.7
+
+initial code for:
+
+polygons below the point.
+
+aes(label) which may have the same value for two different aes(group)
+values, e.g. two algorithms/groups which both compute the same thing,
+optimal changepoint tau^*, but we want to compute and show a label for
+each of them.
+
+using stringDescent to compute height of boxes. maybe consider
+grobDescent or descentDetails?
 
 2020.1.31
 

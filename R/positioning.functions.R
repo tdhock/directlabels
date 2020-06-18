@@ -39,8 +39,11 @@ drawDetails.dlgrob <- function
   if(is.null(cm.data$label)){
     cm.data$label <- cm.data$groups
   }
-  cm.data <- apply.method(x$method,cm.data,
-                          debug=x$debug,axes2native=x$axes2native)
+  cm.data <- apply.method(
+    x$method,
+    cm.data,
+    debug=x$debug,
+    axes2native=x$axes2native)
   if(nrow(cm.data)==0)return()## empty data frames can cause many bugs
   ## Take col from colour or groups.
   colour <- cm.data[["colour"]]
