@@ -41,7 +41,7 @@ geom_dl <- structure(function
       ## for some reason ggplot2 gives us a group column even when the
       ## user does not specify one in aes.
       dldata <- converted[, names(converted) != "group"]
-      directlabels::dlgrob(
+      dlgrob(
         dldata, method, debug = debug, axes2native = axes2native)
     },
     draw_legend = ggplot2::draw_key_text,

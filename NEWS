@@ -33,6 +33,8 @@ https://github.com/tdhock/directlabels/issues/24
 
 2020.6.17
 
+grid grobs have names.
+
 vignette example / LOPART100 data for black/blue pos swapped for
 t=100. (bug fix in make.tiebreaker, use rule=2 in approx for no NA)
 

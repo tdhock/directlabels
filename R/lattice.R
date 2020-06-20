@@ -133,7 +133,8 @@ panel.superpose.dl <- structure(function
     d <- apply.method(translator,d,...)
   }
   d$colour <- key[as.character(d$groups)]
-  g <- dlgrob(d,method,debug=debug)
+  g <- dlgrob(
+    d,method,debug=debug)
   grid.draw(g)
 },ex=function(){
   loci <- data.frame(ppp=c(rbeta(800,10,10),rbeta(100,0.15,1),rbeta(100,1,0.15)),

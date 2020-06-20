@@ -478,7 +478,8 @@ draw.polygons <- function(d,...){
     grid::grid.polygon(
       L$x, L$y,
       default.units="cm",
-      gp=grid::gpar(col=box.color, fill=colour)
+      gp=grid::gpar(col=box.color, fill=colour),
+      name="directlabels.draw.polygon"
     )
   })
   d$colour <- d$text.color
@@ -492,10 +493,11 @@ draw.rects <- function(d,...){
   if(is.null(d$box.color))d$box.color <- "black"
   if(is.null(d$fill))d$fill <- "white"
   for(i in 1:nrow(d)){
-    with(d[i,],{
-      grid.rect(gp = gpar(col = box.color, fill = fill),
-                vp = viewport(x, y, w, h, "cm", c(hjust, vjust), angle=rot))
-    })
+    with(d[i,], grid.rect(
+      gp = gpar(col = box.color, fill = fill),
+      vp = viewport(x, y, w, h, "cm", c(hjust, vjust), angle=rot),
+      name="directlabels.draw.rects"
+    ))
   }
   d
 }
@@ -828,8 +830,14 @@ edges.to.outside <- function
 ### outside of the hull.
 (edges,centers,debug=FALSE,...){
   if(debug){
-    with(centers,grid.points(x,y,pch="+",default.units="cm"))
-    with(edges,grid.segments(x1,y1,x2,y2,default.units="cm"))
+    with(centers,grid.points(
+      x,y,pch="+",default.units="cm",
+      name="directlabels.points.edges.to.outside"
+    ))
+    with(edges,grid.segments(
+      x1,y1,x2,y2,default.units="cm",
+      name="directlabels.segments.edges.to.outside"
+    ))
   }
   closepts <- gapply(centers,project.onto.segments,edges,debug=debug,...)
   closepts$vjust <- ifelse(closepts$y-centers$y>0,0,1)
@@ -885,7 +893,10 @@ project.onto.segments <- function
   i <- which.min(h$d)
   result <- with(h[i,],data.frame(x=xopt,y=yopt))
   if(debug){
-    grid.segments(m$x,m$y,result$x,result$y,default.units="cm")
+    grid.segments(
+      m$x,m$y,result$x,result$y,default.units="cm",
+      name="directlabels.segments.project.onto.segments"
+    )
   }
   result
 }
@@ -1233,14 +1244,19 @@ empty.grid <- function
     (-expand:(hboxes+expand-1))*r[,w]+r[,w]/2+min(ranges[[x]])
   }
   if(debug)with(label.targets,{
-    grid.points(x,y,default.units="cm",gp=gpar(col="green"))
+    grid.points(
+      x,y,default.units="cm",gp=gpar(col="green"),
+      name="directlabels.points.empty.grid.label.targets"
+    )
   })
   draw <- function(g){
     gridlines <- with(g,list(x=unique(c(left,right)),y=unique(c(top,bottom))))
-    drawlines <- function(a,b,c,d)
-      grid.segments(a,b,c,d,"cm",gp=gpar(col="grey"))
-    with(gridlines,drawlines(min(x),y,max(x),y))
-    with(gridlines,drawlines(x,min(y),x,max(y)))
+    drawlines <- function(a,b,c,d,name)
+      grid.segments(a,b,c,d,"cm",name=name,gp=gpar(col="grey"))
+    with(gridlines,drawlines(
+      min(x),y,max(x),y,"directlabels.segments.empty.grid.vertical"))
+    with(gridlines,drawlines(
+      x,min(y),x,max(y),"directlabels.segments.empty.grid.horizontal"))
   }
   res <- data.frame()
   label.targets <-
@@ -1287,7 +1303,8 @@ empty.grid <- function
     })
     all.points <- rbind(all.points,newpts)
   }
-  if(debug)with(all.points,grid.points(x,y,default.units="cm"))
+  if(debug)with(all.points,grid.points(
+    x,y,default.units="cm",name="directlabels.points.empty.grid.all.points"))
   res
 ### Data frame with columns groups x y, 1 line for each group, giving
 ### the positions on the grid closest to each cluster.

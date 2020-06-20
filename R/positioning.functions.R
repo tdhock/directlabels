@@ -65,9 +65,13 @@ drawDetails.dlgrob <- function
     print(cm.data)
     ##browser()
   }
+  text.name <- paste0(
+    "directlabels.text.",
+    if(is.character(x$method))x$method)
   with(cm.data, grid.text(
     label,x,y,hjust=hjust,vjust=vjust,rot=rot,default.units="cm",
-    gp=gp))
+    gp=gp,
+    name=text.name))
 }
 
 dlgrob <- function
@@ -85,7 +89,7 @@ dlgrob <- function
        name=if(is.character(method)){
          sprintf("GRID.dlgrob.%s",method[1])
        }else{
-         NULL
+         "GRID.dlgrob"
        },...)
 }
 
