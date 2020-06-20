@@ -8,6 +8,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(bitmapType="cairo")
+require(grDevices)
+X11.options(type="cairo")
 ```
 
 # Polygon methods
@@ -155,8 +158,6 @@ p2
 
 ## used to fail but should be OK as of 19 June 2020.
 direct.label(p2)
-## Error in base::serialize(object, connection = NULL, ascii = ascii, version = serializeVersion) :
-##   object 'direction' not found
 
 ```
 
