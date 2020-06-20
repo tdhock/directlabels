@@ -22,23 +22,30 @@ see etc/individual.R, and gabor.R
 see etc/xYplot.R for a problem with plotting some weird trellis
 objects.
 
-contourplot labels as in lattice::panel.contourplot or C source code
-in r-source/src/main/plot3d.c
+Maybe remove contour plot support/examples?
+https://cloud.r-project.org/web/packages/isoband/vignettes/isoband3.html
+does much better labels.
 
-other contourplots, see etc/contour.R
+Grid test for text with descent inside polygon?
+
+How to use geom_dl with stat_smooth? added vignette example based on
+https://github.com/tdhock/directlabels/issues/24
 
 2020.6.17
 
-fix test failures that showed up with new code.
-
 TODO top.qp with one point error for tiebreaker.
 
-TODO example/test for geom_dl with same aes(label), but different
-aes(groups, color).
+legends2hide inside tryCatch to fix error with parsing legends in
+ggplots with custom themes,
+https://github.com/tdhock/directlabels/issues/6
 
-TODO draw.polygons supports top/bottom as well as first/last.
+fix test failures that showed up with new code.
 
-TODO test for text with descent inside polygon.
+examples vignette for geom_dl with same aes(label), but different
+aes(label.group, color).
+
+draw.polygons/polygon.method support top/bottom as well as
+first/last/left/right. New *.polygons methods.
 
 2020.6.7
 

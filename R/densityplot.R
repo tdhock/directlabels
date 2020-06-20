@@ -2,6 +2,10 @@
 top.points <-
   gapply.fun(transform(d[which.max(d$y),],hjust=0.5,vjust=0))
 
+### Positioning Method for the bottom of a group of points.
+bottom.points <-
+  gapply.fun(transform(d[which.min(d$y),],hjust=0.5,vjust=1))
+
 ### Label the tops, but bump labels up to avoid collisions.
 top.bumpup <- list("top.points","bumpup")
 

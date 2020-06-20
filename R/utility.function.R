@@ -385,46 +385,94 @@ calc.borders <- function
 
 ### Make a Positioning Method that places non-overlapping speech
 ### polygons at the first or last points.
-polygon.method <- function(method, space, data.col, na.col){
-  list(method, "calc.boxes",
-       function(d,...){
-         for(xy in c("x", "y")){
-           d[[sprintf("%s.%s", data.col, xy)]] <- d[[xy]]
-           d[[sprintf("%s.%s", na.col, xy)]] <- NA
-         }
-         d$x <- d$x + space
-         d
-       },
-       "reduce.cex.lr",
-       function(d,...){
-         d$h <- d$h * 1.5
-         d
-       },
-       "calc.borders",
-       qp.labels("y","bottom","top", make.tiebreaker("x","y"), ylimits),
-       "calc.borders", draw.polygons)
+polygon.method <- function(top.bottom.left.right, space=0.1){
+  opposite.side <- c(
+    left="right",
+    right="left",
+    top="bottom",
+    bottom="top")[[top.bottom.left.right]]
+  direction <- if(
+    top.bottom.left.right %in% c("bottom", "left")
+  ) -1 else 1
+  min.or.max <- if(
+    top.bottom.left.right %in% c("top", "left")
+  ) max else min
+  if(top.bottom.left.right %in% c("left", "right")){
+    min.or.max.xy <- "x"
+    qp.target <- "y"
+    qp.max <- "top"
+    qp.min <- "bottom"
+    limits.fun <- ylimits
+  }else{
+    min.or.max.xy <- "y"
+    qp.target <- "x"
+    qp.max <- "right"
+    qp.min <- "left"
+    limits.fun <- xlimits
+  }
+  list(
+    paste0(top.bottom.left.right, ".points"),
+    function(d,...){
+      ## set the end of the speech polygon to the original data point.
+      for(xy in c("x", "y")){
+        extra.coord <- sprintf(# e.g. left.x
+          "%s.%s", opposite.side, xy)
+        d[[extra.coord]] <- d[[xy]]
+      }
+      ## set the speech polygon position to the min or max of all
+      ## label positions. e.g. max
+      d[[min.or.max.xy]] <- min.or.max(d[[min.or.max.xy]]) + space*direction
+      d
+    },
+    "calc.boxes",
+    "reduce.cex.lr",
+    function(d, ...){
+      d$h <- d$h + space
+      d$w <- d$w + space/2
+      d
+    },
+    "calc.borders",
+    qp.labels(
+      qp.target,
+      qp.min,
+      qp.max,
+      make.tiebreaker(min.or.max.xy, qp.target),
+      limits.fun),
+    "calc.borders",
+    "draw.polygons")
 }
 
 ### Draw polygons around label positions.
 draw.polygons <- function(d,...){
-  stopifnot(c("left.y", "left.x", "right.y", "right.x") %in% names(d))
+  for(side in c("left", "right", "top", "bottom")){
+    for(xy in c("x", "y")){
+      col.name <- paste0(side, ".", xy)
+      if(!col.name %in% names(d)){
+        d[[col.name]] <- NA
+      }
+    }
+  }
   if(! "box.color" %in% names(d)){
     d$box.color <- "black"
   }
-  for(i in 1:nrow(d)){
-    with(d[i,], {
-      L <-
-        list(x=c(left.x, left, right, right.x, right, left),
-             y=c(left.y, top, top, right.y, bottom, bottom))
-      for(xy.name in names(L)){
-        xy <- L[[xy.name]]
-        L[[xy.name]] <- xy[!is.na(xy)]
-      }
-      grid.polygon(L$x, L$y,
-                   default.units="cm", gp=gpar(col=box.color, fill=colour))
-    })
+  if(! "text.color" %in% names(d)){
+    d$text.color <- "white"
   }
-  d$colour <- "white"
+  for(i in 1:nrow(d))with(d[i,], {
+    L <- list(
+      x=c(left.x, left, top.x, right, right.x, right, bottom.x, left),
+      y=c(left.y, top, top.y, top, right.y, bottom, bottom.y, bottom))
+    for(xy.name in names(L)){
+      xy <- L[[xy.name]]
+      L[[xy.name]] <- xy[!is.na(xy)]
+    }
+    grid::grid.polygon(
+      L$x, L$y,
+      default.units="cm",
+      gp=grid::gpar(col=box.color, fill=colour)
+    )
+  })
+  d$colour <- d$text.color
   d
 }
 
@@ -906,7 +954,13 @@ make.tiebreaker <- function(x.var,tiebreak.var){
     group.dfs <- split(orig,orig$groups)
     m <- do.call(cbind,lapply(d$groups,function(g){
       df <- group.dfs[[as.character(g)]]
-      approx(df[,x.var],df[,tiebreak.var],xvals)$y
+      group.x <- df[,x.var]
+      group.y <- df[,tiebreak.var]
+      if(length(unique(group.x)) == length(group.x)){
+        approx(group.x, group.y, xvals)$y
+      }else{
+        group.y
+      }
     }))
     ## useful for debugging:
     ##print(m)

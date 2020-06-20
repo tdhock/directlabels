@@ -36,6 +36,12 @@ first.points <- label.endpoints(min,1)
 ### Positioning Method for the last of a group of points.
 last.points <- label.endpoints(max,0)
 
+### Positioning Method for the first of a group of points.
+left.points <- first.points
+
+### Positioning Method for the last of a group of points.
+right.points <- last.points
+
 ### Do first or last, whichever has points most spread out.
 maxvar.points <- function(d,...){
   myrange <- function(x){
@@ -64,10 +70,22 @@ last.qp <- vertical.qp("last.points")
 first.qp <- vertical.qp("first.points")
 
 ### Draw a speech polygon to the first point.
-first.polygons <- polygon.method("first.points", -0.1, "right", "left")
+left.polygons <- polygon.method("left")
 
 ### Draw a speech polygon to the last point.
-last.polygons <- polygon.method("last.points", 0.1, "left", "right")
+right.polygons <- polygon.method("right")
+
+### Draw a speech polygon to the first point.
+first.polygons <- left.polygons
+
+### Draw a speech polygon to the last point.
+last.polygons <- right.polygons
+
+### Draw a speech polygon to the top point.
+top.polygons <- polygon.method("top")
+
+### Draw a speech polygon to the bottom point.
+bottom.polygons <- polygon.method("bottom")
 
 ### Label first or last points, whichever are more spread out, and use
 ### a QP solver to make sure the labels do not collide.
