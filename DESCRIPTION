@@ -19,6 +19,7 @@ Suggests: MASS, knitr,
 	  ggplot2 (>= 2.0), rlang,
 	  lattice, alphahull, nlme,
 	  lars, latticeExtra,
+	  dplyr, ggthemes,
 	  testthat
 Imports: grid, quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
