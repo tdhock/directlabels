@@ -33,7 +33,12 @@ https://github.com/tdhock/directlabels/issues/24
 
 2020.6.17
 
-TODO top.qp with one point error for tiebreaker.
+vignette example / LOPART100 data for black/blue pos swapped for
+t=100. (bug fix in make.tiebreaker, use rule=2 in approx for no NA)
+
+using top.qp with one point gave an error: need at least two non-NA
+values to interpolate. (bug fix in make.tiebreaker, only run approx if
+there are at least two values)
 
 legends2hide inside tryCatch to fix error with parsing legends in
 ggplots with custom themes,

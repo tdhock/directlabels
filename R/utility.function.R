@@ -383,9 +383,16 @@ calc.borders <- function
   d
 }
 
+polygon.method <- function
 ### Make a Positioning Method that places non-overlapping speech
 ### polygons at the first or last points.
-polygon.method <- function(top.bottom.left.right, space=0.1){
+(top.bottom.left.right,
+### Character string indicating what side of the plot to label.
+  offset.cm=0.1,
+### Offset from the polygon to the most extreme data point.
+  padding.cm=0.05
+### Padding inside the polygon.
+){
   opposite.side <- c(
     left="right",
     right="left",
@@ -403,12 +410,14 @@ polygon.method <- function(top.bottom.left.right, space=0.1){
     qp.max <- "top"
     qp.min <- "bottom"
     limits.fun <- ylimits
+    reduce.method <- "reduce.cex.lr"
   }else{
     min.or.max.xy <- "y"
     qp.target <- "x"
     qp.max <- "right"
     qp.min <- "left"
     limits.fun <- xlimits
+    reduce.method <- "reduce.cex.tb"
   }
   list(
     paste0(top.bottom.left.right, ".points"),
@@ -421,14 +430,14 @@ polygon.method <- function(top.bottom.left.right, space=0.1){
       }
       ## set the speech polygon position to the min or max of all
       ## label positions. e.g. max
-      d[[min.or.max.xy]] <- min.or.max(d[[min.or.max.xy]]) + space*direction
+      d[[min.or.max.xy]] <- min.or.max(d[[min.or.max.xy]]) + offset.cm*direction
       d
     },
     "calc.boxes",
-    "reduce.cex.lr",
+    reduce.method,
     function(d, ...){
-      d$h <- d$h + space
-      d$w <- d$w + space/2
+      d$h <- d$h + padding.cm
+      d$w <- d$w + padding.cm
       d
     },
     "calc.borders",
@@ -537,56 +546,6 @@ ignore.na <- function(d,...){
   }
   d[not.na,]
 }
-
-### If left or right edges of the text are going out of the plotting
-### region, then decrease cex until it fits. We call calc.boxes
-### inside, so you should set cex before using this.
-reduce.cex.lr <- structure(function(d,...){
-  d <- calc.boxes(d)
-  l <- xlimits()
-  positive.part <- function(x)ifelse(x>0,x,0)
-  right <- positive.part(d$right-l[2])
-  left <- positive.part(l[1]-d$left)
-  w <- d$right-d$left
-  if(is.null(d$cex)){
-    d$cex <- 1
-  }
-  d$cex <- (w-right)/w * (w-left)/w * d$cex
-  calc.boxes(d)
-},ex=function(){
-
-  if(require(lars) && require(ggplot2)){
-    data(diabetes,package="lars",envir=environment())
-    X <- diabetes$x
-    colnames(X) <- paste(colnames(X), colnames(X))
-    fit <- lars(X,diabetes$y,type="lasso")
-    beta <- scale(coef(fit),FALSE,1/fit$normx)
-    arclength <- rowSums(abs(beta))
-    path.list <- list()
-    for(variable in colnames(beta)){
-      standardized.coef <- beta[, variable]
-      path.list[[variable]] <-
-        data.frame(step=seq_along(standardized.coef),
-                   arclength,
-                   variable,
-                   standardized.coef)
-    }
-    path <- do.call(rbind, path.list)
-    p <- ggplot(path,aes(arclength,standardized.coef,colour=variable))+
-      geom_line(aes(group=variable))
-    ## the legend isn't very helpful.
-    print(p)
-    ## add direct labels at the end of the lines.
-    direct.label(p, "last.points")
-    ## on my screen, some of the labels go off the end, so we can use
-    ## this Positioning Method to reduce the text size until the labels
-    ## are on the plot.
-    direct.label(p, list("last.points","reduce.cex.lr"))
-    ## the default direct labels for lineplots are similar.
-    direct.label(p)
-  }
-
-})
 
 qp.labels <- structure(function# Make a Positioning Method for non-overlapping lineplot labels
 ### Use a QP solver to find the best places to put the points on a
@@ -956,8 +915,17 @@ make.tiebreaker <- function(x.var,tiebreak.var){
       df <- group.dfs[[as.character(g)]]
       group.x <- df[,x.var]
       group.y <- df[,tiebreak.var]
-      if(length(unique(group.x)) == length(group.x)){
-        approx(group.x, group.y, xvals)$y
+      all.unique <- length(unique(group.x)) == length(group.x)
+      ## approx gives the following error if we only have one point:
+      ## need at least two non-NA values to interpolate
+      x.not.missing <- !is.na(group.x)
+      y.not.missing <- !is.na(group.y)
+      not.missing <- sum(x.not.missing & y.not.missing)
+      if(all.unique && 1 < not.missing){
+        ## rule=2 means to use the most extreme value instead of the
+        ## default NA, for any points that are outside the range -
+        ## this is required to get a good ordering in some cases.
+        approx(group.x, group.y, xvals, rule=2)$y
       }else{
         group.y
       }
@@ -1157,6 +1125,78 @@ ylimits <- function(...){
 xlimits <- function(...){
   convertX(unit(c(0,1),"npc"),"cm",valueOnly=TRUE)
 }
+
+reduce.cex <- structure(function
+### If edges of the text are going out of the plotting
+### region, then decrease cex until it fits. We call calc.boxes
+### inside, so you should set cex before using this.
+(sides
+### string: lr (left and right) or tb (top and bottom).
+){
+  if(sides=="lr"){
+    hi <- "right"
+    lo <- "left"
+    limits.fun <- xlimits
+  }else{
+    hi <- "top"
+    lo <- "bottom"
+    limits.fun <- ylimits
+  }
+  function(d,...){
+    d <- calc.boxes(d)
+    l <- limits.fun()
+    positive.part <- function(x)ifelse(x>0,x,0)
+    hi.pp <- positive.part(d[, hi]-l[2])
+    lo.pp <- positive.part(l[1]-d[, lo])
+    w <- d[, hi]-d[, lo]
+    if(is.null(d$cex)){
+      d$cex <- 1
+    }
+    d$cex <- (w-hi.pp)/w * (w-lo.pp)/w * d$cex
+    calc.boxes(d)
+  }
+},ex=function(){
+
+  if(require(lars) && require(ggplot2)){
+    data(diabetes,package="lars",envir=environment())
+    X <- diabetes$x
+    colnames(X) <- paste(colnames(X), colnames(X))
+    fit <- lars(X,diabetes$y,type="lasso")
+    beta <- scale(coef(fit),FALSE,1/fit$normx)
+    arclength <- rowSums(abs(beta))
+    path.list <- list()
+    for(variable in colnames(beta)){
+      standardized.coef <- beta[, variable]
+      path.list[[variable]] <-
+        data.frame(step=seq_along(standardized.coef),
+                   arclength,
+                   variable,
+                   standardized.coef)
+    }
+    path <- do.call(rbind, path.list)
+    p <- ggplot(path,aes(arclength,standardized.coef,colour=variable))+
+      geom_line(aes(group=variable))
+    ## the legend isn't very helpful.
+    print(p)
+    ## add direct labels at the end of the lines.
+    direct.label(p, "last.points")
+    ## on my screen, some of the labels go off the end, so we can use
+    ## this Positioning Method to reduce the text size until the labels
+    ## are on the plot.
+    direct.label(p, list("last.points",reduce.cex("lr")))
+    ## the default direct labels for lineplots are similar.
+    direct.label(p)
+  }
+
+})
+
+### If edges of the text are going left or right out of the plotting
+### region, then decrease cex until it fits.
+reduce.cex.lr <- reduce.cex("lr")
+
+### If edges of the text are going over the top or bottom of the
+### plotting region, then decrease cex until it fits.
+reduce.cex.tb <- reduce.cex("tb")
 
 empty.grid <- function
 ### Label placement method for scatterplots that ensures labels are

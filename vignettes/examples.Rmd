@@ -159,3 +159,127 @@ direct.label(p2)
 ##   object 'direction' not found
 
 ```
+
+# changepoint minima
+
+```{r}
+
+data(LOPART100, package="directlabels")
+abbrev.vec <- c(
+  data="data and models",
+  cost="cost of last change")
+yfac <- function(l){
+  factor(abbrev.vec[[l]], abbrev.vec)
+}
+COST <- function(dt){
+  data.frame(y.var=yfac("cost"), dt)
+}
+DATA <- function(dt){
+  data.frame(y.var=yfac("data"), dt)
+}
+sig.color <- "grey50"
+tau <- 99
+up.to.t <- 100
+change.dt <- data.frame(tau, change=tau+0.5)
+t.dt <- data.frame(up.to.t)
+my.hjust <- function(x)ifelse(x < nrow(LOPART100$signal)/2, 0, 1)
+min.dt <- do.call(rbind, by(
+  LOPART100$cost,
+  LOPART100$cost$Algorithm,
+  function(df)df[which.min(df$cost_candidates),]))
+cost.range <- range(LOPART100$cost$cost_candidates)
+cost.h <- cost.range[2]-cost.range[1]
+blank.dt <- data.frame(
+  position=1, cost=cost.range[1]-cost.h/4)
+label.colors <- c(
+  "1"="#ff7d7d",
+  "0"="#f6c48f")
+library(ggplot2)
+gg <- ggplot()+
+  geom_blank(aes(
+    position, cost),
+    data=COST(blank.dt))+
+  geom_vline(aes(
+    xintercept=up.to.t),
+    color=sig.color,
+    data=t.dt)+
+  geom_text(aes(
+    up.to.t, 13,
+    hjust=my.hjust(up.to.t),
+    label=sprintf(
+      "$t=%s$", up.to.t)),
+    color=sig.color,
+    data=DATA(t.dt))+
+  geom_rect(aes(
+    xmin=start, xmax=end,
+    fill=paste(changes),
+    ymin=-Inf, ymax=Inf),
+    alpha=0.5,
+    data=LOPART100$labels)+
+  scale_fill_manual("label", values=label.colors)+
+  theme_bw()+
+  theme(panel.spacing=grid::unit(0, "lines"))+
+  facet_grid(y.var ~ ., scales="free")+
+  geom_text(aes(
+    change, 1,
+    hjust=my.hjust(change),
+    label=sprintf(
+      "$\\tau = %d$", tau)),
+    vjust=0,
+    data=DATA(change.dt))+
+  geom_vline(aes(
+    xintercept=change),
+    data=change.dt)+
+  geom_segment(aes(
+    start-0.5, mean,
+    size=Algorithm,
+    color=Algorithm,
+    xend=end+0.5, yend=mean),
+    data=DATA(LOPART100$segments))+
+  geom_point(aes(
+    position, signal),
+    color=sig.color,
+    shape=1,
+    data=DATA(LOPART100$signal))+
+  scale_size_manual(values=c(
+    OPART=1.5,
+    LOPART=0.5),
+    drop=FALSE)+
+  scale_shape_manual(values=c(
+    OPART=1,
+    LOPART=2),
+    drop=FALSE)+
+  scale_color_manual(values=c(
+    OPART="deepskyblue",
+    LOPART="black"),
+    drop=FALSE)+
+  ylab("")+
+  scale_x_continuous(
+    "position $t,\\tau$",
+    breaks=seq(0, 100, by=10))+
+  geom_point(aes(
+    change, cost_candidates,
+    color=Algorithm, shape=Algorithm),
+    data=COST(LOPART100$cost))+
+  geom_point(aes(
+    change, cost_candidates,
+    color=Algorithm),
+    data=COST(min.dt))
+print(gg)
+
+label.cost <- function(df){  
+  gg+
+    directlabels::geom_dl(aes(
+      change, cost_candidates,
+      color=Algorithm,
+      label.group=Algorithm,
+      label=sprintf("$\\tau^*_{%d} = %d$", up.to.t, tau)),
+      method="bottom.polygons",
+      data=COST(df))
+}
+label.cost(LOPART100$cost)
+
+## to make sure it works when there is only one point to label.
+label.cost(min.dt)
+    
+```
