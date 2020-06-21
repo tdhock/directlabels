@@ -402,7 +402,7 @@ polygon.method <- function
     top.bottom.left.right %in% c("bottom", "left")
   ) -1 else 1
   min.or.max <- if(
-    top.bottom.left.right %in% c("top", "left")
+    top.bottom.left.right %in% c("top", "right")
   ) max else min
   if(top.bottom.left.right %in% c("left", "right")){
     min.or.max.xy <- "x"
