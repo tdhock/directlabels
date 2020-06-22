@@ -409,6 +409,8 @@ polygon.method <- function
     qp.target <- "y"
     qp.max <- "top"
     qp.min <- "bottom"
+    padding.h.factor <- 2
+    padding.w.factor <- 1
     limits.fun <- ylimits
     reduce.method <- "reduce.cex.lr"
   }else{
@@ -416,6 +418,8 @@ polygon.method <- function
     qp.target <- "x"
     qp.max <- "right"
     qp.min <- "left"
+    padding.h.factor <- 1
+    padding.w.factor <- 2
     limits.fun <- xlimits
     reduce.method <- "reduce.cex.tb"
   }
@@ -436,8 +440,8 @@ polygon.method <- function
     "calc.boxes",
     reduce.method,
     function(d, ...){
-      d$h <- d$h + padding.cm
-      d$w <- d$w + padding.cm
+      d$h <- d$h + padding.cm * padding.h.factor
+      d$w <- d$w + padding.cm * padding.w.factor
       d
     },
     "calc.borders",
