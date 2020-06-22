@@ -161,7 +161,10 @@ direct.label(p2)
 
 ```
 
-# changepoint minima
+# changepoint cost minima
+
+This is a test for polygon.method with only one unaligned point per
+group as input, in particular the new bottom.polygons method.
 
 ```{r}
 
@@ -283,4 +286,66 @@ label.cost(LOPART100$cost)
 ## to make sure it works when there is only one point to label.
 label.cost(min.dt)
     
+```
+
+# LOPART ROC curve
+
+This is a test for polygon.method with only one unaligned point per
+group as input, in particular with right.polygons.
+
+```{r}
+
+data(LOPART.ROC, package="directlabels")
+algo.colors <- c(
+  OPART="#0077CC",
+  LOPART="black",
+  SegAnnot="#22CC22")
+library(ggplot2)
+ggplot()+
+  theme_bw()+
+  scale_color_manual(values=algo.colors)+
+  scale_size_manual(values=c(
+    LOPART=1.5,
+    OPART=1))+
+  directlabels::geom_dl(aes(
+    FPR, TPR,
+    color=model.name,
+    label=paste0(model.name, ifelse(is.na(auc), "", sprintf(
+      " AUC=%.3f", auc
+    )))),
+    method=list(
+      cex=0.8,
+      directlabels::polygon.method(
+        "right",
+        offset.cm=0.5,
+        padding.cm=0.05)),
+    data=LOPART.ROC$points)+
+  geom_path(aes(
+    FPR, TPR,
+    color=model.name,
+    size=model.name,
+    group=paste(model.name, test.fold)),
+    data=LOPART.ROC$roc)+
+  geom_point(aes(
+    FPR, TPR,
+    color=model.name),
+    size=3,
+    shape=21,
+    fill="white",
+    data=LOPART.ROC$points)+
+  theme(
+    panel.spacing=grid::unit(0, "lines"),
+    legend.position="none"
+  )+
+  facet_grid(test.fold ~ Penalty + Parameters, labeller=label_both)+
+  coord_equal()+
+  scale_x_continuous(
+    "False Positive Rate (test set labels)",
+    breaks=c(0, 0.5, 1),
+    labels=c("0", "0.5", "1"))+
+  scale_y_continuous(
+    "True Positive Rate (test set labels)",
+    breaks=c(0, 0.5, 1),
+    labels=c("0", "0.5", "1"))
+
 ```
