@@ -9,8 +9,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 options(bitmapType="cairo")
-require(grDevices)
-X11.options(type="cairo")
 ```
 
 # Polygon methods
