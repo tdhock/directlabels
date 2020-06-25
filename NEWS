@@ -27,9 +27,17 @@ https://cloud.r-project.org/web/packages/isoband/vignettes/isoband3.html
 does much better labels.
 
 Grid test for text with descent inside polygon?
+use makeContent instead of drawDetails, which would make it possible
+to test rendered output using grid.force
+https://journal.r-project.org/archive/2013/RJ-2013-035/RJ-2013-035.pdf
 
 How to use geom_dl with stat_smooth? added vignette example based on
 https://github.com/tdhock/directlabels/issues/24
+
+Get dldoc working / web page updated with new pos methods.
+
+Get lattice transformation functions working again + tests. (Error:
+data must have a column named label for qqmath examples)
 
 2020.6.17
 
