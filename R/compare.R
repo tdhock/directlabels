@@ -47,14 +47,18 @@ dlcompare <- structure(function # Direct label comparison plot
   for(col in seq_along(col.items)){
     if(!is.null(names(col.items))){
       pushViewport(viewport(layout.pos.col=col,layout.pos.row=1))
-      grid.text(names(col.items)[col])
+      grid.text(
+        names(col.items)[col],
+        name=paste0("dlcompare.text.col.", col))
       popViewport()
     }
     for(row in seq_along(row.items)){
       if(col==1&&!is.null(names(row.items))){
         pushViewport(viewport(layout.pos.col=length(col.items)+1,
                               layout.pos.row=row+rowadd))
-        grid.text(names(row.items)[row],rot=-90)
+        grid.text(
+          names(row.items)[row],rot=-90,
+          name=paste0("dlcompare.text.row", row))
         popViewport()
       }
       pushViewport(viewport(layout.pos.col=col,layout.pos.row=row+rowadd))
@@ -62,7 +66,7 @@ dlcompare <- structure(function # Direct label comparison plot
         direct.label(row.items[[row]],col.items[[col]],debug=debug)
       else direct.label(col.items[[col]],row.items[[row]],debug=debug)
       print(p,newpage=FALSE)
-      if(rects)grid.rect()
+      if(rects)grid.rect(name=paste0("dlcompare.rect.row.", row))
       popViewport()
     }
   }

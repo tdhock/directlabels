@@ -20,12 +20,6 @@ geom_dl <- structure(function
 ### Positioning Method for direct label placement, passed to apply.method.
  debug=FALSE,
 ### Show directlabels debugging output?
- na.rm = TRUE,
-### passed to params.
- parse = FALSE,
-### parse text labels as plotmath expressions? not yet supported, but
-### I would be open to accepting a PR if somebody wants to implement
-### that.
  stat = "identity",
 ### passed to layer.
  position = "identity",
@@ -36,32 +30,26 @@ geom_dl <- structure(function
 ### ggproto object implementing direct labels.
   GeomDl <- ggplot2::ggproto(
     "GeomDl", ggplot2::Geom,
-    draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE, parse=FALSE) {
-      stopifnot(is.logical(parse))
-      stopifnot(length(parse) == 1)
-      if(parse){
-        stop("parse=TRUE is not yet supported in directlabels, ",
-             "but if you want to do that, ",
-             "why don't you fork tdhock/directlabels and submit me a PR?")
-      }
-      data$rot <- as.integer(data$angle)
-      data$groups <- data$label
+    draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE) {
+      data$rot <- as.numeric(data[["angle"]])
+      groups.col <- if(all(is.na(data[["label.group"]])))"label" else "label.group"
+      data$groups <- data[[groups.col]]
       axes2native <- function(data){
         coord$transform(data, panel_scales)
       }
       converted <- axes2native(data)
+      ## for some reason ggplot2 gives us a group column even when the
+      ## user does not specify one in aes.
       dldata <- converted[, names(converted) != "group"]
-
-      directlabels::dlgrob(
+      dlgrob(
         dldata, method, debug = debug, axes2native = axes2native)
     },
     draw_legend = ggplot2::draw_key_text,
     required_aes = c("x", "y", "label"),
     default_aes = ggplot2::aes(
       colour = "black", size = 5, angle = 0, hjust = 0.5,
-      vjust = 0.5, alpha = 1)
-    )
-
+      vjust = 0.5, alpha = 1, label.group = NA)
+  )
   ## Geom for direct labeling that creates dlgrobs in the draw()
   ## method.
   ggplot2::layer(
@@ -73,8 +61,6 @@ geom_dl <- structure(function
     show.legend = FALSE, # since direct labels replace a legend.
     inherit.aes = inherit.aes,
     params = list(
-      parse = parse,
-      na.rm = na.rm,
       method = method,
       debug = debug,
       ...)
@@ -184,7 +170,11 @@ direct.label.ggplot <- function
                     stat=L$stat,debug=debug,data=data)
   dlgeom$stat_params <- L$stat_params
   ## Look through legends for a colour/fill legend.
-  leg.info <- legends2hide(p)
+  leg.info <- tryCatch({
+    legends2hide(p)
+  }, error=function(E){
+    NULL #ignore errors in parsing custom/non-standard ggplots.
+  })
   guide.args <- as.list(rep("none", length(leg.info$hide)))
   names(guide.args) <- leg.info$hide
   guide.args$colour <- "none"
@@ -211,7 +201,6 @@ legends2hide <- function(p){
   position <- theme$legend.position
   # by default, guide boxes are vertically aligned
   theme$legend.box <- if(is.null(theme$legend.box)) "vertical" else theme$legend.box
-
   # size of key (also used for bar in colorbar guide)
   theme$legend.key.width <- if(is.null(theme$legend.key.width)) theme$legend.key.size
   theme$legend.key.height <- if(is.null(theme$legend.key.height)) theme$legend.key.size

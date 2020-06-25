@@ -5,8 +5,7 @@
 \usage{geom_dl(mapping = NULL, 
     data = NULL, ..., 
     method = stop("must specify method= argument"), 
-    debug = FALSE, na.rm = TRUE, 
-    parse = FALSE, stat = "identity", 
+    debug = FALSE, stat = "identity", 
     position = "identity", 
     inherit.aes = TRUE)}
 \arguments{
@@ -15,10 +14,6 @@
   \item{\dots}{passed to params.}
   \item{method}{Positioning Method for direct label placement, passed to \code{\link{apply.method}}.}
   \item{debug}{Show directlabels debugging output?}
-  \item{na.rm}{passed to params.}
-  \item{parse}{\code{parse} text labels as plotmath expressions? not yet supported, but
-I would be open to accepting a PR if somebody wants to implement
-that.}
   \item{stat}{passed to layer.}
   \item{position}{passed to layer.}
   \item{inherit.aes}{inherit aes from global ggplot definition?}

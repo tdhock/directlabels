@@ -1,4 +1,1 @@
-library(testthat)
-library(directlabels)
-
-test_check("directlabels")
+if(require(testthat))test_check("directlabels")

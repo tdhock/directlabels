@@ -36,8 +36,14 @@ drawDetails.dlgrob <- function
   names(code) <- as.character(levs$groups)
   ## apply ignore.na function -- these points are not plotted
   cm.data <- ignore.na(cm.data)
-  cm.data <- apply.method(x$method,cm.data,
-                          debug=x$debug,axes2native=x$axes2native)
+  if(is.null(cm.data$label)){
+    cm.data$label <- cm.data$groups
+  }
+  cm.data <- apply.method(
+    x$method,
+    cm.data,
+    debug=x$debug,
+    axes2native=x$axes2native)
   if(nrow(cm.data)==0)return()## empty data frames can cause many bugs
   ## Take col from colour or groups.
   colour <- cm.data[["colour"]]
@@ -59,10 +65,13 @@ drawDetails.dlgrob <- function
     print(cm.data)
     ##browser()
   }
-  with(cm.data,{
-    grid.text(groups,x,y,hjust=hjust,vjust=vjust,rot=rot,default.units="cm",
-              gp=gp)
-  })
+  text.name <- paste0(
+    "directlabels.text.",
+    if(is.character(x$method))x$method)
+  with(cm.data, grid.text(
+    label,x,y,hjust=hjust,vjust=vjust,rot=rot,default.units="cm",
+    gp=gp,
+    name=text.name))
 }
 
 dlgrob <- function
@@ -80,7 +89,7 @@ dlgrob <- function
        name=if(is.character(method)){
          sprintf("GRID.dlgrob.%s",method[1])
        }else{
-         NULL
+         "GRID.dlgrob"
        },...)
 }
 

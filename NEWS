@@ -22,10 +22,59 @@ see etc/individual.R, and gabor.R
 see etc/xYplot.R for a problem with plotting some weird trellis
 objects.
 
-contourplot labels as in lattice::panel.contourplot or C source code
-in r-source/src/main/plot3d.c
+Maybe remove contour plot support/examples?
+https://cloud.r-project.org/web/packages/isoband/vignettes/isoband3.html
+does much better labels.
 
-other contourplots, see etc/contour.R
+Grid test for text with descent inside polygon?
+use makeContent instead of drawDetails, which would make it possible
+to test rendered output using grid.force
+https://journal.r-project.org/archive/2013/RJ-2013-035/RJ-2013-035.pdf
+
+How to use geom_dl with stat_smooth? added vignette example based on
+https://github.com/tdhock/directlabels/issues/24
+
+Get dldoc working / web page updated with new pos methods.
+
+Get lattice transformation functions working again + tests. (Error:
+data must have a column named label for qqmath examples)
+
+2020.6.17
+
+grid grobs have names.
+
+vignette example / LOPART100 data for black/blue pos swapped for
+t=100. (bug fix in make.tiebreaker, use rule=2 in approx for no NA)
+
+using top.qp with one point gave an error: need at least two non-NA
+values to interpolate. (bug fix in make.tiebreaker, only run approx if
+there are at least two values)
+
+legends2hide inside tryCatch to fix error with parsing legends in
+ggplots with custom themes,
+https://github.com/tdhock/directlabels/issues/6
+
+fix test failures that showed up with new code.
+
+examples vignette for geom_dl with same aes(label), but different
+aes(label.group, color).
+
+draw.polygons/polygon.method support top/bottom as well as
+first/last/left/right. New *.polygons methods.
+
+2020.6.7
+
+initial code for:
+
+polygons below the point.
+
+aes(label) which may have the same value for two different aes(group)
+values, e.g. two algorithms/groups which both compute the same thing,
+optimal changepoint tau^*, but we want to compute and show a label for
+each of them.
+
+using stringDescent to compute height of boxes. maybe consider
+grobDescent or descentDetails?
 
 2020.1.31
 

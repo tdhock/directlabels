@@ -7,8 +7,9 @@ sequentially applying its elements to the input data to obtain the
 label positions.}
 \usage{apply.method(method, 
     d, columns.to.check = c("x", 
-        "y", "groups"), 
-    ..., debug = FALSE)}
+        "y", "groups", 
+        "label"), ..., 
+    debug = FALSE)}
 \arguments{
   \item{method}{Direct labeling Positioning Method. Starting from the data frame
 of points to plot for the panel, the elements of the Positioning

@@ -7,11 +7,15 @@ far.from.others.borders <- function(all.groups,...,debug=FALSE){
     ## Run linear interpolation to get a set of points on which we
     ## could place the label (this is useful for e.g. the lasso path
     ## where there are only a few points plotted).
-    approx.list <- with(group.data[[groups]], approx(x, y))
+    one.group <- group.data[[groups]]
+    approx.list <- with(one.group, approx(x, y))
     if(debug){
       with(approx.list, grid.points(x, y, default.units="cm"))
     }
-    group.list[[groups]] <- data.frame(approx.list, groups)
+    group.list[[groups]] <- data.frame(
+      approx.list,
+      groups,
+      label=one.group$label[1])
   }
   output.list <- list()
   for(group.i in seq_along(group.list)){
@@ -286,7 +290,7 @@ dl.move <- structure(function # Manually move a direct label
     ## maybe generalize this to be symmetric on x and y one day?
     if("x" %in% names(L) && (!"y" %in% names(L))){
       orig <- attr(d,"orig.data")
-      orig <- orig[orig$groups==group,]
+      orig <- orig[orig$label==group,]
       ## do linear interpolation to find a good y-value
       f <- with(orig,approxfun(x,y))
       d[v,"y"] <- f(L$x)
@@ -321,21 +325,22 @@ calc.boxes <- function
  ...
  ){
   vp <- current.viewport()
-  convert <- function(worh){
+  convert <- function(str.prop, worh=str.prop){
     conv <- get(paste("convert",worh,sep=""))
-    stri <- get(paste("string",worh,sep=""))
+    stri <- get(paste("string", str.prop, sep=""))
     as.numeric(sapply(seq_along(d$groups),function(i){
       if("cex"%in%names(d))vp$gp <- gpar(cex=d$cex[i])
       pushViewport(vp)
       if(debug)grid.rect() ##highlight current viewport
-      w <- conv(stri(as.character(d$groups[i])),"cm")
+      cm <- conv(stri(as.character(d$label[i])),"cm")
       popViewport()
-      w
+      cm
     }))
   }
   ## abs since we have a weird bug with ggplot2 sometimes
   d$w <- abs(convert("Width"))
   d$h <- abs(convert("Height"))
+  d$descent <- abs(convert("Descent", "Height"))
   calc.borders(d)
 }
 
@@ -368,55 +373,120 @@ calc.borders <- function
       d[,just] <- 0.5
     }
   }
+  if(!"descent" %in% names(d)){
+    d$descent <- 0
+  }
   d$top <- d$y+(1-d$vjust)*d$h
-  d$bottom <- d$y-d$vjust*d$h
+  d$bottom <- d$y-d$vjust*d$h - d$descent
   d$right <- d$x+(1-d$hjust)*d$w
   d$left <- d$x-d$hjust*d$w
   d
 }
 
+polygon.method <- function
 ### Make a Positioning Method that places non-overlapping speech
 ### polygons at the first or last points.
-polygon.method <- function(method, space, data.col, na.col){
-  list(method, "calc.boxes",
-       function(d,...){
-         for(xy in c("x", "y")){
-           d[[sprintf("%s.%s", data.col, xy)]] <- d[[xy]]
-           d[[sprintf("%s.%s", na.col, xy)]] <- NA
-         }
-         d$x <- d$x + space
-         d
-       },
-       "reduce.cex.lr",
-       function(d,...){
-         d$h <- d$h * 1.5
-         d
-       },
-       "calc.borders",
-       qp.labels("y","bottom","top", make.tiebreaker("x","y"), ylimits),
-       "calc.borders", draw.polygons)
+(top.bottom.left.right,
+### Character string indicating what side of the plot to label.
+  offset.cm=0.1,
+### Offset from the polygon to the most extreme data point.
+  padding.cm=0.05
+### Padding inside the polygon.
+){
+  opposite.side <- c(
+    left="right",
+    right="left",
+    top="bottom",
+    bottom="top")[[top.bottom.left.right]]
+  direction <- if(
+    top.bottom.left.right %in% c("bottom", "left")
+  ) -1 else 1
+  min.or.max <- if(
+    top.bottom.left.right %in% c("top", "right")
+  ) max else min
+  if(top.bottom.left.right %in% c("left", "right")){
+    min.or.max.xy <- "x"
+    qp.target <- "y"
+    qp.max <- "top"
+    qp.min <- "bottom"
+    padding.h.factor <- 2
+    padding.w.factor <- 1
+    limits.fun <- ylimits
+    reduce.method <- "reduce.cex.lr"
+  }else{
+    min.or.max.xy <- "y"
+    qp.target <- "x"
+    qp.max <- "right"
+    qp.min <- "left"
+    padding.h.factor <- 1
+    padding.w.factor <- 2
+    limits.fun <- xlimits
+    reduce.method <- "reduce.cex.tb"
+  }
+  list(
+    paste0(top.bottom.left.right, ".points"),
+    function(d,...){
+      ## set the end of the speech polygon to the original data point.
+      for(xy in c("x", "y")){
+        extra.coord <- sprintf(# e.g. left.x
+          "%s.%s", opposite.side, xy)
+        d[[extra.coord]] <- d[[xy]]
+      }
+      ## set the speech polygon position to the min or max of all
+      ## label positions. e.g. max
+      d[[min.or.max.xy]] <- min.or.max(d[[min.or.max.xy]]) + offset.cm*direction
+      d
+    },
+    "calc.boxes",
+    reduce.method,
+    function(d, ...){
+      d$h <- d$h + padding.cm * padding.h.factor
+      d$w <- d$w + padding.cm * padding.w.factor
+      d
+    },
+    "calc.borders",
+    qp.labels(
+      qp.target,
+      qp.min,
+      qp.max,
+      make.tiebreaker(min.or.max.xy, qp.target),
+      limits.fun),
+    "calc.borders",
+    "draw.polygons")
 }
 
 ### Draw polygons around label positions.
 draw.polygons <- function(d,...){
-  stopifnot(c("left.y", "left.x", "right.y", "right.x") %in% names(d))
+  for(side in c("left", "right", "top", "bottom")){
+    for(xy in c("x", "y")){
+      col.name <- paste0(side, ".", xy)
+      if(!col.name %in% names(d)){
+        d[[col.name]] <- NA
+      }
+    }
+  }
   if(! "box.color" %in% names(d)){
     d$box.color <- "black"
   }
-  for(i in 1:nrow(d)){
-    with(d[i,], {
-      L <-
-        list(x=c(left.x, left, right, right.x, right, left),
-             y=c(left.y, top, top, right.y, bottom, bottom))
-      for(xy.name in names(L)){
-        xy <- L[[xy.name]]
-        L[[xy.name]] <- xy[!is.na(xy)]
-      }
-      grid.polygon(L$x, L$y,
-                   default.units="cm", gp=gpar(col=box.color, fill=colour))
-    })
+  if(! "text.color" %in% names(d)){
+    d$text.color <- "white"
   }
-  d$colour <- "white"
+  for(i in 1:nrow(d))with(d[i,], {
+    L <- list(
+      x=c(left.x, left, top.x, right, right.x, right, bottom.x, left),
+      y=c(left.y, top, top.y, top, right.y, bottom, bottom.y, bottom))
+    for(xy.name in names(L)){
+      xy <- L[[xy.name]]
+      L[[xy.name]] <- xy[!is.na(xy)]
+    }
+    grid::grid.polygon(
+      L$x, L$y,
+      default.units="cm",
+      gp=grid::gpar(col=box.color, fill=colour),
+      name="directlabels.draw.polygon"
+    )
+  })
+  d$colour <- d$text.color
   d
 }
 
@@ -427,10 +497,11 @@ draw.rects <- function(d,...){
   if(is.null(d$box.color))d$box.color <- "black"
   if(is.null(d$fill))d$fill <- "white"
   for(i in 1:nrow(d)){
-    with(d[i,],{
-      grid.rect(gp = gpar(col = box.color, fill = fill),
-                vp = viewport(x, y, w, h, "cm", c(hjust, vjust), angle=rot))
-    })
+    with(d[i,], grid.rect(
+      gp = gpar(col = box.color, fill = fill),
+      vp = viewport(x, y, w, h, "cm", c(hjust, vjust), angle=rot),
+      name="directlabels.draw.rects"
+    ))
   }
   d
 }
@@ -481,56 +552,6 @@ ignore.na <- function(d,...){
   }
   d[not.na,]
 }
-
-### If left or right edges of the text are going out of the plotting
-### region, then decrease cex until it fits. We call calc.boxes
-### inside, so you should set cex before using this.
-reduce.cex.lr <- structure(function(d,...){
-  d <- calc.boxes(d)
-  l <- xlimits()
-  positive.part <- function(x)ifelse(x>0,x,0)
-  right <- positive.part(d$right-l[2])
-  left <- positive.part(l[1]-d$left)
-  w <- d$right-d$left
-  if(is.null(d$cex)){
-    d$cex <- 1
-  }
-  d$cex <- (w-right)/w * (w-left)/w * d$cex
-  calc.boxes(d)
-},ex=function(){
-
-  if(require(lars) && require(ggplot2)){
-    data(diabetes,package="lars",envir=environment())
-    X <- diabetes$x
-    colnames(X) <- paste(colnames(X), colnames(X))
-    fit <- lars(X,diabetes$y,type="lasso")
-    beta <- scale(coef(fit),FALSE,1/fit$normx)
-    arclength <- rowSums(abs(beta))
-    path.list <- list()
-    for(variable in colnames(beta)){
-      standardized.coef <- beta[, variable]
-      path.list[[variable]] <-
-        data.frame(step=seq_along(standardized.coef),
-                   arclength,
-                   variable,
-                   standardized.coef)
-    }
-    path <- do.call(rbind, path.list)
-    p <- ggplot(path,aes(arclength,standardized.coef,colour=variable))+
-      geom_line(aes(group=variable))
-    ## the legend isn't very helpful.
-    print(p)
-    ## add direct labels at the end of the lines.
-    direct.label(p, "last.points")
-    ## on my screen, some of the labels go off the end, so we can use
-    ## this Positioning Method to reduce the text size until the labels
-    ## are on the plot.
-    direct.label(p, list("last.points","reduce.cex.lr"))
-    ## the default direct labels for lineplots are similar.
-    direct.label(p)
-  }
-
-})
 
 qp.labels <- structure(function# Make a Positioning Method for non-overlapping lineplot labels
 ### Use a QP solver to find the best places to put the points on a
@@ -813,8 +834,14 @@ edges.to.outside <- function
 ### outside of the hull.
 (edges,centers,debug=FALSE,...){
   if(debug){
-    with(centers,grid.points(x,y,pch="+",default.units="cm"))
-    with(edges,grid.segments(x1,y1,x2,y2,default.units="cm"))
+    with(centers,grid.points(
+      x,y,pch="+",default.units="cm",
+      name="directlabels.points.edges.to.outside"
+    ))
+    with(edges,grid.segments(
+      x1,y1,x2,y2,default.units="cm",
+      name="directlabels.segments.edges.to.outside"
+    ))
   }
   closepts <- gapply(centers,project.onto.segments,edges,debug=debug,...)
   closepts$vjust <- ifelse(closepts$y-centers$y>0,0,1)
@@ -870,7 +897,10 @@ project.onto.segments <- function
   i <- which.min(h$d)
   result <- with(h[i,],data.frame(x=xopt,y=yopt))
   if(debug){
-    grid.segments(m$x,m$y,result$x,result$y,default.units="cm")
+    grid.segments(
+      m$x,m$y,result$x,result$y,default.units="cm",
+      name="directlabels.segments.project.onto.segments"
+    )
   }
   result
 }
@@ -898,7 +928,22 @@ make.tiebreaker <- function(x.var,tiebreak.var){
     group.dfs <- split(orig,orig$groups)
     m <- do.call(cbind,lapply(d$groups,function(g){
       df <- group.dfs[[as.character(g)]]
-      approx(df[,x.var],df[,tiebreak.var],xvals)$y
+      group.x <- df[,x.var]
+      group.y <- df[,tiebreak.var]
+      all.unique <- length(unique(group.x)) == length(group.x)
+      ## approx gives the following error if we only have one point:
+      ## need at least two non-NA values to interpolate
+      x.not.missing <- !is.na(group.x)
+      y.not.missing <- !is.na(group.y)
+      not.missing <- sum(x.not.missing & y.not.missing)
+      if(all.unique && 1 < not.missing){
+        ## rule=2 means to use the most extreme value instead of the
+        ## default NA, for any points that are outside the range -
+        ## this is required to get a good ordering in some cases.
+        approx(group.x, group.y, xvals, rule=2)$y
+      }else{
+        group.y
+      }
     }))
     ## useful for debugging:
     ##print(m)
@@ -985,7 +1030,7 @@ apply.method <- function # Apply a Positioning Method
 ### columns should be in centimeters (cm), so that Positioning Methods
 ### can easily calculate the L2/Euclidean/visual distance between
 ### pairs of points.
- columns.to.check=c("x","y","groups"),
+ columns.to.check=c("x","y","groups","label"),
 ### After applying each Positioning Method list element, we check for
 ### the presence of these columns, and if not found we stop with an
 ### error.
@@ -1096,6 +1141,78 @@ xlimits <- function(...){
   convertX(unit(c(0,1),"npc"),"cm",valueOnly=TRUE)
 }
 
+reduce.cex <- structure(function
+### If edges of the text are going out of the plotting
+### region, then decrease cex until it fits. We call calc.boxes
+### inside, so you should set cex before using this.
+(sides
+### string: lr (left and right) or tb (top and bottom).
+){
+  if(sides=="lr"){
+    hi <- "right"
+    lo <- "left"
+    limits.fun <- xlimits
+  }else{
+    hi <- "top"
+    lo <- "bottom"
+    limits.fun <- ylimits
+  }
+  function(d,...){
+    d <- calc.boxes(d)
+    l <- limits.fun()
+    positive.part <- function(x)ifelse(x>0,x,0)
+    hi.pp <- positive.part(d[, hi]-l[2])
+    lo.pp <- positive.part(l[1]-d[, lo])
+    w <- d[, hi]-d[, lo]
+    if(is.null(d$cex)){
+      d$cex <- 1
+    }
+    d$cex <- (w-hi.pp)/w * (w-lo.pp)/w * d$cex
+    calc.boxes(d)
+  }
+},ex=function(){
+
+  if(require(lars) && require(ggplot2)){
+    data(diabetes,package="lars",envir=environment())
+    X <- diabetes$x
+    colnames(X) <- paste(colnames(X), colnames(X))
+    fit <- lars(X,diabetes$y,type="lasso")
+    beta <- scale(coef(fit),FALSE,1/fit$normx)
+    arclength <- rowSums(abs(beta))
+    path.list <- list()
+    for(variable in colnames(beta)){
+      standardized.coef <- beta[, variable]
+      path.list[[variable]] <-
+        data.frame(step=seq_along(standardized.coef),
+                   arclength,
+                   variable,
+                   standardized.coef)
+    }
+    path <- do.call(rbind, path.list)
+    p <- ggplot(path,aes(arclength,standardized.coef,colour=variable))+
+      geom_line(aes(group=variable))
+    ## the legend isn't very helpful.
+    print(p)
+    ## add direct labels at the end of the lines.
+    direct.label(p, "last.points")
+    ## on my screen, some of the labels go off the end, so we can use
+    ## this Positioning Method to reduce the text size until the labels
+    ## are on the plot.
+    direct.label(p, list("last.points",reduce.cex("lr")))
+    ## the default direct labels for lineplots are similar.
+    direct.label(p)
+  }
+
+})
+
+### If edges of the text are going left or right out of the plotting
+### region, then decrease cex until it fits.
+reduce.cex.lr <- reduce.cex("lr")
+
+### If edges of the text are going over the top or bottom of the
+### plotting region, then decrease cex until it fits.
+reduce.cex.tb <- reduce.cex("tb")
+
 empty.grid <- function
 ### Label placement method for scatterplots that ensures labels are
 ### placed in different places. A grid is drawn over the whole
@@ -1131,14 +1248,19 @@ empty.grid <- function
     (-expand:(hboxes+expand-1))*r[,w]+r[,w]/2+min(ranges[[x]])
   }
   if(debug)with(label.targets,{
-    grid.points(x,y,default.units="cm",gp=gpar(col="green"))
+    grid.points(
+      x,y,default.units="cm",gp=gpar(col="green"),
+      name="directlabels.points.empty.grid.label.targets"
+    )
   })
   draw <- function(g){
     gridlines <- with(g,list(x=unique(c(left,right)),y=unique(c(top,bottom))))
-    drawlines <- function(a,b,c,d)
-      grid.segments(a,b,c,d,"cm",gp=gpar(col="grey"))
-    with(gridlines,drawlines(min(x),y,max(x),y))
-    with(gridlines,drawlines(x,min(y),x,max(y)))
+    drawlines <- function(a,b,c,d,name)
+      grid.segments(a,b,c,d,"cm",name=name,gp=gpar(col="grey"))
+    with(gridlines,drawlines(
+      min(x),y,max(x),y,"directlabels.segments.empty.grid.vertical"))
+    with(gridlines,drawlines(
+      x,min(y),x,max(y),"directlabels.segments.empty.grid.horizontal"))
   }
   res <- data.frame()
   label.targets <-
@@ -1185,7 +1307,8 @@ empty.grid <- function
     })
     all.points <- rbind(all.points,newpts)
   }
-  if(debug)with(all.points,grid.points(x,y,default.units="cm"))
+  if(debug)with(all.points,grid.points(
+    x,y,default.units="cm",name="directlabels.points.empty.grid.all.points"))
   res
 ### Data frame with columns groups x y, 1 line for each group, giving
 ### the positions on the grid closest to each cluster.

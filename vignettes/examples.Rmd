@@ -1,0 +1,349 @@
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{examples}
+-->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(bitmapType="cairo")
+```
+
+# Polygon methods
+
+```{r}
+
+param.df <- data.frame(
+  mean=c(0, 0, 2),
+  sd=c(1, 2, 1))
+density.df.list <- list()
+for(param.i in 1:nrow(param.df)){
+  one.param <- param.df[param.i,]
+  observation <- seq(-4, 4, by=0.1)
+  density.df.list[[param.i]] <- data.frame(
+    param.i,
+    param.fac=factor(param.i),
+    one.param,
+    observation,
+    density=dnorm(observation, one.param$mean, one.param$sd),
+    row.names=NULL)
+}
+density.df <- do.call(rbind, density.df.list)
+
+library(ggplot2)
+gg <- ggplot()+
+  geom_line(aes(
+    observation, density, color=param.fac),
+    data=density.df)
+directlabels::direct.label(gg, "top.polygons")
+
+density.df$mean.lab <- paste0("mean=", density.df$mean)
+gg <- ggplot()+
+  geom_line(aes(
+    observation, density, color=param.fac),
+    data=density.df)+
+  directlabels::geom_dl(aes(
+    observation, density,
+    color=param.fac,
+    label.group=param.fac,
+    label=mean.lab),
+    method="top.polygons",
+    data=density.df)
+gg
+
+gg <- ggplot()+
+  geom_line(aes(
+    observation, density, color=mean.lab, group=param.fac),
+    data=density.df)
+directlabels::direct.label(gg, "top.polygons")
+
+data(BodyWeight, package="nlme")
+gg <- ggplot()+
+  geom_line(aes(
+    Time, weight, color=Rat),
+    data=BodyWeight)+
+  facet_grid(. ~ Diet)
+gg
+
+directlabels::direct.label(gg, "right.polygons")
+
+gg.wider <- gg+xlim(-10, 70)
+directlabels::direct.label(gg.wider, "right.polygons")
+
+directlabels::direct.label(gg.wider, "left.polygons")
+
+```
+
+# SO post about stats
+
+https://github.com/tdhock/directlabels/issues/24
+
+```{r}
+
+library("ggplot2")
+library(directlabels)
+set.seed(124234345)
+# Generate data
+df.2 <- data.frame("n_gram" = c("word1"),
+                   "year" = rep(100:199),
+                   "match_count" = runif(100 ,min = 1000 , max = 2000))
+df.2 <- rbind(df.2, data.frame("n_gram" = c("word2"),
+                               "year" = rep(100:199),
+                               "match_count" = runif(100 ,min = 1000 , max = 2000)) )
+# use stat smooth with geom_dl to get matching direct labels.
+span <- 0.3
+ggplot(df.2, aes(year, match_count, group=n_gram, color=n_gram)) +
+  geom_line(alpha = I(7/10), color="grey") +
+  stat_smooth(size=2, span=span, se=F) +
+  geom_dl(aes(
+    label=n_gram),
+    ## method should be passed to geom_dl but ggplot2 (mistakenly?)
+    ## passes it to stat_smooth, which rightly raises a warning about
+    ## an unknown smoothing function.
+    method = "last.qp", 
+    stat="smooth", span=span) +
+  xlim(c(100,220))+
+  guides(colour="none")
+
+```
+
+# serialize issue
+
+https://github.com/tdhock/directlabels/issues/6
+
+```{r}
+
+library("dplyr")
+library("ggplot2")
+library("directlabels")
+library("ggthemes")
+
+## create data
+aaa <- structure(
+  list(x = c(28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 
+             18, 17, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17),
+       count = c(2344L, 
+                 4088L, 3247L, 2808L, 2046L, 1669L, 1315L, 951L, 610L, 543L, 469L, 
+                 370L, 937L, 1116L, 550L, 379L, 282L, 204L, 174L, 160L, 136L, 
+                 132L, 128L, 122L),
+       term = c("aaa", "aaa", "aaa", "aaa", "aaa", 
+                "aaa", "aaa", "aaa", "aaa", "aaa", "aaa", "aaa", "bbb", "bbb", 
+                "bbb", "bbb", "bbb", "bbb", "bbb", "bbb", "bbb", "bbb", "bbb", 
+                "bbb")),
+  class = c("tbl_df", "tbl", "data.frame"),
+  row.names = c(NA, 
+                -24L),
+  .Names = c("x", "count", "term"))
+## have a look
+aaa
+
+## initial plot
+p2 <- aaa %>% ggplot(aes(x = x, y = count, group = term, colour = term)) + geom_line()
+## have a look
+p2
+
+## works
+direct.label(p2)
+
+
+
+## plot with theme
+p2 <- aaa %>% ggplot(aes(x = x, y = count, group = term, colour = term)) + geom_line() + theme_fivethirtyeight()
+## have a look
+p2
+
+## used to fail but should be OK as of 19 June 2020.
+direct.label(p2)
+
+```
+
+# changepoint cost minima
+
+This is a test for polygon.method with only one unaligned point per
+group as input, in particular the new bottom.polygons method.
+
+```{r}
+
+data(LOPART100, package="directlabels")
+abbrev.vec <- c(
+  data="data and models",
+  cost="cost of last change")
+yfac <- function(l){
+  factor(abbrev.vec[[l]], abbrev.vec)
+}
+COST <- function(dt){
+  data.frame(y.var=yfac("cost"), dt)
+}
+DATA <- function(dt){
+  data.frame(y.var=yfac("data"), dt)
+}
+sig.color <- "grey50"
+tau <- 99
+up.to.t <- 100
+change.dt <- data.frame(tau, change=tau+0.5)
+t.dt <- data.frame(up.to.t)
+my.hjust <- function(x)ifelse(x < nrow(LOPART100$signal)/2, 0, 1)
+min.dt <- do.call(rbind, by(
+  LOPART100$cost,
+  LOPART100$cost$Algorithm,
+  function(df)df[which.min(df$cost_candidates),]))
+cost.range <- range(LOPART100$cost$cost_candidates)
+cost.h <- cost.range[2]-cost.range[1]
+blank.dt <- data.frame(
+  position=1, cost=cost.range[1]-cost.h/4)
+label.colors <- c(
+  "1"="#ff7d7d",
+  "0"="#f6c48f")
+library(ggplot2)
+gg <- ggplot()+
+  geom_blank(aes(
+    position, cost),
+    data=COST(blank.dt))+
+  geom_vline(aes(
+    xintercept=up.to.t),
+    color=sig.color,
+    data=t.dt)+
+  geom_text(aes(
+    up.to.t, 13,
+    hjust=my.hjust(up.to.t),
+    label=sprintf(
+      "$t=%s$", up.to.t)),
+    color=sig.color,
+    data=DATA(t.dt))+
+  geom_rect(aes(
+    xmin=start, xmax=end,
+    fill=paste(changes),
+    ymin=-Inf, ymax=Inf),
+    alpha=0.5,
+    data=LOPART100$labels)+
+  scale_fill_manual("label", values=label.colors)+
+  theme_bw()+
+  theme(panel.spacing=grid::unit(0, "lines"))+
+  facet_grid(y.var ~ ., scales="free")+
+  geom_text(aes(
+    change, 1,
+    hjust=my.hjust(change),
+    label=sprintf(
+      "$\\tau = %d$", tau)),
+    vjust=0,
+    data=DATA(change.dt))+
+  geom_vline(aes(
+    xintercept=change),
+    data=change.dt)+
+  geom_segment(aes(
+    start-0.5, mean,
+    size=Algorithm,
+    color=Algorithm,
+    xend=end+0.5, yend=mean),
+    data=DATA(LOPART100$segments))+
+  geom_point(aes(
+    position, signal),
+    color=sig.color,
+    shape=1,
+    data=DATA(LOPART100$signal))+
+  scale_size_manual(values=c(
+    OPART=1.5,
+    LOPART=0.5),
+    drop=FALSE)+
+  scale_shape_manual(values=c(
+    OPART=1,
+    LOPART=2),
+    drop=FALSE)+
+  scale_color_manual(values=c(
+    OPART="deepskyblue",
+    LOPART="black"),
+    drop=FALSE)+
+  ylab("")+
+  scale_x_continuous(
+    "position $t,\\tau$",
+    breaks=seq(0, 100, by=10))+
+  geom_point(aes(
+    change, cost_candidates,
+    color=Algorithm, shape=Algorithm),
+    data=COST(LOPART100$cost))+
+  geom_point(aes(
+    change, cost_candidates,
+    color=Algorithm),
+    data=COST(min.dt))
+print(gg)
+
+label.cost <- function(df){  
+  gg+
+    directlabels::geom_dl(aes(
+      change, cost_candidates,
+      color=Algorithm,
+      label.group=Algorithm,
+      label=sprintf("$\\tau^*_{%d} = %d$", up.to.t, tau)),
+      method="bottom.polygons",
+      data=COST(df))
+}
+label.cost(LOPART100$cost)
+
+## to make sure it works when there is only one point to label.
+label.cost(min.dt)
+    
+```
+
+# LOPART ROC curve
+
+This is a test for polygon.method with only one unaligned point per
+group as input, in particular with right.polygons.
+
+```{r}
+
+data(LOPART.ROC, package="directlabels")
+algo.colors <- c(
+  OPART="#0077CC",
+  LOPART="black",
+  SegAnnot="#22CC22")
+library(ggplot2)
+ggplot()+
+  theme_bw()+
+  scale_color_manual(values=algo.colors)+
+  scale_size_manual(values=c(
+    LOPART=1.5,
+    OPART=1))+
+  directlabels::geom_dl(aes(
+    FPR, TPR,
+    color=model.name,
+    label=paste0(model.name, ifelse(is.na(auc), "", sprintf(
+      " AUC=%.3f", auc
+    )))),
+    method=list(
+      cex=0.8,
+      directlabels::polygon.method(
+        "right",
+        offset.cm=0.5,
+        padding.cm=0.05)),
+    data=LOPART.ROC$points)+
+  geom_path(aes(
+    FPR, TPR,
+    color=model.name,
+    size=model.name,
+    group=paste(model.name, test.fold)),
+    data=LOPART.ROC$roc)+
+  geom_point(aes(
+    FPR, TPR,
+    color=model.name),
+    size=3,
+    shape=21,
+    fill="white",
+    data=LOPART.ROC$points)+
+  theme(
+    panel.spacing=grid::unit(0, "lines"),
+    legend.position="none"
+  )+
+  facet_grid(test.fold ~ Penalty + Parameters, labeller=label_both)+
+  coord_equal()+
+  scale_x_continuous(
+    "False Positive Rate (test set labels)",
+    breaks=c(0, 0.5, 1),
+    labels=c("0", "0.5", "1"))+
+  scale_y_continuous(
+    "True Positive Rate (test set labels)",
+    breaks=c(0, 0.5, 1),
+    labels=c("0", "0.5", "1"))
+
+```
