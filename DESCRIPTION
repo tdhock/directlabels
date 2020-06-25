@@ -14,8 +14,9 @@ Description: An extensible framework
  and inferring an appropriate Positioning Method.
 URL: https://github.com/tdhock/directlabels
 LazyData: true
-Suggests: MASS, knitr,
-	  inlinedocs,
+Suggests: MASS,
+	  knitr, markdown,
+	  inlinedocs, 
 	  ggplot2 (>= 2.0), rlang,
 	  lattice, alphahull, nlme,
 	  lars, latticeExtra,
