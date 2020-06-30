@@ -1,7 +1,7 @@
 Package: directlabels
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Author: Toby Dylan Hocking
-Version: 2020.6.17
+Version: 2020.6.30
 BugReports: https://github.com/tdhock/directlabels/issues
 License: GPL-3
 Title: Direct Labels for Multicolor Plots
@@ -16,7 +16,8 @@ URL: https://github.com/tdhock/directlabels
 LazyData: true
 Suggests: MASS,
 	  knitr, markdown,
-	  inlinedocs, 
+	  inlinedocs,
+	  RColorBrewer,
 	  ggplot2 (>= 2.0), rlang,
 	  lattice, alphahull, nlme,
 	  lars, latticeExtra,

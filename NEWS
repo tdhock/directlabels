@@ -39,6 +39,12 @@ Get dldoc working / web page updated with new pos methods.
 Get lattice transformation functions working again + tests. (Error:
 data must have a column named label for qqmath examples)
 
+2020.6.30
+
+custom.colors argument for polygon.method, default choice of white or
+black depending on how dark the color would be if rendered as
+grayscale.
+
 2020.6.17
 
 grid grobs have names.
