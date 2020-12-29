@@ -825,6 +825,7 @@ gapply <- function
     res <- apply.method(method,d,columns.to.check=c("x","y"),...)
     if(nrow(res)){
       res[[groups]] <- d[[groups]][1]
+      res[["label"]] <- d[["label"]][1]
     }
     res
   }

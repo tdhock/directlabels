@@ -51,6 +51,8 @@ rot parameter respected by polygons method?
 
 2020.12.29
 
+fix for lattice.
+
 dldoc no longer uses type="cairo" at request of CRAN.
 
 2020.6.30

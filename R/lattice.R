@@ -114,7 +114,7 @@ panel.superpose.dl <- structure(function
   if(is.null(method))method <- default.picker("trellis")
   groups <- as.factor(groups)
   groups <- groups[subscripts]
-  d <- data.frame(x,groups)
+  d <- data.frame(x,groups,label=groups)
   d$y <- if(missing(y))NA else y
   type <- type[type!="g"] ## printing the grid twice looks bad.
   col.text <-
