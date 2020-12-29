@@ -39,6 +39,20 @@ Get dldoc working / web page updated with new pos methods.
 Get lattice transformation functions working again + tests. (Error:
 data must have a column named label for qqmath examples)
 
+How to figure out if user assigned aes(group)?  You can always deduce
+if a group was explicitly assigned by seeing if the group column is
+positive... The -1 is an indicator saying that everything
+automatically belongs to the same group.  group and PANEL are the two
+single columns that are enforced to always exist in the layer data and
+is used extensively during the data preparation pipeline so it is
+unlikely that we will make their presence optional.
+
+rot parameter respected by polygons method?
+
+2020.12.29
+
+dldoc no longer uses type="cairo" at request of CRAN.
+
 2020.6.30
 
 custom.colors argument for polygon.method, default choice of white or
