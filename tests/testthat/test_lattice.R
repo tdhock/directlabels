@@ -1,3 +1,5 @@
+library(directlabels)
+library(lattice)
 library(testthat)
 test_that("panel.superpose.dl works", {
   loci <- data.frame(

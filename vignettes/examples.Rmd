@@ -389,3 +389,58 @@ ggplot()+
   scale_fill_identity()+
   scale_color_identity()
 ```
+
+## odd qp labels for timings figure
+
+```{r}
+
+data(odd_timings, package="directlabels")
+library(ggplot2)
+gg <- ggplot()+
+  geom_line(aes(
+    N.col, median.seconds, color=fun),
+    data=odd_timings)+
+  facet_grid(. ~ captures)+
+  scale_x_log10(limits=c(10, 1e6))+
+  scale_y_log10()
+directlabels::direct.label(gg, "right.polygons")
+
+```
+ 
+TODO edit polygon.method so that the right panel labels do not cross
+-- can this be added as a constraint in the qp, or do we just need to
+re-order?
+
+## two dlgrobs 
+
+This example has two `geom_dl` with the same method, but the grobs
+need different names to render correctly
+https://github.com/tdhock/directlabels/issues/30
+
+```{r}
+data(odd_timings, package="directlabels")
+zero <- subset(odd_timings, captures==0)
+on.right <- with(zero, N.col==max(N.col))
+funs.right <- unique(zero[on.right, "fun"])
+is.right <- zero$fun %in% funs.right
+timings.right <- zero[is.right,]
+timings.left <- zero[!is.right,]
+library(ggplot2)
+gg <- ggplot()+
+  geom_line(aes(
+    N.col, median.seconds, color=fun),
+    data=zero)+
+  directlabels::geom_dl(aes(
+    N.col, median.seconds, color=fun, label=fun),
+    method="right.polygons",
+    data=timings.left)+
+  directlabels::geom_dl(aes(
+    N.col, median.seconds, color=fun, label=fun),
+    method="right.polygons",
+    data=timings.right)+
+  scale_x_log10(limits=c(10, 1e6))+
+  scale_y_log10()
+gg
+
+```
+
