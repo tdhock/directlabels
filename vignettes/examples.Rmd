@@ -392,15 +392,23 @@ ggplot()+
 
 ## odd qp labels for timings figure
 
+In the image below the strange thing in the labels is that the end of
+the pointer of `nc::capture_melt_single` is inside of the pointer for
+`cdata::unpivot_to_blocks` -- this is ok, but we could probably avoid
+this by switching the order. we should be able to detect/avoid this
+using a linear inequality constraint: bottom of label box must be
+greater than next target down, etc. But if targets are too close
+together this could lead to no feasible solution.
+
 ```{r}
 
 data(odd_timings, package="directlabels")
+odd4 <- subset(odd_timings, captures==4)
 library(ggplot2)
 gg <- ggplot()+
   geom_line(aes(
     N.col, median.seconds, color=fun),
-    data=odd_timings)+
-  facet_grid(. ~ captures)+
+    data=odd4)+
   scale_x_log10(limits=c(10, 1e6))+
   scale_y_log10()
 directlabels::direct.label(gg, "right.polygons")
