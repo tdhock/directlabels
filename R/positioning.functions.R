@@ -66,31 +66,37 @@ drawDetails.dlgrob <- function
     ##browser()
   }
   text.name <- paste0(
-    "directlabels.text.",
-    if(is.character(x$method))x$method)
+    "directlabels.text.", x$name)
   with(cm.data, grid.text(
     label,x,y,hjust=hjust,vjust=vjust,rot=rot,default.units="cm",
     gp=gp,
     name=text.name))
 }
 
+### This environment holds an integer id that will be incremented to
+### get a unique id for each dlgrob.
+dl.env <- new.env()
+dl.env$dlgrob.id <- 0L
+
 dlgrob <- function
 ### Make a grid grob that will draw direct labels.
 (data,
 ### Data frame including points to plot in native coordinates.
- method,
+  method,
 ### Positioning Method.
- debug=FALSE,
- axes2native=identity,
- ...
- ){
+  debug=FALSE,
+  axes2native=identity,
+  ...
+){
+  ## increment dlgrob.id to get a unique name because as explaine on
+  ## ?grid::gTree "Grob names need not be unique in general, but all
+  ## children of a gTree must have different names."
+  dl.env$dlgrob.id <- dl.env$dlgrob.id+1L
+  mstr <- if(is.character(method))method[1] else "NA"
+  name <- sprintf("GRID.dlgrob.%d.%s", dl.env$dlgrob.id, mstr)
   grob(data=data,method=method,debug=debug,axes2native=axes2native,
        cl="dlgrob",
-       name=if(is.character(method)){
-         sprintf("GRID.dlgrob.%s",method[1])
-       }else{
-         "GRID.dlgrob"
-       },...)
+       name=name,...)
 }
 
 direct.label <- structure(function # Direct labels for color decoding

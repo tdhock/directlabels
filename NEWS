@@ -4,6 +4,10 @@ Implement a solver for vertical.qp, to avoid depending on the compiled
 code in quadprog which I guess is not always available.
 
 Define makeContent.dlgrob instead of drawDetails.dlgrob in R-3.0?
+Grid test for text with descent inside polygon?
+use makeContent instead of drawDetails, which would make it possible
+to test rendered output using grid.force
+https://journal.r-project.org/archive/2013/RJ-2013-035/RJ-2013-035.pdf
 
 image labels: draw a grob on screen instead of assuming it is
 text. Have a toggle for drawing images and/or text. Handle both in a
@@ -26,18 +30,40 @@ Maybe remove contour plot support/examples?
 https://cloud.r-project.org/web/packages/isoband/vignettes/isoband3.html
 does much better labels.
 
-Grid test for text with descent inside polygon?
-use makeContent instead of drawDetails, which would make it possible
-to test rendered output using grid.force
-https://journal.r-project.org/archive/2013/RJ-2013-035/RJ-2013-035.pdf
-
 How to use geom_dl with stat_smooth? added vignette example based on
 https://github.com/tdhock/directlabels/issues/24
 
 Get dldoc working / web page updated with new pos methods.
 
-Get lattice transformation functions working again + tests. (Error:
-data must have a column named label for qqmath examples)
+How to figure out if user assigned aes(group)?  You can always deduce
+if a group was explicitly assigned by seeing if the group column is
+positive... The -1 is an indicator saying that everything
+automatically belongs to the same group.  group and PANEL are the two
+single columns that are enforced to always exist in the layer data and
+is used extensively during the data preparation pipeline so it is
+unlikely that we will make their presence optional.
+
+rot parameter respected by polygons method?
+
+2020.12.29
+
+fix for single ggplot with two geom_dl with same method. previously
+this would create two grobs with the same name in a single gTree,
+which is not allowed (as documented in ?gTree) and resulted in only
+the first geom_dl being drawn. Now we append a unique integer id to
+each name so that grid draws both geom_dl.
+
+fix for lattice: Get lattice transformation functions working again +
+tests. (Error: data must have a column named label for qqmath
+examples)
+
+dldoc no longer uses type="cairo" at request of CRAN.
+
+2020.6.30
+
+custom.colors argument for polygon.method, default choice of white or
+black depending on how dark the color would be if rendered as
+grayscale.
 
 2020.6.17
 

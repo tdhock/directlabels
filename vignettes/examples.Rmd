@@ -347,3 +347,108 @@ ggplot()+
     labels=c("0", "0.5", "1"))
 
 ```
+
+## white or black text on colored background
+
+The weighted method for rgb to grayscale conversion is used for the
+default text.color in polygon.method, and explained here
+https://www.tutorialspoint.com/dip/grayscale_to_rgb_conversion.htm
+
+```{r}
+m <- RColorBrewer::brewer.pal.info
+brewer.dt.list <- list()
+for(brewer.row in 1:nrow(m)){
+  brewer.name <- rownames(m)[[brewer.row]]
+  brewer.info <- m[brewer.name, ]
+  col.vec <- RColorBrewer::brewer.pal(brewer.info[, "maxcolors"], brewer.name)
+  rgb.mat <- col2rgb(col.vec)
+  hsv.mat <- rgb2hsv(rgb.mat)
+  brewer.dt.list[[brewer.name]] <- data.frame(
+    brewer.name,
+    brewer.fac=factor(brewer.name, rownames(m)),
+    brewer.row,
+    category=factor(brewer.info[, "category"], c("seq", "qual", "div")),
+    column=seq_along(col.vec),
+    color=col.vec,
+    t(rgb.mat),
+    t(hsv.mat))
+}
+brewer.dt <- do.call(rbind, brewer.dt.list)
+library(ggplot2)
+ggplot()+
+  theme_bw()+
+  theme(panel.spacing=grid::unit(0, "lines"))+
+  facet_grid(category ~ ., scales="free", space="free")+
+  geom_tile(aes(
+    factor(column), brewer.fac, fill=color),
+    data=brewer.dt)+
+  geom_text(aes(
+    factor(column), brewer.fac, label=brewer.fac, color=ifelse(
+      ((0.3 * red) + (0.59 * green) + (0.11 * blue))/255 < 0.5, "white", "black")),
+    data=brewer.dt)+
+  scale_fill_identity()+
+  scale_color_identity()
+```
+
+## odd qp labels for timings figure
+
+In the image below the strange thing in the labels is that the end of
+the pointer of `nc::capture_melt_single` is inside of the pointer for
+`cdata::unpivot_to_blocks` -- this is ok, but we could probably avoid
+this by switching the order. we should be able to detect/avoid this
+using a linear inequality constraint: bottom of label box must be
+greater than next target down, etc. But if targets are too close
+together this could lead to no feasible solution.
+
+```{r}
+
+data(odd_timings, package="directlabels")
+odd4 <- subset(odd_timings, captures==4)
+library(ggplot2)
+gg <- ggplot()+
+  geom_line(aes(
+    N.col, median.seconds, color=fun),
+    data=odd4)+
+  scale_x_log10(limits=c(10, 1e6))+
+  scale_y_log10()
+directlabels::direct.label(gg, "right.polygons")
+
+```
+ 
+TODO edit polygon.method so that the right panel labels do not cross
+-- can this be added as a constraint in the qp, or do we just need to
+re-order?
+
+## two dlgrobs 
+
+This example has two `geom_dl` with the same method, but the grobs
+need different names to render correctly
+https://github.com/tdhock/directlabels/issues/30
+
+```{r}
+data(odd_timings, package="directlabels")
+zero <- subset(odd_timings, captures==0)
+on.right <- with(zero, N.col==max(N.col))
+funs.right <- unique(zero[on.right, "fun"])
+is.right <- zero$fun %in% funs.right
+timings.right <- zero[is.right,]
+timings.left <- zero[!is.right,]
+library(ggplot2)
+gg <- ggplot()+
+  geom_line(aes(
+    N.col, median.seconds, color=fun),
+    data=zero)+
+  directlabels::geom_dl(aes(
+    N.col, median.seconds, color=fun, label=fun),
+    method="right.polygons",
+    data=timings.left)+
+  directlabels::geom_dl(aes(
+    N.col, median.seconds, color=fun, label=fun),
+    method="right.polygons",
+    data=timings.right)+
+  scale_x_log10(limits=c(10, 1e6))+
+  scale_y_log10()
+gg
+
+```
+

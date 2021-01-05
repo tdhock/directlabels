@@ -390,9 +390,23 @@ polygon.method <- function
 ### Character string indicating what side of the plot to label.
   offset.cm=0.1,
 ### Offset from the polygon to the most extreme data point.
-  padding.cm=0.05
+  padding.cm=0.05,
 ### Padding inside the polygon.
+  custom.colors=NULL
+### Positioning method applied just before draw.polygons, can set
+### box.color and text.color for custom colors.
 ){
+  if(is.null(custom.colors)){
+    custom.colors <- gapply.fun({
+      rgb.mat <- col2rgb(d[["colour"]])
+      d$text.color <- with(data.frame(t(rgb.mat)), {
+        ifelse(
+        (0.3 * red) + (0.59 * green) + (0.11 * blue)/255 < 0.5,
+        "white", "black")
+      })
+      d
+    })
+  }
   opposite.side <- c(
     left="right",
     right="left",
@@ -452,6 +466,7 @@ polygon.method <- function
       make.tiebreaker(min.or.max.xy, qp.target),
       limits.fun),
     "calc.borders",
+    custom.colors,
     "draw.polygons")
 }
 
@@ -810,6 +825,7 @@ gapply <- function
     res <- apply.method(method,d,columns.to.check=c("x","y"),...)
     if(nrow(res)){
       res[[groups]] <- d[[groups]][1]
+      res[["label"]] <- d[["label"]][1]
     }
     res
   }
