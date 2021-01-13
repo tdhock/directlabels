@@ -45,6 +45,10 @@ unlikely that we will make their presence optional.
 
 rot parameter respected by polygons method?
 
+2021.1.13
+
+Remove bitmapType cairo in examples vignette.
+
 2020.12.29
 
 fix for single ggplot with two geom_dl with same method. previously
