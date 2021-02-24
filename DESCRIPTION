@@ -1,7 +1,7 @@
 Package: directlabels
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Author: Toby Dylan Hocking
-Version: 2021.1.13
+Version: 2021.2.24
 BugReports: https://github.com/tdhock/directlabels/issues
 License: GPL-3
 Title: Direct Labels for Multicolor Plots

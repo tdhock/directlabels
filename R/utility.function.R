@@ -400,9 +400,8 @@ polygon.method <- function
     custom.colors <- gapply.fun({
       rgb.mat <- col2rgb(d[["colour"]])
       d$text.color <- with(data.frame(t(rgb.mat)), {
-        ifelse(
-        (0.3 * red) + (0.59 * green) + (0.11 * blue)/255 < 0.5,
-        "white", "black")
+        gray <- 0.3*red + 0.59*green + 0.11*blue
+        ifelse(gray/255 < 0.5, "white", "black")
       })
       d
     })

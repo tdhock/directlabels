@@ -45,6 +45,10 @@ unlikely that we will make their presence optional.
 
 rot parameter respected by polygons method?
 
+2021.2.24
+
+rgb to grayscale formula corrected in polygon.method().
+
 2021.1.13
 
 Remove bitmapType cairo in examples vignette.
