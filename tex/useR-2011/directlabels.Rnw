@@ -1,0 +1,91 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsfonts, amsmath, hanging, hyperref, natbib, parskip, times}
+\usepackage[pdftex]{graphicx}
+\hypersetup{
+  colorlinks,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+\let\section=\subsubsection
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}} 
+\let\proglang=\textit
+\let\code=\texttt 
+\renewcommand{\title}[1]{\begin{center}{\bf \LARGE #1}\end{center}}
+\newcommand{\affiliations}{\footnotesize}
+\newcommand{\keywords}{\paragraph{Keywords:}}
+
+\setlength{\topmargin}{-15mm}
+\setlength{\oddsidemargin}{-2mm}
+\setlength{\textwidth}{165mm}
+\setlength{\textheight}{250mm}
+
+\begin{document}
+\pagestyle{empty}
+
+\title{Adding direct labels to plots}
+
+\begin{center}
+  {\bf Toby Dylan Hocking$^{1,2,^\star}$}
+\end{center}
+
+\begin{affiliations}
+  1. INRIA Sierra team for machine learning research,
+  23 avenue d'Italie, Paris, France\\[-2pt]
+  2. Institut Curie/INSERM U900/Mines ParisTech cancer bioinformatics group,
+  26 rue d'Ulm, Paris, France\\[-2pt]
+  $^\star$Contact author:
+  \href{mailto:toby.hocking@inria.fr}{toby.hocking@inria.fr}
+\end{affiliations}
+
+\keywords Visualization, graphics, legends, direct labels
+
+\vskip 0.8cm
+
+High-level plotting systems such as \pkg{lattice} and \pkg{ggplot2}
+provide automatic legends for decoding color labels in \proglang{R}
+plots \citep{lattice,ggplot2}. However, with many colors, legends
+become difficult to read, and direct labels are a more suitable
+decoding method:
+
+<<echo=FALSE>>=
+options(width=70)
+@ 
+
+<<fig=TRUE,height=4,width=8,center=TRUE>>=
+library(lattice)
+data(mpg,package="ggplot2")
+p <- xyplot(jitter(cty)~jitter(hwy),mpg,groups=class,
+            main="City and highway fuel efficiency depends on car class")
+##p2 <- update(p,main="City and highway fuel efficiency depends on car class")
+library(directlabels)
+print(direct.label(p))
+@ 
+
+Direct labels are inherently more intuitive to decode than legends,
+since they are placed near the related data. However, direct labels
+are not widely used because they are often much more difficult to
+implement than legends, and their implementation varies between
+plotting systems.
+
+The \pkg{directlabels} package solves these problems by providing a
+simple, unified interface for direct labeling in \proglang{R}. Given a
+\pkg{lattice} or \pkg{ggplot2} plot saved in the variable \texttt{p},
+direct labels can be added by calling \texttt{direct.label(p,f)} where
+\texttt{f} is a Positioning Method that describes where labels
+should be placed as a function of the data. The power of this system
+lies in the fact that you can write your own Positioning Methods,
+and that any Positioning Method can be used with any plot. So once
+you have a library of Positioning Methods, direct labeling becomes
+trivial and so can more easily used as a visualization technique in
+everyday statistical practice.
+
+% The
+% \pkg{directlabels} package comes with several Positioning Methods for
+% different plot types, and a system of intelligent defaults so that
+% often you don't even need to specify the Positioning Method.
+
+\bibliographystyle{chicago}
+\bibliography{refs}
+
+\end{document}

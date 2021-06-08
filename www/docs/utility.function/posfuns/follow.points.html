@@ -1,0 +1,87 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - follow.points</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - follow.points</h1>
+
+<p>Draws a line between each center and every point, then follows the
+line out far enough to give a box outside the cloud. Out of all
+the boxes constructed in this way that do not contain any points,
+take the one which has the smallest distance to the center. </p>
+
+<pre>
+follow.points &lt;- function
+### Draws a line between each center and every point, then follows the
+### line out far enough to give a box outside the cloud. Out of all
+### the boxes constructed in this way that do not contain any points,
+### take the one which has the smallest distance to the center. 
+(d,debug=FALSE,...){
+  allm &lt;- <a href="../../utility.function/posfuns/apply.method.html">apply.method</a>(list("<a href="../../utility.function/posfuns/dl.jitter.html">dl.jitter</a>","<a href="../../utility.function/posfuns/big.boxes.html">big.boxes</a>"),d)
+  if(debug)<a href="../../utility.function/posfuns/draw.rects.html">draw.rects</a>(allm)
+  labtab &lt;- data.frame()
+  for(g in levels(d$groups)){
+    x &lt;- d
+    m &lt;- subset(allm,groups==g)
+    x$a &lt;- x$y - m$y
+    x$b &lt;- x$x - m$x
+    x$h &lt;- sqrt(x$a^2+x$b^2) ## hypotenuse of triangle, not box height!
+    x$x &lt;- x$x + m$w/2 * x$b/x$h *1.01 ## b/h = cos(theta)
+    x$y &lt;- x$y + m$h/2 * x$a/x$h *1.01 ## a/h = sin(theta)
+    x$dist &lt;- (x$x-m$x)^2+(x$y-m$y)^2
+    x &lt;- transform(x,
+                   left=x-m$w/2,right=x+m$w/2,
+                   top=y+m$h/2,bottom=y-m$h/2)
+    x$points &lt;- <a href="../../utility.function/posfuns/inside.html">inside</a>(x,d)
+    ## consider only subset of boxes that contain no points
+    x &lt;- subset(x,points==0)
+    ## take the box with the minimal distance
+    x &lt;- subset(x,dist==min(dist))[1,]
+    labtab &lt;- rbind(labtab,transform(x,x=x,y=y,groups=g))
+    ## add the box's 4 points to the list of points
+    newpoints &lt;- d[1:4,]
+    newpoints$x &lt;- c(x$left,x$right,x$right,x$left)
+    newpoints$groups &lt;- g
+    newpoints$y &lt;- c(x$top,x$top,x$bottom,x$bottom)
+    d &lt;- rbind(d,newpoints)
+  }
+  labtab
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please contact <a href="http://cbio.ensmp.fr/~thocking/">Toby
+Dylan Hocking</a> if you are using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a> or have ideas to
+contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2.10
+(svn revision 636)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

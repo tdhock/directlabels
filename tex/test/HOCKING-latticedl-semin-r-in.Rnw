@@ -1,0 +1,123 @@
+% -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
+\documentclass[9pt]{beamer}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage[nogin]{Sweave}
+\title{Visualizing multivariate data using lattice and direct labels\\
+\url{http://directlabels.r-forge.r-project.org}}
+\author{Toby Dylan Hocking \\ toby.hocking AT inria.fr}
+\date{15 October 2009}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\newcommand{\framet}[2]{\frame[containsverbatim]{
+\begin{itemize}
+\frametitle{#1}{#2}
+\end{itemize}
+}}
+
+\begin{document}
+\setkeys{Gin}{width=\textwidth}
+\frame{\titlepage}
+
+\section{The lattice system}
+
+\framet{Brief history of lattice}{
+  \item Bill Cleveland, \emph{Visualizing Data} (1993).
+  \item Bill Cleveland, Rick Becker, Bell Labs, 1990s: trellis
+    graphics system for S: \url{http://cm.bell-labs.com/cm/ms/departments/sia/project/trellis/}
+  \item Deepayan Sarkar, 2000s: the lattice package for R.
+  \item Deepayan Sarkar (2008) Lattice: Multivariate Data Visualization
+    with R, Springer.
+}
+
+\framet{Installing the required packages}{
+\item I used R 2.9.2 for the following examples.
+\item lattice is preinstalled with R.
+\item \texttt{library(lattice)}
+\item \texttt{install.packages(c("latticeExtra","latticedl"))}
+\item \texttt{library(latticeExtra)}
+\item \texttt{library(latticedl)}
+}
+
+SWEAVE(LATTICE)
+
+\section{Adding direct labels using the latticedl package}
+
+\framet{Why use direct labels instead of legends?}{
+\item Edward Tufte, professor emeritus of statistics at Yale.
+\item The Visual Display of Quantitative Information (1983).
+\includegraphics{TUFTE.jpg}
+\item One of his points: legends make it harder to decode a statistical graphic.
+\item Use direct labels whenever possible.
+}
+
+\frame[containsverbatim]{\frametitle{How to plot direct labels in R?}
+\begin{itemize}
+\item Lattice + latticedl: direct.label(xyplot(y$\sim$x,data,groups=z),method=f)
+\item Positions of direct labels can be specified as a function of
+      the data:\\
+\begin{Schunk}
+\begin{Sinput}
+f <- function(d,...){
+  # d is a data frame with columns x,y,groups of the data points
+  #... analyze the points and return the label positions:
+  return(data.frame(x=a,y=b,groups=c))
+}
+\end{Sinput}
+\begin{Soutput}
+        groups    x y hjust vjust rot
+1   Rural Male 66.0 5     0   0.5  30
+2 Rural Female 54.3 5     0   0.5  30
+3   Urban Male 71.1 5     0   0.5  30
+4 Urban Female 50.0 5     0   0.5  30
+\end{Soutput}
+\includegraphics[width=0.3\textwidth]{method}
+\end{Schunk}
+    \item latticedl does the labeling for you, keeping track of the
+      correct colors.
+    \item Common plot types have default direct labeling methods.
+\end{itemize}
+}
+
+SWEAVE(LATTICEDL)
+
+\framet{References for learning more about lattice and latticedl}{
+\item First load the libraries in R
+  \begin{itemize}
+  \item library(lattice)
+  \item library(latticeExtra)
+  \item library(latticedl)
+\end{itemize}
+\item Then you can look at the interactive help pages
+  \begin{description}
+  \item[Overview] ?Lattice
+  \item[Customizing plots] ?xyplot
+  \item[Included panel functions] ?panel.functions, ?llines
+  \item[Multiple plots per page] ?plot.trellis, ?c.trellis
+  \item[Direct labeling] ?direct.label
+  \end{description}
+  \item Deepayan Sarkar (2008) Lattice: Multivariate Data Visualization
+    with R, Springer.
+  \item R code from the slides available on the web: \\
+    \url{http://directlabels.r-forge.r-project.org}
+  \item Email me directly: toby.hocking AT inria.fr
+}
+
+\end{document}
+

@@ -1,0 +1,198 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - projectionSeconds</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - lineplot - example -
+projectionSeconds</h1>
+
+<pre>
+data(projectionSeconds, package="directlabels")
+p &lt;- ggplot(projectionSeconds, aes(vector.length/1e6))+
+  geom_ribbon(aes(ymin=min, ymax=max,
+                  fill=method, group=method), alpha=1/2)+
+  geom_line(aes(y=mean, group=method, colour=method))+
+  ggtitle("Projection Time against Vector Length (Sparsity = 10%)")+
+  guides(fill="none")+
+  ylab("Runtime (s)")
+</pre>
+
+<table>
+<tr>
+  <td><img alt="angled.boxes" src="../../lineplot/projectionSeconds.angled.boxes.png" /></td>
+  <td><p>Draw a box with the label inside, at the point furthest away from
+the plot border and any other curve.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/angled.boxes.html">angled.boxes</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="bottom.polygons" src="../../lineplot/projectionSeconds.bottom.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the bottom point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/bottom.polygons.html">bottom.polygons</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.bumpup" src="../../lineplot/projectionSeconds.first.bumpup.png" /></td>
+  <td><p>Label first points, bumping labels up if they collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.bumpup.html">first.bumpup</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.points" src="../../lineplot/projectionSeconds.first.points.png" /></td>
+  <td><p>Positioning Method for the first of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.points.html">first.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.polygons" src="../../lineplot/projectionSeconds.first.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the first point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.polygons.html">first.polygons</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.qp" src="../../lineplot/projectionSeconds.first.qp.png" /></td>
+  <td><p>Label first points from QP solver that ensures labels do not collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.qp.html">first.qp</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="lasso.labels" src="../../lineplot/projectionSeconds.lasso.labels.png" /></td>
+  <td><p>Label points at the zero before the first nonzero y value.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/lasso.labels.html">lasso.labels</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.bumpup" src="../../lineplot/projectionSeconds.last.bumpup.png" /></td>
+  <td><p>Label last points, bumping labels up if they collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.bumpup.html">last.bumpup</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.points" src="../../lineplot/projectionSeconds.last.points.png" /></td>
+  <td><p>Positioning Method for the last of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.points.html">last.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.polygons" src="../../lineplot/projectionSeconds.last.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the last point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.polygons.html">last.polygons</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.qp" src="../../lineplot/projectionSeconds.last.qp.png" /></td>
+  <td><p>Label last points from QP solver that ensures labels do not collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.qp.html">last.qp</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="left.points" src="../../lineplot/projectionSeconds.left.points.png" /></td>
+  <td><p>Positioning Method for the first of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/left.points.html">left.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="left.polygons" src="../../lineplot/projectionSeconds.left.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the first point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/left.polygons.html">left.polygons</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="lines2" src="../../lineplot/projectionSeconds.lines2.png" /></td>
+  <td><p>Positioning Method for 2 groups of longitudinal data. One curve
+is on top of the other one (on average), so we label the top one
+at its maximal point, and the bottom one at its minimal
+point. Vertical justification is chosen to minimize collisions
+with the other line. This may not work so well for data with high
+variability, but then again lineplots may not be the best for
+these data either.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/lines2.html">lines2</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="maxvar.points" src="../../lineplot/projectionSeconds.maxvar.points.png" /></td>
+  <td><p>Do first or last, whichever has points most spread out.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/maxvar.points.html">maxvar.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="maxvar.qp" src="../../lineplot/projectionSeconds.maxvar.qp.png" /></td>
+  <td><p>Label first or last points, whichever are more spread out, and use
+a QP solver to make sure the labels do not collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/maxvar.qp.html">maxvar.qp</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="right.points" src="../../lineplot/projectionSeconds.right.points.png" /></td>
+  <td><p>Positioning Method for the last of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/right.points.html">right.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="right.polygons" src="../../lineplot/projectionSeconds.right.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the last point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/right.polygons.html">right.polygons</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="top.polygons" src="../../lineplot/projectionSeconds.top.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the top point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/top.polygons.html">top.polygons</a>")
+  </pre></td>
+</tr>
+</table>
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2021.2.24
+(svn revision )
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

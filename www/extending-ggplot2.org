@@ -1,0 +1,51 @@
+Some notes on extending ggplot2 using custom grid grobs
+
+For the directlabels package, since there is not a lot of documentation on extending ggplot2, I had to look through the code quite a bit to understand how it works. This document tries to summarize a few things I learned in this process that can be applicable to writing geoms in the future.
+
+First, download the most recent version of the ggplot2 source from github:
+
+#+BEGIN_SRC shell-script
+cd
+mkdir R
+cd R
+git clone git://github.com/hadley/ggplot2.git
+#+END_SRC
+
+Then you can look at how the geoms are implemented, in =ggplot2/R/geom-*.r=. For directlabels, I basically modified GeomText in =geom-text.r=.
+
+The most important method is =draw= (from [[https://r-forge.r-project.org/scm/viewvc.php/pkg/directlabels/R/ggplot2.R?view=markup&root=directlabels][directlabels/R/ggplot2.R]]):
+
+#+BEGIN_SRC R
+GeomDirectLabel <- proto(Geom, {
+  draw <- function(., data, scales, coordinates,
+                   method=NULL,debug=FALSE, ...) {
+    data$rot <- as.integer(data$angle)
+    data$groups <- data$label
+    dlgrob(subset(coordinates$transform(data, scales),select=-group),
+           method,debug=debug,
+           axes2native=function(data){
+             coordinates$transform(data, scales)
+           })
+  }
+})
+#+END_SRC
+
+- The ggplot2 system works by calling =draw= for the data in every facet when you =print= a ggplot object. The =draw= function must return some grid grobs that will be plotted later.
+
+- Standard grobs can be created using functions like =textGrob=, =rectGrob=, or =linesGrob=. 
+
+- I made a custom grob with ~grob(cl="dlgrob",...)~ inside the =dlgrob= function. For making custom grobs, all you have to know is that a grob is basically a list, and you can stick whatever you want inside that list using named arguments to =grob= that will be intercepted by the =...= argument and stored in that list. 
+
+- When you call =grid.draw= on a grob, grid will plot the grob in the current viewport, calling =drawDetails= on the grob for doing the actual plotting.
+
+- The directlabels package calculates the size of text labels before they are drawn by exploiting the fact that =drawDetails= is called in the plotting viewport. I wrote a =drawDetails.dlgrob= function that is called to plot dlgrobs.
+
+- One tricky part about plotting using ggplot2 is that the native plotting coordinates do not match the coordinates of the data, or the axes labels. So you have to make sure to call =coordinates$transform(data,scales)= to convert axes units to native units, that you can plot in grobs as ~unit(x,"native")~.
+
+- If you define more arguments to =draw=, i.e. =method= and =debug=
+  above, these arguments can be specified when you instantiate the
+  geom. For example,
+  ~GeomDirectLabel$new(aes(Petal.Length,Sepal.Length,label=Species),method=smart.grid)~
+  means that inside =draw=,
+  ~data=data.frame(x=Petal.Length,y=Sepal.Length,label=Species)~ and
+  ~method=smart.grid~

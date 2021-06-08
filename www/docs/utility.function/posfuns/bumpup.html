@@ -1,0 +1,84 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - bumpup</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - bumpup</h1>
+
+<p>Sequentially bump labels up, starting from the bottom, if they
+collide with the label underneath.</p>
+
+<pre>
+bumpup &lt;- function(d,...){
+  d &lt;- <a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>(d)[order(d$y),]
+  "%between%" &lt;- function(v,lims)lims[1]&lt;v&amp;v&lt;lims[2]
+  obox &lt;- function(x,y){
+    tocheck &lt;- with(x,c(left,(right-left)/2+left,right))
+    tocheck %between% with(y,c(left,right))
+  }
+  for(i in 2:nrow(d)){
+    dif &lt;- d$bottom[i]-d$top[i-1]
+    ## here we are trying to test if box i can possibly collide with
+    ## the box below it! Originally we checked if the bottom points of
+    ## this box fall in the box below it, but this causes problems
+    ## since we are reassigning box positions. If all boxes start at
+    ## the same place, 2 will get moved up, 3 will not since its
+    ## bottom points are no longer <a href="../../utility.function/posfuns/inside.html">inside</a> box 2. Solution: Look at box
+    ## left and right limits and see if they collide!
+
+    ## GOTCHA: If all the boxes are exactly the same size, on top of
+    ## each other, then if we only examine left and right points of
+    ## each box, none of the boxes will be detected as
+    ## overlapping. One way to fix this is change &gt; to &gt;= in %between%
+    ## but this is a bad idea since you can have boxes right next to
+    ## each other that we don't want to move, that would be detected
+    ## as overlapping. Solution: use the midpoint of the box as well!
+    overlap &lt;- c(obox(d[i,],d[i-1,]),obox(d[i-1,],d[i,]))
+    if(dif&lt;0&amp;&amp;any(overlap)){
+      d$bottom[i] &lt;- d$bottom[i]-dif
+      d$top[i] &lt;- d$top[i]-dif
+      d$y[i] &lt;- d$y[i]-dif
+    }
+  }
+  d
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>
