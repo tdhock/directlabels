@@ -1,0 +1,82 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - loci</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - densityplot - example -
+loci</h1>
+
+<pre>
+loci &lt;- data.frame(ppp=c(rbeta(800,10,10),rbeta(100,0.15,1),rbeta(100,1,0.15)),
+                   type=factor(c(rep("NEU",800),rep("POS",100),rep("BAL",100))))
+library(ggplot2)
+p &lt;- qplot(ppp,data=loci,colour=type,geom="density")
+</pre>
+
+<table>
+<tr>
+  <td><img alt="bottom.points" src="../../densityplot/loci.bottom.points.png" /></td>
+  <td><p>Positioning Method for the bottom of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/bottom.points.html">bottom.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="top.bumptwice" src="../../densityplot/loci.top.bumptwice.png" /></td>
+  <td><p>Label the tops, bump labels up to avoid other labels, then to the
+side to avoid collisions with points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/top.bumptwice.html">top.bumptwice</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="top.bumpup" src="../../densityplot/loci.top.bumpup.png" /></td>
+  <td><p>Label the tops, but bump labels up to avoid collisions.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/top.bumpup.html">top.bumpup</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="top.points" src="../../densityplot/loci.top.points.png" /></td>
+  <td><p>Positioning Method for the top of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/top.points.html">top.points</a>")
+  </pre></td>
+</tr>
+</table>
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2021.2.24
+(svn revision )
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

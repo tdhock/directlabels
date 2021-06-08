@@ -1,0 +1,230 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - qp.labels</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - qp.labels</h1>
+
+<p>Use a QP solver to find the best places to put the points on a
+line, subject to the constraint that they should not overlap.</p>
+
+<pre>
+qp.labels &lt;- structure(function# Make a Positioning Method for non-overlapping lineplot labels
+### Use a QP solver to find the best places to put the points on a
+### line, subject to the constraint that they should not overlap.
+(target.var,
+### Variable name of the label target.
+ lower.var,
+### Variable name of the lower limit of each label bounding box.
+ upper.var,
+### Variable name of the upper limit of each label bounding box.
+ order.labels=function(d)order(d[,target.var]),
+### Function that takes the data.frame of labels and returns an
+### ordering, like from the order function. That ordering will be used
+### to reorder the rows. This is useful to e.g. break ties when two
+### groups have exactly the same value at the endpoint near the label.
+ limits=NULL
+### Function that takes the data.frame of labels an returns a numeric
+### vector of length 2. If finite, these values will be used to add
+### constraints to the QP: limits[1] is the lower limit for the first
+### label's lower.var, and limits[2] is the upper limit for the last
+### labels's upper.var. Or NULL for no limits.
+ ){
+  ## Reality checks. These also have the side effect of forcing
+  ## evaluation of all the arguments in the returned closure.
+  stopifnot(is.function(order.labels))
+  essential &lt;- list(target.var,upper.var,lower.var)
+  for(v in essential){
+    stopifnot(is.character(v))
+    stopifnot(length(v)==1)
+  }
+  stopifnot(is.function(limits)||is.null(limits))
+
+  function(d,...){
+
+    ## If there is only 1 label, there is no collision detection to
+    ## do, so just return it.
+    if(nrow(d)==1)return(d)
+
+    ## Reality checks.
+    for(v in essential){
+      if(! v %in% names(d)){
+        stop("need to have calculated ",v)
+      }
+    }
+
+    ## sorts data so that target_1 &lt;= target_2 &lt;= ... &lt;= target_n.
+    d &lt;- d[order.labels(d),]
+
+    ## check limits to see if there is enough space, given specified
+    ## cex.
+    if(is.function(limits)){
+      l &lt;- limits(d)
+      stopifnot(is.numeric(l))
+      stopifnot(length(l)==2)
+      stopifnot(l[1]&lt;l[2])
+
+      h.available &lt;- l[2] - l[1]
+      h &lt;- d[,upper.var]-d[,lower.var]
+      h.occupied &lt;- sum(h)
+      if(h.occupied &gt; h.available){ ## then the feasible set is empty.
+        ## total hack:
+        cex &lt;- h.available / h.occupied  * 0.9
+        if("cex" %in% names(d)){
+          d$cex &lt;- d$cex * cex
+        }else{
+          d$cex &lt;- cex
+        }
+        d &lt;- <a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>(d)
+      }
+    }
+    
+    ## These are the standard form matrices described in the
+    ## directlabels poster.
+    target &lt;- d[,target.var]
+    k &lt;- nrow(d)
+    D &lt;- diag(rep(1,k))
+    Ik &lt;- diag(rep(1,k-1))
+    A &lt;- rbind(0,Ik)-rbind(Ik,0)
+    y.up &lt;- d[,upper.var]
+    y.lo &lt;- d[,lower.var]
+    b0 &lt;- (y.up-target)[-k] + (target-y.lo)[-1]
+
+    ## limit constraints.
+    if(is.function(limits)){
+      if(is.finite(l[1])){
+        c.vec &lt;- rep(0,k)
+        c.vec[1] &lt;- 1
+        A &lt;- cbind(A,c.vec)
+        b0 &lt;- c(b0,l[1]+target[1]-y.lo[1])
+      }
+      if(is.finite(l[2])){
+        c.vec &lt;- rep(0,k)
+        c.vec[k] &lt;- -1
+        A &lt;- cbind(A,c.vec)
+        b0 &lt;- c(b0,y.up[k]-target[k]-l[2])
+      }
+    }
+
+    ##print(A)
+    ##print(b0)
+    ##browser()
+    sol &lt;- solve.QP(D,target,A,b0)
+    d[,target.var] &lt;- sol$solution
+    d
+  }
+### Positioning Method that adjusts target.var so there is no overlap
+### of the label bounding boxes, as specified by upper.var and
+### lower.var.
+},ex=function(){
+  SegCost$error &lt;- factor(SegCost$error,c("FP","FN","E","I"))
+  library(ggplot2)
+  fp.fn.colors &lt;- c(FP="skyblue",FN="#E41A1C",I="black",E="black")
+  fp.fn.sizes &lt;- c(FP=2.5,FN=2.5,I=1,E=1)
+  fp.fn.linetypes &lt;- c(FP="solid",FN="solid",I="dashed",E="solid")
+  err.df &lt;- subset(SegCost,type!="Signal")
+  if(!"theme"%in%ls("package:ggplot2")){
+    theme &lt;- opts
+  }
+kplot &lt;- ggplot(err.df,aes(segments,cost))+
+  geom_line(aes(colour=error,size=error,linetype=error))+
+  facet_grid(type~bases.per.probe)+
+  scale_linetype_manual(values=fp.fn.linetypes)+
+  scale_colour_manual(values=fp.fn.colors)+
+  scale_size_manual(values=fp.fn.sizes)+
+  scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
+  theme_bw()+theme(panel.margin=unit(0,"lines"))
+
+  ## The usual ggplot without direct labels.
+  print(kplot)
+
+  ## Get rid of legend for direct labels.
+  no.leg &lt;- kplot+guides(colour="none",linetype="none",size="none")
+
+  ## Default direct labels.
+  direct.label(no.leg)
+
+  ## Explore several options for tiebreaking and limits. First let's
+  ## make a qp.labels Positioning Method that does not tiebreak.
+  no.tiebreak &lt;- list("<a href="../../lineplot/posfuns/first.points.html">first.points</a>",
+                      "<a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>",
+                      qp.labels("y","bottom","top"))
+  direct.label(no.leg, no.tiebreak)
+
+  ## Look at the weird labels in the upper left panel. The E curve is
+  ## above the FN curve, but the labels are the opposite! This is
+  ## because they have the same y value on the first points, which are
+  ## the targets for qp.labels. We need to tiebreak.
+  qp.break &lt;- qp.labels("y","bottom","top",<a href="../../utility.function/posfuns/make.tiebreaker.html">make.tiebreaker</a>("x","y"))
+  tiebreak &lt;- list("<a href="../../lineplot/posfuns/first.points.html">first.points</a>",
+                   "<a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>",
+                   "qp.break")
+  direct.label(no.leg, tiebreak)
+
+  ## Enlarge the text size and spacing.
+  tiebreak.big &lt;- list("<a href="../../lineplot/posfuns/first.points.html">first.points</a>",
+                       cex=2,
+                       "<a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>",
+                       <a href="../../utility.function/posfuns/dl.trans.html">dl.trans</a>(h=1.25*h),
+                       "<a href="../../utility.function/posfuns/calc.borders.html">calc.borders</a>",
+                       "qp.break")
+  direct.label(no.leg, tiebreak.big)
+
+  ## Even on my big monitor, the FP runs off the bottom of the screen
+  ## in the top panels. To avoid that you can specify a limits
+  ## function.
+
+  ## Below, the <a href="../../utility.function/posfuns/ylimits.html">ylimits</a> function uses the limits of each panel, so
+  ## labels appear <a href="../../utility.function/posfuns/inside.html">inside</a> the plot region. Also, if you resize your
+  ## window so that it is small, you can see that the text size of the
+  ## labels is decreased until they all fit in the plotting region.
+  qp.limited &lt;-  qp.labels("y","bottom","top",<a href="../../utility.function/posfuns/make.tiebreaker.html">make.tiebreaker</a>("x","y"),<a href="../../utility.function/posfuns/ylimits.html">ylimits</a>)
+  tiebreak.lim &lt;- list("<a href="../../lineplot/posfuns/first.points.html">first.points</a>",
+                       cex=2,
+                       "<a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>",
+                       <a href="../../utility.function/posfuns/dl.trans.html">dl.trans</a>(h=1.25*h),
+                       "<a href="../../utility.function/posfuns/calc.borders.html">calc.borders</a>",
+                       "qp.limited")
+  direct.label(no.leg, tiebreak.lim)
+
+})
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

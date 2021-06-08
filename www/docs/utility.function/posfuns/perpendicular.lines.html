@@ -1,0 +1,95 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - perpendicular.lines</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - perpendicular.lines</h1>
+
+<p>Draw a line between the centers of each cluster, then draw a
+perpendicular line for each cluster that goes through its
+center. For each cluster, return the point the lies furthest out
+along this line.</p>
+
+<pre>
+perpendicular.lines &lt;- function
+### Draw a line between the centers of each cluster, then draw a
+### perpendicular line for each cluster that goes through its
+### center. For each cluster, return the point the lies furthest out
+### along this line.
+(d,
+### Data frame with groups x y.
+ debug=FALSE,
+### If TRUE will draw points at the center of each cluster and some
+### lines that show how the points returned were chosen.
+ ...
+### ignored.
+ ){
+  if(length(unique(d$groups))==1)return(<a href="../../utility.function/posfuns/extreme.points.html">extreme.points</a>(d))
+  means &lt;- with(<a href="../../utility.function/posfuns/get.means.html">get.means</a>(d),data.frame(mx=x,my=y,groups))
+  big &lt;- merge(d,means,by="groups")
+  fit &lt;- lm(my~mx,means)
+  b &lt;- coef(fit)[1]
+  m &lt;- coef(fit)[2]
+  big2 &lt;- transform(big,x1=(mx+x+(my-y)*m)/2)
+  big3 &lt;- transform(big2,y1=m*(x1-x)+y)
+  big4 &lt;- transform(big3,
+                    d=sqrt((x-x1)^2+(y-y1)^2),
+                    dm=sqrt((x-mx)^2+(y-my)^2))
+  big5 &lt;- transform(big4,ratio=d/dm)
+  winners &lt;- <a href="../../utility.function/posfuns/gapply.html">gapply</a>(big5,function(d,...)d[which.min(d$ratio),])
+  ## gives back a function of a line that goes through the designated center
+  f &lt;- function(v)function(x){
+    r &lt;- means[means$groups==v,]
+    -1/m*(x-r$mx)+r$my
+  }
+  if(debug){
+    ## myline draws a line over the range of the data for a given fun F
+    myline &lt;- function(F)
+      grid.lines(range(d$x),F(range(d$x)),default.units="cm")
+    ## Then draw a line between these means
+    myline(function(x)m*x+b)
+    ## Then draw perpendiculars that go through each center
+    for(v in means$groups)myline(f(v))
+  }
+  winners[,c("x","y","groups")]
+### Data frame with groups x y, giving the point for each cluster
+### which is the furthest out along the line drawn through its center.
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please contact <a href="http://cbio.ensmp.fr/~thocking/">Toby
+Dylan Hocking</a> if you are using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a> or have ideas to
+contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2.10
+(svn revision 636)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

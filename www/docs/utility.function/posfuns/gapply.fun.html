@@ -1,0 +1,71 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - gapply.fun</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - gapply.fun</h1>
+
+<p>Makes a function you can use to specify the location of each group
+independently.</p>
+
+<pre>
+gapply.fun &lt;- structure(function # Direct label groups independently
+### Makes a function you can use to specify the location of each group
+### independently.
+(expr
+### Expression that takes a subset of the d data frame, with data from
+### only a single group, and returns the direct label position.
+ ){
+  foo &lt;- substitute(expr)
+  f &lt;- function(d,...)eval(foo)
+  src &lt;- paste("gapply.fun(",paste(deparse(foo),collapse="n"),")",sep="")
+  pf &lt;- structure(function(d,...)<a href="../../utility.function/posfuns/gapply.html">gapply</a>(d,f,...),"source"=src)
+  pf
+### A Positioning Function.
+},ex=function(){
+  complicated &lt;- list(<a href="../../utility.function/posfuns/dl.trans.html">dl.trans</a>(x=x+10),
+                      gapply.fun(d[-2,]),
+                      rot=c(30,180))
+  library(lattice)
+  direct.label(dotplot(VADeaths,type="o"),complicated,TRUE)
+})
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

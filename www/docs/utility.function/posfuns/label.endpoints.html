@@ -1,0 +1,80 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - label.endpoints</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - label.endpoints</h1>
+
+<p>Make a Positioning Method that labels a certain x value.</p>
+
+<pre>
+label.endpoints &lt;- function
+### Make a Positioning Method that labels a certain x value.
+(FUN,
+### FUN(d$x) should return an index of which point to label. for
+### example you can use which.min or which.max.
+ HJUST
+### hjust of the labels.
+ ){
+  stopifnot(is.function(FUN))
+  stopifnot(length(HJUST)==1)
+  stopifnot(is.numeric(HJUST))
+  stopifnot(is.finite(HJUST))
+  function(d,...)<a href="../../utility.function/posfuns/gapply.html">gapply</a>(d,function(d,...){
+    i &lt;- FUN(d$x)==d$x
+    if(length(i)==0){
+      data.frame()
+    }else{
+      sub.df &lt;- d[i,]
+      if(nrow(sub.df) &gt; 1){
+        y.target &lt;- mean(range(sub.df$y))
+        sub.df &lt;- sub.df[1,]
+        sub.df$y &lt;- y.target
+      }
+      sub.df$hjust &lt;- HJUST
+      sub.df$vjust &lt;- 0.5
+      sub.df
+    }
+  })
+### A Positioning Method like <a href="../../lineplot/posfuns/first.points.html">first.points</a> or last.points.
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

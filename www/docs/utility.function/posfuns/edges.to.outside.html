@@ -1,0 +1,71 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - edges.to.outside</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - edges.to.outside</h1>
+
+<p>Given a list of edges from the convex or alpha hull, and a list of
+cluster centers, calculate a point near to each cluster on the
+outside of the hull.</p>
+
+<pre>
+edges.to.outside &lt;- function
+### Given a list of edges from the convex or alpha hull, and a list of
+### cluster centers, calculate a point near to each cluster on the
+### outside of the hull.
+(edges,centers,debug=FALSE,...){
+  if(debug){
+    with(centers,grid.points(x,y,pch="+",default.units="cm"))
+    with(edges,grid.segments(x1,y1,x2,y2,default.units="cm"))
+  }
+  closepts &lt;- <a href="../../utility.function/posfuns/gapply.html">gapply</a>(centers,<a href="../../utility.function/posfuns/project.onto.segments.html">project.onto.segments</a>,edges,debug=debug,...)
+  closepts$vjust &lt;- ifelse(closepts$y-centers$y&gt;0,0,1)
+  closepts$hjust &lt;- ifelse(closepts$x-centers$x&gt;0,0,1)
+  r &lt;- <a href="../../utility.function/posfuns/apply.method.html">apply.method</a>("<a href="../../utility.function/posfuns/big.boxes.html">big.boxes</a>",closepts)
+  r$x &lt;- (r$right-r$left)/2+r$left
+  r$y &lt;- (r$top-r$bottom)/2+r$bottom
+  r$hjust &lt;- 0.5
+  r$vjust &lt;- 0.5
+  r
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>
