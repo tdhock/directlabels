@@ -1,0 +1,148 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - empty.grid</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - empty.grid</h1>
+
+<p>Label placement method for scatterplots that ensures labels are
+placed in different places. A grid is drawn over the whole
+plot. Each cluster is considered in sequence and assigned to the
+point on this grid which is closest to the point given by
+the input data points. Makes use of attr(d,"orig.data").</p>
+
+<pre>
+empty.grid &lt;- function
+### Label placement method for scatterplots that ensures labels are
+### placed in different places. A grid is drawn over the whole
+### plot. Each cluster is considered in sequence and assigned to the
+### point on this grid which is closest to the point given by
+### the input data points. Makes use of attr(d,"orig.data").
+(d,
+### Data frame of target points on the scatterplot for each label.
+ debug=FALSE,
+### Show debugging info on the plot?
+ ...
+### ignored.
+ ){
+  NREP &lt;- 10
+  orig &lt;- attr(d,"orig.data")
+  all.points &lt;- orig[,c("x","y")]
+  if(any(table(d$groups)&gt;1))d &lt;- <a href="../../utility.function/posfuns/get.means.html">get.means</a>(d)
+  label.targets &lt;- d
+  ranges &lt;- list(x=convertX(unit(c(0,1),"npc"),"cm",valueOnly=TRUE),
+                 y=convertY(unit(c(0,1),"npc"),"cm",valueOnly=TRUE))
+  gl &lt;- function(v){
+    s &lt;- seq(min(all.points[,v]),max(all.points[,v]),l=NREP)
+    if(expand){
+      dif &lt;- s[2]-s[1]
+      s &lt;- seq(min(ranges[[v]])-expand*dif,
+               max(ranges[[v]])+expand*dif,
+               l=NREP+2*expand)
+    }
+    list(centers=s,diff=s[2]-s[1])
+  }
+  hgrid &lt;- function(x,w){
+    hboxes &lt;- floor(diff(ranges[[x]])/r[,w])
+    (-expand:(hboxes+expand-1))*r[,w]+r[,w]/2+min(ranges[[x]])
+  }
+  if(debug)with(label.targets,{
+    grid.points(x,y,default.units="cm",gp=gpar(col="green"))
+  })
+  draw &lt;- function(g){
+    gridlines &lt;- with(g,list(x=unique(c(left,right)),y=unique(c(top,bottom))))
+    drawlines &lt;- function(a,b,c,d)
+      grid.segments(a,b,c,d,"cm",gp=gpar(col="grey"))
+    with(gridlines,drawlines(min(x),y,max(x),y))
+    with(gridlines,drawlines(x,min(y),x,max(y)))
+  }
+  res &lt;- data.frame()
+  label.targets &lt;-
+    label.targets[order(nchar(as.character(label.targets$groups))),]
+  for(v in label.targets$groups){
+    r &lt;- label.targets[label.targets$groups==v,]
+    no.points &lt;- data.frame()
+    expand &lt;- 0
+    while(nrow(no.points)==0){
+      boxes &lt;- if("left"%in%names(label.targets)){
+        list(x=hgrid("x","w"),y=hgrid("y","h"),w=r$w,h=r$h)
+      }else{
+        L &lt;- sapply(c("x","y"),gl,simplify=FALSE)
+        list(x=L$x$centers,y=L$y$centers,w=L$x$diff,h=L$y$diff)
+      }
+      boxes &lt;- <a href="../../utility.function/posfuns/calc.borders.html">calc.borders</a>(do.call(expand.grid,boxes))
+      boxes &lt;- cbind(boxes,data=<a href="../../utility.function/posfuns/inside.html">inside</a>(boxes,all.points))
+      no.points &lt;- transform(subset(boxes,data==0))
+      expand &lt;- expand+1 ## look further out if we can't find any labels <a href="../../utility.function/posfuns/inside.html">inside</a>
+    }
+    if(debug)draw(boxes)
+    
+    ## TDH 29 Aug 2012. For every box, figure out the class of the
+    ## point which is its nearest neighbor.
+    no.points$nearest &lt;- NA
+    for(i in 1:nrow(no.points)){
+      b &lt;- no.points[i,]
+      d.orig &lt;- with(orig,(b$x-x)^2+(b$y-y)^2)
+      no.points[i,"nearest"] &lt;- as.character(orig$groups[which.min(d.orig)])
+    }
+    ## Only consider boxes that are closest to this class.
+    closest &lt;- no.points[no.points$nearest == rownames(r),]
+    if(nrow(closest) == 0){
+      closest &lt;- no.points
+    }
+    closest$len &lt;- with(closest,(r$x-x)^2+(r$y-y)^2)
+    best &lt;- closest[closest$len == min(closest$len), ][1, ]
+
+    res &lt;- rbind(res,transform(r,x=best$x,y=best$y))
+    ## add points to cloud
+    newpts &lt;- with(best,{
+      expand.grid(x=seq(left,right,l=3),
+                  y=seq(top,bottom,l=3))
+    })
+    all.points &lt;- rbind(all.points,newpts)
+  }
+  if(debug)with(all.points,grid.points(x,y,default.units="cm"))
+  res
+### Data frame with columns groups x y, 1 line for each group, giving
+### the positions on the grid closest to each cluster.
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - project.onto.segments</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - project.onto.segments</h1>
+
+<p>Given a point and a set of line segments representing a convex or
+alpha hull, calculate the closest point on the segments.</p>
+
+<pre>
+project.onto.segments &lt;- function
+### Given a point and a set of line segments representing a convex or
+### alpha hull, calculate the closest point on the segments.
+(m,
+### m is 1 row, a center of a point cloud, we need to find the
+### distance to the closest point on each segment of the convex
+### hull.
+ h,
+### Data frame describing the line segments of the convex or alpha
+### hull.
+ debug=FALSE,
+ ...
+### ignored
+ ){
+  h$s &lt;- (h$y2-h$y1)/(h$x2-h$x1)
+  ## the closest point on the line formed by expanding this line
+  ## segment (this expression is calculated by finding the minimum
+  ## of the distance function).
+  h$xstar &lt;- (m$x + m$y*h$s + h$x1*h$s^2 - h$s*h$y1)/(h$s^2+1)
+  h$minval &lt;- apply(cbind(h$x1,h$x2),1,min)
+  h$maxval &lt;- apply(cbind(h$x1,h$x2),1,max)
+  ## xopt is the closest point on the line segment
+  h$xopt &lt;- ifelse(h$xstar&lt;h$minval,h$minval,
+                   ifelse(h$xstar&gt;h$maxval,h$maxval,h$xstar))
+  h$yopt &lt;- h$s*(h$xopt-h$x1)+h$y1
+  ## distance to each point on line segment from the center
+  h$d &lt;- (m$x-h$xopt)^2+(m$y-h$yopt)^2
+  i &lt;- which.min(h$d)
+  result &lt;- with(h[i,],data.frame(x=xopt,y=yopt))
+  if(debug){
+    grid.segments(m$x,m$y,result$x,result$y,default.units="cm")
+  }
+  result
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

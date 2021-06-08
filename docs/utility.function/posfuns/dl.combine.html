@@ -1,0 +1,191 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - dl.combine</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - dl.combine</h1>
+
+<p>Apply several Positioning methods to the original data frame.</p>
+
+<pre>
+dl.combine &lt;- structure(function # Combine output of several methods
+### Apply several Positioning methods to the original data frame.
+(...
+### Several Positioning Methods.
+ ){
+  FUNS &lt;- list(...)
+  pf &lt;- function(d,...){
+    dfs &lt;- lapply(FUNS,<a href="../../utility.function/posfuns/apply.method.html">apply.method</a>,d,...)
+    res &lt;- data.frame()
+    for(df in dfs){
+      ## if cex is undefined, we will get NAs which will not be
+      ## plotted.
+      if(!"cex"%in%names(df)){
+        df$cex &lt;- 1
+      }
+      
+      ## we need to do merge to keep all the columns around.
+      if(nrow(res))res &lt;- merge(df,res,all=TRUE)
+      else res &lt;- df
+    }
+    res
+  }
+  pf
+### A Positioning Method that returns the combined data frame after
+### applying each specified Positioning Method.
+},ex=function(){
+  ## Simple example: label the start and endpoints
+  library(nlme)
+  library(lattice)
+  ratplot &lt;- xyplot(weight~Time|Diet,BodyWeight,groups=Rat,type='l',layout=c(3,1))
+  ##ratplot &lt;- qplot(Time,weight,data=BodyWeight,group=Rat,colour=Rat,geom="line",facets=.~Diet)
+  both &lt;- dl.combine("<a href="../../lineplot/posfuns/first.points.html">first.points</a>","<a href="../../lineplot/posfuns/last.points.html">last.points</a>")
+  rat.both &lt;- direct.label(ratplot,"both")
+  print(rat.both)
+  ##   grid.edit(gPath("panel-3-3",".*","GRID.dlgrob"),
+  ##             method=list(cex=2,fontfamily="bold","both"),
+  ##             grep=TRUE)
+  ## can also do this by repeatedly calling direct.label
+  rat.repeated &lt;-
+    direct.label(direct.label(ratplot,"<a href="../../lineplot/posfuns/last.points.html">last.points</a>"),"<a href="../../lineplot/posfuns/first.points.html">first.points</a>")
+  print(rat.repeated)
+  ##   grid.edit(gPath("panel-3-5",".*","GRID.dlgrob.<a href="../../lineplot/posfuns/first.points.html">first.points</a>"),
+  ##             method=list(cex=2,fontfamily="bold","both"),
+  ##             grep=TRUE)
+  library(ggplot2)
+  rp2 &lt;- qplot(Time,weight,data=BodyWeight,geom="line",facets=.~Diet,colour=Rat)
+  print(direct.label(direct.label(rp2,"<a href="../../lineplot/posfuns/last.points.html">last.points</a>"),"<a href="../../lineplot/posfuns/first.points.html">first.points</a>"))
+  print(direct.label(rp2,"both"))
+
+  mylars &lt;- function
+  ## Least angle regression algorithm for calculating lasso solutions.
+  (x,
+   ## Matrix of predictor variables.
+   y,
+   ## Vector of responses.
+   epsilon=1e-6
+   ## If correlation &lt; epsilon, we are done.
+   ){
+    xscale &lt;- scale(x) # need to work with standardized variables
+    b &lt;- rep(0,ncol(x))# coef vector starts at 0
+    names(b) &lt;- colnames(x)
+    ycor &lt;- apply(xscale,2,function(xj)sum(xj*y))
+    j &lt;- which.max(ycor) # variables in active set, starts with most correlated
+    alpha.total &lt;- 0
+    out &lt;- data.frame()
+    
+    while(1){## lar loop
+      xak &lt;- xscale[,j] # current variables
+      r &lt;- y-xscale%*%b # current residual
+      ## direction of parameter evolution
+      delta &lt;- solve(t(xak)%*%xak)%*%t(xak)%*%r
+      ## Current correlations (actually dot product)
+      intercept &lt;- apply(xscale,2,function(xk)sum(r*xk))
+      ## current rate of change of correlations
+      z &lt;- xak%*%delta
+      slope &lt;- apply(xscale,2,function(xk)-sum(z*xk))
+      ## store current values of parameters and correlation
+      out &lt;- rbind(out,data.frame(variable=colnames(x),
+                                  coef=b,
+                                  corr=abs(intercept),
+                                  alpha=alpha.total,
+                                  arclength=sum(abs(b)),
+                                  coef.unscaled=b/attr(xscale,"scaled:scale")))
+
+      if(sum(abs(intercept)) &lt; epsilon)#corr==0 so we are done
+        return(transform(out,s=arclength/max(arclength)))
+      
+      ## If there are more variables we can enter into the regression,
+      ## then see which one will cross the highest correlation line
+      ## first, and record the alpha value of where the lines cross.
+      d &lt;- data.frame(slope,intercept)
+      d[d$intercept&lt;0,] &lt;- d[d$intercept&lt;0,]*-1
+      d0 &lt;- data.frame(d[j[1],])# highest correlation line
+      d2 &lt;- data.frame(rbind(d,-d),variable=names(slope))#reflected lines
+      ## Calculation of alpha for where lines cross for each variable
+      d2$alpha &lt;- (d0$intercept-d2$intercept)/(d2$slope-d0$slope)
+      subd &lt;- d2[(!d2$variable%in%colnames(x)[j])&amp;d2$alpha&gt;epsilon,]
+      subd &lt;- subd[which.min(subd$alpha),]
+      nextvar &lt;- subd$variable
+      alpha &lt;- if(nrow(subd))subd$alpha else 1
+      
+      ## If one of the coefficients would hit 0 at a smaller alpha
+      ## value, take it out of the regression and continue.
+      hit0 &lt;- xor(b[j]&gt;0,delta&gt;0)&amp;b[j]!=0
+      alpha0 &lt;- -b[j][hit0]/delta[hit0]
+      takeout &lt;- length(alpha0)&amp;&amp;min(alpha0) &lt; alpha
+      if(takeout){
+        i &lt;- which.min(alpha0)
+        alpha &lt;- alpha0[i]
+      }
+      
+      b[j] &lt;- b[j]+alpha*delta ## evolve parameters
+      alpha.total &lt;- alpha.total+alpha
+      ## add or remove a variable from the active set
+      j &lt;- if(takeout)j[j!=which(names(i)==colnames(x))]
+      else c(j,which(nextvar==colnames(x)))
+    }
+  }
+
+  ## Calculate lasso path, plot and label
+  mylasso &lt;- dl.combine(<a href="../../lineplot/posfuns/lasso.labels.html">lasso.labels</a>,<a href="../../lineplot/posfuns/last.qp.html">last.qp</a>)
+  if(require(ElemStatLearn)){
+    pros &lt;- subset(prostate,select=-train,train==TRUE)
+    ycol &lt;- which(names(pros)=="lpsa")
+    x &lt;- as.matrix(pros[-ycol])
+    y &lt;- unlist(pros[ycol])
+    res &lt;- mylars(x,y)
+    P &lt;- xyplot(coef~arclength,res,groups=variable,type="l")
+    plot(direct.label(P,"mylasso"))
+    p &lt;- ggplot(res,aes(arclength,coef,colour=variable))+
+      geom_line(aes(group=variable))
+    direct.label(p,"mylasso")
+  }
+
+  if(require(lars)){
+    data(diabetes,envir=environment())
+    dres &lt;- with(diabetes,mylars(x,y))
+    P &lt;- xyplot(coef~arclength,dres,groups=variable,type="l")
+    plot(direct.label(P,"mylasso"))
+  }
+})
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

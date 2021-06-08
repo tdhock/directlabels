@@ -1,0 +1,80 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - iris</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - scatterplot - example -
+iris</h1>
+
+<pre>
+library(lattice)
+p &lt;- xyplot(jitter(Sepal.Length)~jitter(Petal.Length),iris,groups=Species)
+</pre>
+
+<table>
+<tr>
+  <td><img alt="ahull.grid" src="../../scatterplot/iris.ahull.grid.png" /></td>
+  <td><p>Label the closest point on the alpha hull of the data.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/ahull.grid.html">ahull.grid</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="chull.grid" src="../../scatterplot/iris.chull.grid.png" /></td>
+  <td><p>Label the closest point on the convex hull of the data.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/chull.grid.html">chull.grid</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="extreme.grid" src="../../scatterplot/iris.extreme.grid.png" /></td>
+  <td><p>Label each point cloud near the extremities of the plot region.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/extreme.grid.html">extreme.grid</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="smart.grid" src="../../scatterplot/iris.smart.grid.png" /></td>
+  <td><p>Search the plot region for a label position near the center of
+each point cloud.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/smart.grid.html">smart.grid</a>")
+  </pre></td>
+</tr>
+</table>
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

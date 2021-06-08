@@ -1,0 +1,119 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - smart.grid</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - scatterplot -
+Positioning Method - smart.grid</h1>
+
+<p>Search the plot region for a label position near the center of
+each point cloud.</p>
+
+<pre>
+smart.grid &lt;- list("<a href="../../utility.function/posfuns/big.boxes.html">big.boxes</a>","<a href="../../utility.function/posfuns/empty.grid.html">empty.grid</a>")
+</pre>
+
+<table>
+<tr>
+  <td><img alt="class-manufacturer" src="../../scatterplot/class-manufacturer.smart.grid.png" /></td>
+  <td><p><a href="../plots/class-manufacturer.html">class-manufacturer</a></p><pre>
+data(mpg,package="ggplot2")
+m &lt;- lm(cty~displ,data=mpg)
+mpgf &lt;- fortify(m,mpg)
+library(lattice)
+library(latticeExtra)
+p &lt;- xyplot(cty~hwy|manufacturer,mpgf,groups=class,aspect="iso",
+       main="City and highway fuel efficiency by car class and manufacturer")+
+  layer_(panel.abline(0,1,col="grey90"))
+direct.label(p,"smart.grid")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="cylinders" src="../../scatterplot/cylinders.smart.grid.png" /></td>
+  <td><p><a href="../plots/cylinders.html">cylinders</a></p><pre>
+data(mpg,package="ggplot2")
+m &lt;- lm(cty~displ,data=mpg)
+mpgf &lt;- fortify(m,mpg)
+library(lattice)
+p &lt;- xyplot(jitter(.resid)~jitter(.fitted),mpgf,groups=factor(cyl))
+direct.label(p,"smart.grid")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="iris" src="../../scatterplot/iris.smart.grid.png" /></td>
+  <td><p><a href="../plots/iris.html">iris</a></p><pre>
+library(lattice)
+p &lt;- xyplot(jitter(Sepal.Length)~jitter(Petal.Length),iris,groups=Species)
+direct.label(p,"smart.grid")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="mpglattice" src="../../scatterplot/mpglattice.smart.grid.png" /></td>
+  <td><p><a href="../plots/mpglattice.html">mpglattice</a></p><pre>
+data(mpg,package="ggplot2")
+library(lattice)
+p &lt;- xyplot(jitter(cty)~jitter(hwy),mpg,groups=class,
+       main="Fuel efficiency depends on car size")
+direct.label(p,"smart.grid")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="mpg" src="../../scatterplot/mpg.smart.grid.png" /></td>
+  <td><p><a href="../plots/mpg.html">mpg</a></p><pre>
+library(ggplot2)
+data(mpg,package="ggplot2")
+p &lt;- qplot(jitter(hwy),jitter(cty),data=mpg,colour=class,
+      main="Fuel efficiency depends on car size")
+direct.label(p,"smart.grid")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="path" src="../../scatterplot/path.smart.grid.png" /></td>
+  <td><p><a href="../plots/path.html">path</a></p><pre>
+data(normal.l2.cluster,package="directlabels")
+library(ggplot2)
+p &lt;- ggplot(normal.l2.cluster$path,aes(x,y))+
+  geom_path(aes(group=row),colour="grey")+
+  geom_point(aes(size=lambda),colour="grey")+
+  geom_point(aes(colour=class),data=normal.l2.cluster$pts,pch=21,fill="white")+
+  coord_equal()
+direct.label(p,"smart.grid")
+  </pre></td>
+</tr>
+</table>
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

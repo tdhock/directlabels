@@ -1,0 +1,152 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - chemqqmathsex</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - lineplot - example -
+chemqqmathsex</h1>
+
+<pre>
+data(Chem97,package="mlmRev")
+library(lattice)
+p &lt;- qqmath(~gcsescore,Chem97,groups=gender,
+       type=c("l","g"),f.value=ppoints(100))
+</pre>
+
+<table>
+<tr>
+  <td><img alt="angled.boxes" src="../../lineplot/chemqqmathsex.angled.boxes.png" /></td>
+  <td><p>Draw a box with the label inside, at the point furthest away from
+the plot border and any other curve.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/angled.boxes.html">angled.boxes</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.bumpup" src="../../lineplot/chemqqmathsex.first.bumpup.png" /></td>
+  <td><p>Label first points, bumping labels up if they collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.bumpup.html">first.bumpup</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.points" src="../../lineplot/chemqqmathsex.first.points.png" /></td>
+  <td><p>Positioning Method for the first of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.points.html">first.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.polygons" src="../../lineplot/chemqqmathsex.first.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the first point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.polygons.html">first.polygons</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="first.qp" src="../../lineplot/chemqqmathsex.first.qp.png" /></td>
+  <td><p>Label first points from QP solver that ensures labels do not collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/first.qp.html">first.qp</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="lasso.labels" src="../../lineplot/chemqqmathsex.lasso.labels.png" /></td>
+  <td><p>Label points at the zero before the first nonzero y value.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/lasso.labels.html">lasso.labels</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.bumpup" src="../../lineplot/chemqqmathsex.last.bumpup.png" /></td>
+  <td><p>Label last points, bumping labels up if they collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.bumpup.html">last.bumpup</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.points" src="../../lineplot/chemqqmathsex.last.points.png" /></td>
+  <td><p>Positioning Method for the last of a group of points.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.points.html">last.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.polygons" src="../../lineplot/chemqqmathsex.last.polygons.png" /></td>
+  <td><p>Draw a speech polygon to the last point.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.polygons.html">last.polygons</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="last.qp" src="../../lineplot/chemqqmathsex.last.qp.png" /></td>
+  <td><p>Label last points from QP solver that ensures labels do not collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/last.qp.html">last.qp</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="lines2" src="../../lineplot/chemqqmathsex.lines2.png" /></td>
+  <td><p>Positioning Method for 2 groups of longitudinal data. One curve
+is on top of the other one (on average), so we label the top one
+at its maximal point, and the bottom one at its minimal
+point. Vertical justification is chosen to minimize collisions
+with the other line. This may not work so well for data with high
+variability, but then again lineplots may not be the best for
+these data either.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/lines2.html">lines2</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="maxvar.points" src="../../lineplot/chemqqmathsex.maxvar.points.png" /></td>
+  <td><p>Do first or last, whichever has points most spread out.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/maxvar.points.html">maxvar.points</a>")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="maxvar.qp" src="../../lineplot/chemqqmathsex.maxvar.qp.png" /></td>
+  <td><p>Label first or last points, whichever are more spread out, and use
+a QP solver to make sure the labels do not collide.</p>
+    <pre>
+direct.label(p,"<a href="../posfuns/maxvar.qp.html">maxvar.qp</a>")
+  </pre></td>
+</tr>
+</table>
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

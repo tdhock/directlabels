@@ -1,0 +1,12 @@
+Toby Dylan Hocking, 12 October 2009
+
+latticedl presentation for semin-r group meeting.
+
+I made a bunch of demo plotting code in LATTICE.R and
+LATTICEDL.R. Each plot is commented. We use make_sweave.py to convert
+the R code to Sweave code, and add it to the Rnw file. We then run
+Sweave on the Rnw file, producing a tex file. We post-process the tex
+file using killplot.py to delete the obligatory plot() calls. Finally
+we process with pdflatex to produce slides in pdf format.
+
+R -make_sweave> Rnw -Sweave> tex -killplot> tex -pdflatex> pdf

@@ -1,0 +1,29 @@
+Toby Dylan Hocking
+Insitut Curie, INSERM U900, INRIA-Sierra
+
+Recent advances in direct labeled graphics
+
+The directlabels package provides functions for labeling multicolored
+plots using direct labels, which are often much easier to read than a
+legend. I will discuss new optimization-based methods for direct
+labeling common plots, and how to customize direct label appearance
+for everyday statistical graphics.
+
+Développement récents dans l'annotation direct des graphiques
+
+Le package directlabels propose des fonctions pour l'annotation direct
+des graphiques multicolores, ce qui est souvent plus facile à lire
+qu'une légende. Je discuterai des nouvelles méthodes d'annotation
+basées sur l'optimisation, et comment customiser l'apparence des
+annotations dans les graphiques quotidiens.
+
+
+The lattice and ggplot2 packages make it easy to draw 2D plots where
+data variables are encoded using spatial position and color. But the
+default legends are sometimes confusing since they are drawn using
+only the color information, ignoring the spatial position of each
+colored group. The directlabels package provides functions that draw
+direct labels, which exploit the spatial position of each colored
+group, thus facilitating intuitive labeling of everyday statistical
+graphics. I will discuss how to add direct labels to common plots, and
+how to

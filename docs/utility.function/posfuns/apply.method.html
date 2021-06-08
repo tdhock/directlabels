@@ -1,0 +1,157 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - apply.method</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - apply.method</h1>
+
+<p>Run a Positioning Method list on a given data set. This function
+contains all the logic for parsing a Positioning Method and
+sequentially applying its elements to the input data to obtain the
+label positions.</p>
+
+<pre>
+apply.method &lt;- function # Apply a Positioning Method
+### Run a Positioning Method list on a given data set. This function
+### contains all the logic for parsing a Positioning Method and
+### sequentially applying its elements to the input data to obtain the
+### label positions.
+(method,
+### Direct labeling Positioning Method. Starting from the data frame
+### of points to plot for the panel, the elements of the Positioning
+### Method list are applied in sequence, and then each row of the
+### resulting data frame is used to draw a direct label. The
+### elements of a Positioning Method list can be
+### itemize{
+### item a Positioning Function is any function(d,...) which takes a
+### data.frame d with columns x,y,groups and returns another
+### data.frame representing the positions of the desired direct
+### labels. For a description of all the columns that are interpreted
+### for drawing direct labels, see code{link{drawDetails.dlgrob}}.
+### For example, <a href="../../lineplot/posfuns/maxvar.points.html">maxvar.points</a> is a Positioning Function that returns
+### a data.frame with columns x,y,groups,hjust,vjust.
+### item a character vector of length 1 is treated as the name of an
+### R object. For example, specifying "<a href="../../lineplot/posfuns/maxvar.points.html">maxvar.points</a>" means to look up
+### the variable called <a href="../../lineplot/posfuns/maxvar.points.html">maxvar.points</a> and use that. Using the name of
+### a Positioning Function is preferable to specifying the Positioning
+### Function itself, since then the name is visible in the Positioning
+### Method list, which is more interpretable when debugging.
+### item a named list element is used to add or update variables in
+### the data.frame of direct labels to plot. For example
+### list("<a href="../../lineplot/posfuns/first.points.html">first.points</a>",cex=1.5) means take only the first points of
+### every group and then set the cex column to 1.5.
+### item an element of a Positioning Method list can be another
+### Positioning Method list, in which case the elements of the inner
+### list are applied.
+### }
+ d,
+### Data frame to which we apply the Positioning Method. The x and y
+### columns should be in centimeters (cm), so that Positioning Methods
+### can easily calculate the L2/Euclidean/visual distance between
+### pairs of points.
+ columns.to.check=c("x","y","groups"),
+### After applying each Positioning Method list element, we check for
+### the presence of these columns, and if not found we stop with an
+### error.
+ ...,
+### Named arguments, passed to Positioning Functions.
+ debug=FALSE
+### If TRUE, print each Positioning Method list elmenent and the
+### direct label data.frame that results from its evaluation.
+ ){
+  attr(d,"orig.data") &lt;- d ##DONT DELETE: if the first Positioning
+                           ##Method needs orig.data, this needs to be
+                           ##here!
+  <a href="../../utility.function/posfuns/check.for.columns.html">check.for.columns</a>(d,columns.to.check)
+  if(!is.list(method))method &lt;- list(method)
+  isconst &lt;- function(){
+    m.var &lt;- names(method)[1]
+    !(is.null(m.var)||m.var=="")
+  }
+  islist &lt;- function()is.list(method[[1]])
+  isref &lt;- function()(!isconst())&amp;&amp;is.character(method[[1]])
+  while(length(method)){
+    if(debug)print(method[1])##not [[1]] --- named items!
+    ##browser()
+    ## Resolve any names or nested lists
+    while(islist()||isref()){
+      if(islist()){
+        method &lt;- c(method[[1]],method[-1])
+      }else{ #must be character -&gt; get the fun(s)
+        if(length(method[[1]])&gt;1){
+          warning("using first element of character vector")
+          method[[1]] &lt;- method[[1]][1]
+        }
+        method &lt;- c(get(method[[1]]),method[-1])
+      }
+    }
+    if(isconst())
+      d[[names(method)[1]]] &lt;- method[[1]]
+    else{ #should be a Positioning Function
+      old &lt;- d
+      group.dfs &lt;- split(d,d$groups)
+      group.specific &lt;- lapply(group.dfs,<a href="../../utility.function/posfuns/only.unique.vals.html">only.unique.vals</a>)
+      to.restore &lt;- Reduce(intersect,lapply(group.specific,names))
+      d &lt;- method[[1]](d,debug=debug,...)
+      <a href="../../utility.function/posfuns/check.for.columns.html">check.for.columns</a>(d,columns.to.check)
+      ## do not restore if they are present in the returned list!
+      to.restore &lt;- to.restore[!to.restore %in% names(d)]
+      for(N in to.restore){
+        d[[N]] &lt;- NA
+        for(g in unique(d$groups)){
+          d[d$groups==g,N] &lt;- group.specific[[g]][,N]
+        }
+      }
+      attr(d,"orig.data") &lt;-
+        if(is.null(attr(old,"orig.data")))old
+        else attr(old,"orig.data")
+    }
+    if(debug){
+      print(d)
+    }
+    method &lt;- method[-1]
+  }
+  d
+### The final data frame returned after applying all of the items in
+### the Positioning Method list, with x and y in units of cm.
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

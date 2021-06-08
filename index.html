@@ -1,0 +1,270 @@
+
+<!-- This is the project specific website template -->
+<!-- It can be changed as liked or replaced by other content -->
+
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>directlabels</title>
+	<link href="estilo1.css" rel="stylesheet" type="text/css" />
+  </head>
+
+<body class="normal">
+
+<h1>Easily add direct labels to plots using the directlabels package</h1>
+
+<table>
+<tr>
+  <td><img src="iris-scatter.png" alt="direct labeled iris data" /></td>
+  <td>
+
+<p>This package is an attempt to make direct labeling a reality in
+everyday statistical practice by making available a body of useful
+functions that make direct labeling of common plots easy to do with
+high-level plotting systems such as lattice and ggplot2. The main
+function that the package provides is <tt>direct.label(p)</tt>, which
+takes a lattice or ggplot2 plot <tt>p</tt> and adds direct labels:</p>
+
+
+<pre>
+install.packages("directlabels", repo="http://r-forge.r-project.org")
+library(lattice)
+library(directlabels)
+direct.label(xyplot(jitter(Sepal.Length)~jitter(Petal.Length),iris,groups=Species))
+    </pre>
+<p>
+directlabels website navigation:
+</p>
+
+<ul>
+<li><a href="docs/index.html">Positioning Method examples database</a></li>
+<li><a href="motivation.html">When are direct labels better than
+legends? Why not just add direct labels by hand?</a></li>
+<li><a href="examples.html">Several advanced examples</a></li>
+<li><a href="smart.html">Smart label Positioning Methods that avoid label collisions</a></li>
+</ul>
+
+<h2>Frequently asked questions</h2>
+
+<ul>
+<li><a href="http://stackoverflow.com/search?q=directlabels">Before
+emailing me, please search and post on stackoverflow</a>.</li>
+<li>How to avoid overlapping labels? Use a Positioning Method
+with <a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/calc.boxes.html">calc.boxes</a>
+to compute the label bounding box. For
+example, <a href="http://directlabels.r-forge.r-project.org/docs/scatterplot/posfuns/smart.grid.html">smart.grid</a>
+for scatterplots
+and <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.polygons.html">last.polygons</a>
+or <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.qp.html">last.qp</a>
+for lineplots.</li>
+<li>Can I increase text size? Yes, but do it before calling
+Positioning Methods that calculate the label bounding
+box: <tt>direct.label(p, list(cex=2, "last.qp"))</tt> for a lineplot <tt>p</tt>.</li>
+<li>Why are some labels small when using lineplot labeling methods
+like <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.polygons.html">last.polygons</a>?
+Because the labels are automatically resized to fit in the plotting
+area. To increase the text size you can increase the x axis limits as in
+the <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/plots/lars.html">lars</a>
+and <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/plots/ridge.html">ridge</a>
+examples.</li>
+<li>How to adjust all labels left or right?  For example you can
+use <tt>direct.label(p, list(dl.trans(x=x+0.1), "last.qp"))</tt> to
+move labels to the right 0.1cm and then
+apply <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.qp.html">last.qp</a>
+for a lineplot <tt>p</tt>.</li>
+<li>How
+about <tt>fontface</tt>, <tt>fontfamily</tt>, <tt>rot</tt>, <tt>alpha</tt>
+text parameters? See <tt>example(dlcompare)</tt>.</li>
+<li>How about direct labeling aesthetics other than colour in ggplot2?
+See <tt>example(geom_dl)</tt>.</li>
+<li>Can I use directlabels to label individual points on scatterplots?
+The intended purpose of directlabels is to replace a confusing legend
+(which labels groups of points, not individual points). You may want
+to try to <a href="motivation.html">write your own Positioning
+Method</a> but be aware
+that <a href="https://en.wikipedia.org/wiki/Automatic_label_placement">automatic
+label placement is an NP-hard problem</a>!
+</ul>
+
+</td>
+  </tr>
+</table>
+
+<h2>Positioning Methods specify the direct label positions</h2>
+
+<p>Direct labeling a plot can be decomposed into 2 steps: calculating
+label positions, then drawing the labels. For the first step, the
+directlabels package introduces the concept of the Positioning Method,
+which is a list that specifies how to transform the data points into
+labels. For example, with the scatterplot above, the default
+Positioning Method is
+<a href="http://directlabels.r-forge.r-project.org/docs/scatterplot/posfuns/smart.grid.html">smart.grid</a>,
+which places each label close to the center of the corresponding point
+cloud. The following diagram shows how the data to plot is converted
+to standard form column names and positions in centimeters before the
+Positioning Method is applied:</p>
+
+<table>
+<tr>
+<td>
+<pre>
+Petal.Length Sepal.Length Species
+         1.4          5.1  setosa
+         1.4          4.9  setosa
+         1.3          4.7  setosa
+         1.5          4.6  setosa
+         1.4          5.0  setosa
+         1.7          5.4  setosa
+         ...          ...    ...  
+</pre>
+</td>
+<td>
+<pre>
+ convert to
+ standard form (cm)
+---------------------&gt;  
+ direct.label.trellis
+ and
+ drawDetails.dlgrob
+</pre>
+</td>
+<td>
+<pre>
+       x        y groups
+2.021041 3.786670 setosa
+2.021041 3.066771 setosa
+1.772450 2.346872 setosa
+2.269632 1.986922 setosa
+2.021041 3.426721 setosa
+2.766813 4.866519 setosa
+    ...      ...    ...  
+</pre>
+</td>
+<td>
+<pre>
+ calculate label
+ positions with
+ Positioning Method
+---------------------&gt;  
+ smart.grid
+</pre>
+</td>
+<td>
+<pre>
+         x      y     groups
+ 0.8364451  3.806     setosa
+11.2194634 11.418  virginica
+ 8.0289573  7.958 versicolor
+</pre>
+</td>
+</tr>
+</table>
+
+<p>If default label positions are not satisfactory, you can always
+specify your own Positioning Method, using the <tt>method=</tt>
+argument to <tt>direct.label</tt>. For example, we can label
+longitudinal data either on the left or right of the lines:</p>
+
+<pre>
+install.packages("ggplot2")
+library(ggplot2)
+data(BodyWeight,package="nlme")
+p &lt;- qplot(Time,weight,data=BodyWeight,colour=Rat,geom="line",facets=.~Diet)
+direct.label(p,"<a href="docs/lineplot/posfuns/first.qp.html">first.qp</a>")
+direct.label(p,"<a href="docs/lineplot/posfuns/last.qp.html">last.qp</a>")
+</pre>
+
+<p><tt>first.qp</tt> and <tt>last.qp</tt> are the names of Positioning
+Methods which place the labels respectively near the first or last
+points, ensuring that the labels do not overlap and so are
+readable. To find out which built-in Positioning Methods are
+appropriate for your plot, <a href="docs/index.html">check out the
+Positioning Methods example database</a>.</p>
+
+<img src="rat-ggplot2-firstlast.png" alt="rat data plotted in ggplot2" />
+
+<p>However, the power of the directlabels system is the fact that you
+can <a href="motivation.html">write your own</a> Positioning Methods,
+and they can be reused for different plots. So once you write a
+Positioning Method that works, adding direct labels in everyday plots
+is as simple as calling <tt>direct.label</tt>, no matter if you are
+using lattice or ggplot2.</p>
+
+<h2>Talks, links, etc.</h2>
+
+<p>
+<a href="2012-03-29-HOCKING-directlabels-semin-r.pdf">Recent
+advances in direct labeled graphics</a>
+[<a href="http://r-forge.r-project.org/scm/viewvc.php/tex/2012-semin-r/?root=directlabels">source</a>]. Invited talk
+for semin-r, the Paris R user group (2012).
+</p>
+
+<p>
+<a href="HOCKING-useR-2011-directlabels-poster.pdf">Adding direct
+labels to
+plots</a>, <a href="http://www.warwick.ac.uk/statsdept/user-2011/">Best
+Student Poster at useR 2011</a>, attempts to motivate the package and
+explain how it works
+[<a href="http://r-forge.r-project.org/scm/viewvc.php/tex/useR-2011/?root=directlabels">source</a>]. Notably,
+the "Optimal Labels" section is basically the only documentation of
+how to implement
+the <a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/qp.labels.html">qp.labels</a>
+Positioning Method. The details of the "Modular package design"
+section have changed in version 2.0. Rather than
+calling <tt>label.positions</tt> the first time the plot
+is <tt>print</tt>ed, we now draw a <tt>dlgrob</tt>
+whose <tt>drawDetails</tt> method calculates label positions every
+time the plot window is resized/redrawn.
+</p>
+
+<p><a href="http://www.mnhn.fr/semin-r/">semin-r</a>, 15 oct
+2009. "<a href="HOCKING-latticedl-semin-r.pdf">Visualizing
+multivariate data using lattice and direct labels</a>"
+with <a href="HOCKING-latticedl-semin-r.R">R code examples</a>. Note
+that the <tt>latticedl</tt> package used in these slides is obsolete,
+so please use the <tt>directlabels</tt> package instead.</p>
+
+<p>Blog reviews: <a href="http://learnr.wordpress.com/2010/01/03/directlabels-adding-direct-labels-to-ggplot2-and-lattice-plots/">learnr 2010</a>,
+<a href="http://kbroman.wordpress.com/2011/08/26/quick-labels-within-figures-done-right/">Karl
+Broman 2011</a>.</p>
+
+<p>The <a href="http://bm2.genes.nig.ac.jp/RGM2/R_current/library/Hmisc/man/labcurve.html">labcurve</a>
+function in the Hmisc package provides some similar functionality.</p>
+
+<p><a href="extending-ggplot2.html">Some notes on extending ggplot2
+using custom grid grobs</a>.</p>
+
+<p>More examples
+of <a href="http://rgm2.lab.nig.ac.jp/RGM2/images.php?show=all&amp;query=package%3Adirectlabels">directlabels
+on the R Graphical Manual</a>.</p>
+
+
+<p>Return to
+the <a href="http://r-forge.r-project.org/projects/directlabels/"><strong>project
+summary page</strong></a>. </p>
+
+<center>
+<table>
+<tr>
+
+<td>Please send email to <a
+href="http://cbio.ensmp.fr/~thocking/">Toby
+Dylan Hocking</a> if you are using directlabels or have ideas to
+contribute, thanks!</td>
+
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+</html>

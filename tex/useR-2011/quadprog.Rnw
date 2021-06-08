@@ -1,0 +1,114 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amssymb,amsmath}
+\usepackage{tikz}
+\usepackage[nogin]{Sweave}
+\newcommand{\RR}{\mathbb R}
+\pagestyle{empty}
+\begin{document}
+  Let $t_1\leq \dots\leq t_k$ be the target locations for each of the
+  $k$ direct labels, and let $h_1, ..., h_k$ be the heights of the
+  corresponding labels.
+
+<<fig=TRUE,tikz=TRUE,echo=FALSE,width=6,height=3,results=hide>>=
+par(mar=c(0,0,0,3))
+y <- c(1,2,5,6)
+x <- rep(0,length(y))
+h <- c(1,0.5,1,0.8)
+plot(c(0,0.5),c(0,7),type="n")
+rect(0,y-h/2,0.5,y+h/2,col="grey90")
+i <- c(1,2,"k-1","k")
+axis(4,y,sprintf("$t_{%s}$",i),las=2)
+axis(4,3.5,"$\\vdots$",las=2,tick=FALSE)
+arrows(0.2,y-h/2,0.2,y+h/2,0.1,code=3)
+text(0.25,y,sprintf("$h_{%s}$",i),adj=c(0,0.5))
+text(0.25,3.5,"$\\vdots$",adj=c(0,0.5))
+@   
+
+  The optimal direct labels do not overlap, and are as close as
+  possible to the target locations:
+\begin{equation}
+\begin{aligned}
+&\min_{b\in\RR^k} && \sum_{i=1}^k (b_i-t_i)^2
+=||b-t||^2
+\\
+&\text{subject to} && b_{i+1} \geq b_i + h_{i+1}/2+h_i/2,
+\ \forall\ i=1,...,k-1
+\end{aligned}
+\end{equation}
+This is a quadratic program (QP) that we can solve using
+\texttt{quadprog::solve.QP()} and we can use the optimal $b$ for the
+direct label positions. To use the solver, we must write the QP in
+standard form:
+\begin{equation}
+  \label{eq:standard}
+  \begin{aligned}
+    &\min_{b\in\RR^k} && \frac 1 2 b^\prime b - t^\prime b\\
+    &\text{subject to} &&
+A^\prime b =
+\left[
+  \begin{array}{cccccc}
+    -1 & 1 & 0 \\
+    0 & -1 & 1\\
+    &&\ddots&\ddots\\
+    &&&-1&1&0\\
+    &&&0&-1&1
+  \end{array}
+\right]
+\left[
+  \begin{array}{c}
+    b_1\\
+    \vdots\\
+    b_k
+  \end{array}
+\right]
+ \geq
+\underbrace{
+\left[
+  \begin{array}{c}
+    (h_1 + h_2)/2\\
+    \vdots\\
+    (h_{k-1}+h_k)/2
+  \end{array}
+\right]
+}_{\texttt{(h[-k]+h[-1])/2}}
+\end{aligned}
+\end{equation}
+where $A$ is the $k\times k-1$ constraint coefficient matrix:
+\begin{equation}
+  \label{eq:A}
+  A=
+\left[
+  \begin{array}{ccccc}
+    -1 & 0 \\
+    1 & -1\\
+    0 & 1 & \ddots\\
+    &&\ddots&-1&0\\
+    &&&1&-1\\
+    &&&0&1
+  \end{array}
+\right]
+=
+\underbrace{
+\left[
+  \begin{array}{ccc}
+    0 & \cdots & 0\\
+   1 & & 0\\
+    & \ddots\\
+    0 & & 1
+   \end{array}
+\right]
+}_{\texttt{rbind(0,$I_{k-1}$)}}
+-
+\underbrace{
+\left[
+  \begin{array}{ccc}
+    1 & & 0\\
+    & \ddots\\
+    0 & & 1\\
+    0 & \cdots & 0
+  \end{array}
+\right]
+}_{\texttt{rbind($I_{k-1}$,0)}}
+\end{equation}
+\end{document}

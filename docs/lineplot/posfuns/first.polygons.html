@@ -1,0 +1,170 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - first.polygons</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - lineplot -
+Positioning Method - first.polygons</h1>
+
+<p>Draw a speech polygon to the first point.</p>
+
+<pre>
+first.polygons &lt;- <a href="../../utility.function/posfuns/polygon.method.html">polygon.method</a>("<a href="../../lineplot/posfuns/first.points.html">first.points</a>", -0.1, "right", "left")
+</pre>
+
+<table>
+<tr>
+  <td><img alt="bodyweight" src="../../lineplot/bodyweight.first.polygons.png" /></td>
+  <td><p><a href="../plots/bodyweight.html">bodyweight</a></p><pre>
+data(BodyWeight,package="nlme")
+library(lattice)
+p &lt;- xyplot(weight~Time|Diet,BodyWeight,groups=Rat,type='l',
+       layout=c(3,1),xlim=c(-10,75))
+direct.label(p,"first.polygons")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="chemqqmathscore" src="../../lineplot/chemqqmathscore.first.polygons.png" /></td>
+  <td><p><a href="../plots/chemqqmathscore.html">chemqqmathscore</a></p><pre>
+data(Chem97,package="mlmRev")
+library(lattice)
+p &lt;- qqmath(~gcsescore|gender,Chem97,groups=factor(score),
+       type=c('l','g'),f.value=ppoints(100))
+direct.label(p,"first.polygons")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="chemqqmathsex" src="../../lineplot/chemqqmathsex.first.polygons.png" /></td>
+  <td><p><a href="../plots/chemqqmathsex.html">chemqqmathsex</a></p><pre>
+data(Chem97,package="mlmRev")
+library(lattice)
+p &lt;- qqmath(~gcsescore,Chem97,groups=gender,
+       type=c("l","g"),f.value=ppoints(100))
+direct.label(p,"first.polygons")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="lars" src="../../lineplot/lars.first.polygons.png" /></td>
+  <td><p><a href="../plots/lars.html">lars</a></p><pre>
+data(prostate,package="ElemStatLearn")
+pros &lt;- subset(prostate,select=-train,train==TRUE)
+ycol &lt;- which(names(pros)=="lpsa")
+x &lt;- as.matrix(pros[-ycol])
+y &lt;- pros[[ycol]]
+library(lars)
+fit &lt;- lars(x,y,type="lasso")
+beta &lt;- scale(coef(fit),FALSE,1/fit$normx)
+arclength &lt;- rowSums(abs(beta))
+library(reshape2)
+path &lt;- data.frame(melt(beta),arclength)
+names(path)[1:3] &lt;- c("step","variable","standardized.coef")
+library(ggplot2)
+p &lt;- ggplot(path,aes(arclength,standardized.coef,colour=variable))+
+  geom_line(aes(group=variable))+
+  ggtitle("LASSO path for prostate cancer data calculated using the LARS")+
+  xlim(0,20)
+direct.label(p,"first.polygons")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="projectionSeconds" src="../../lineplot/projectionSeconds.first.polygons.png" /></td>
+  <td><p><a href="../plots/projectionSeconds.html">projectionSeconds</a></p><pre>
+data(projectionSeconds, package="directlabels")
+p &lt;- ggplot(projectionSeconds, aes(vector.length/1e6))+
+  geom_ribbon(aes(ymin=min, ymax=max,
+                  fill=method, group=method), alpha=1/2)+
+  geom_line(aes(y=mean, group=method, colour=method))+
+  ggtitle("Projection Time against Vector Length (Sparsity = 10%)")+
+  guides(fill="none")+
+  ylab("Runtime (s)")
+direct.label(p,"first.polygons")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="ridge" src="../../lineplot/ridge.first.polygons.png" /></td>
+  <td><p><a href="../plots/ridge.html">ridge</a></p><pre>
+## complicated ridge regression lineplot ex. fig 3.8 from Elements of
+## Statistical Learning, Hastie et al.
+myridge &lt;- function(f,data,lambda=c(exp(-seq(-15,15,l=200)),0)){
+  require(MASS)
+  require(reshape2)
+  fit &lt;- lm.ridge(f,data,lambda=lambda)
+  X &lt;- data[-which(names(data)==as.character(f[[2]]))]
+  Xs &lt;- svd(scale(X)) ## my d's should come from the scaled matrix
+  dsq &lt;- Xs$d^2
+  ## make the x axis degrees of freedom
+  df &lt;- sapply(lambda,function(l)sum(dsq/(dsq+l)))
+  D &lt;- data.frame(t(fit$coef),lambda,df) # scaled coefs
+  molt &lt;- melt(D,id=c("lambda","df"))
+  ## add in the points for df=0
+  limpts &lt;- transform(subset(molt,lambda==0),lambda=Inf,df=0,value=0)
+  rbind(limpts,molt)
+}
+data(prostate,package="ElemStatLearn")
+pros &lt;- subset(prostate,train==TRUE,select=-train)
+m &lt;- myridge(lpsa~.,pros)
+library(lattice)
+p &lt;- xyplot(value~df,m,groups=variable,type="o",pch="+",
+       panel=function(...){
+         panel.xyplot(...)
+         panel.abline(h=0)
+         panel.abline(v=5,col="grey")
+       },
+       xlim=c(-1,9),
+       main="Ridge regression shrinks least squares coefficients",
+       ylab="scaled coefficients",
+       sub="grey line shows coefficients chosen by cross-validation",
+       xlab=expression(df(lambda)))
+direct.label(p,"first.polygons")
+  </pre></td>
+</tr>
+<tr>
+  <td><img alt="sexdeaths" src="../../lineplot/sexdeaths.first.polygons.png" /></td>
+  <td><p><a href="../plots/sexdeaths.html">sexdeaths</a></p><pre>
+library(ggplot2)
+tx &lt;- time(mdeaths)
+Time &lt;- ISOdate(floor(tx),round(tx%%1 * 12)+1,1,0,0,0)
+uk.lung &lt;- rbind(data.frame(Time,sex="male",deaths=as.integer(mdeaths)),
+                 data.frame(Time,sex="female",deaths=as.integer(fdeaths)))
+p &lt;- qplot(Time,deaths,data=uk.lung,colour=sex,geom="line")+
+  xlim(ISOdate(1973,9,1),ISOdate(1980,4,1))
+direct.label(p,"first.polygons")
+  </pre></td>
+</tr>
+</table>
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>
