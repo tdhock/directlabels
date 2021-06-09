@@ -1,0 +1,17 @@
+1. direct labeling statistical graphics eases interpretation, because
+data is used for label positions.
+
+2. direct labeling is currently possible in R, but (1) hard
+(positioning functions) and (2) different between plotting systems
+(same api).
+
+3. automatic legends are currently implemented in ggplot2 and lattice,
+so in practice legends are used when direct labels would be better,
+simply because implementation is easier.
+
+4. The directlabels package makes adding direct labels so easy that it
+becomes natural to use direct labels instead of legends in everyday
+work.
+
+5. System of Positioning Functions + intelligent defaults allows
+maximum customizability, code re-use, and user-friendlyness.

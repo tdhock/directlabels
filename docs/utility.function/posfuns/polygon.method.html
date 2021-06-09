@@ -1,0 +1,67 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - polygon.method</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - polygon.method</h1>
+
+<p>Make a Positioning Method that places non-overlapping speech
+polygons at the first or last points.</p>
+
+<pre>
+polygon.method &lt;- function(method, space, data.col, na.col){
+  list(method, "<a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>",
+       function(d,...){
+         for(xy in c("x", "y")){
+           d[[sprintf("%s.%s", data.col, xy)]] &lt;- d[[xy]]
+           d[[sprintf("%s.%s", na.col, xy)]] &lt;- NA
+         }
+         d$x &lt;- d$x + space
+         d
+       },
+       "<a href="../../utility.function/posfuns/reduce.cex.lr.html">reduce.cex.lr</a>",
+       <a href="../../utility.function/posfuns/dl.trans.html">dl.trans</a>(h=h*1.5),
+       "<a href="../../utility.function/posfuns/calc.borders.html">calc.borders</a>",
+       <a href="../../utility.function/posfuns/qp.labels.html">qp.labels</a>("y","bottom","top", <a href="../../utility.function/posfuns/make.tiebreaker.html">make.tiebreaker</a>("x","y"), <a href="../../utility.function/posfuns/ylimits.html">ylimits</a>),
+       "<a href="../../utility.function/posfuns/calc.borders.html">calc.borders</a>", <a href="../../utility.function/posfuns/draw.polygons.html">draw.polygons</a>)
+}
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please
+contact <a href="http://sugiyama-www.cs.titech.ac.jp/~toby/">Toby
+Dylan Hocking</a> if you are
+using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a>
+or have ideas to contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from source
+code version 2014.1.27
+(svn revision 675)
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

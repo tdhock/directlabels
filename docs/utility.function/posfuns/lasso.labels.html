@@ -1,0 +1,61 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html;
+	charset=UTF-8" />
+	<link href="http://directlabels.r-forge.r-project.org/estilo1.css"
+	rel="stylesheet" type="text/css" />
+	<title>directlabels documentation - lasso.labels</title>
+  </head>
+
+<body>
+
+<h1><a href="../../index.html">directlabels</a> - utility.function -
+Positioning Method - lasso.labels</h1>
+
+<p>Label points at the zero before the first nonzero y value.</p>
+
+<pre>
+lasso.labels &lt;-
+  list(rot=60,
+       <a href="../../utility.function/posfuns/gapply.fun.html">gapply.fun</a>({ ## figure out where the path hits 0
+         d &lt;- d[order(d$x),]
+         zero &lt;- d$y[1]
+         i &lt;- which(d$y!=zero)[1]
+         just &lt;- as.integer(d[i,"y"]&gt;zero)
+         transform(d[i-1,],hjust=just,vjust=just)
+       }),
+       "<a href="../../utility.function/posfuns/calc.boxes.html">calc.boxes</a>",
+       ## calculate how wide the tilted box is
+       <a href="../../utility.function/posfuns/dl.trans.html">dl.trans</a>(hyp=h/sin(2*pi*rot/360)),
+       ## avoid collisions between tilted boxes
+       <a href="../../utility.function/posfuns/qp.labels.html">qp.labels</a>("x","hyp"))
+</pre>
+
+
+
+<center>
+<table>
+<tr><td>Please contact <a href="http://cbio.ensmp.fr/~thocking/">Toby
+Dylan Hocking</a> if you are using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a> or have ideas to
+contribute, thanks!</td>
+</tr>
+<tr><td align="center">Documentation website generated from comments
+in R source code
+using <a href="http://inlinedocs.r-forge.r-project.org">inlinedocs</a>.</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>
