@@ -1,0 +1,25 @@
+name: Commit changes to gh-pages
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - R/**.R
+  pull_request:
+    branches:
+      - master
+    paths:
+      - R/**.R
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.1
+      - name: Deploy 
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages 
+          folder: R
+          clean: false
+          target-folder: R
