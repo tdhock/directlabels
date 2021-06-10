@@ -75,7 +75,7 @@ dldoc <- function # Make directlabels documentation
   version <- read.dcf("DESCRIPTION")[,"Version"]
   git.line <- system('git log -1 --pretty=format:"%h %aD"', intern=TRUE)
   foot.info <- list(version=version,git=as.character(git.line))
-  setwd(file.path("..","..","www","docs"))
+  setwd(file.path("docs"))
   foot <- filltemplate(foot.info,"templates/foot.html")
   makehtml <- function # Make HTML documentation
   ## Make plots and HTML for documentation website.
