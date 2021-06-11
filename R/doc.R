@@ -75,7 +75,9 @@ dldoc <- function # Make directlabels documentation
   version <- read.dcf("DESCRIPTION")[,"Version"]
   git.line <- system('git log -1 --pretty=format:"%h %aD"', intern=TRUE)
   foot.info <- list(version=version,git=as.character(git.line))
-  setwd(file.path("docs"))
+  tryCatch(setwd(file.path("docs")), error = function(e) {
+    message("Documentation cannot be generated because no 'docs' directory is found. (i.e., 'docs' %in% dir(getwd()) must be FALSE)")
+    cat('Please ensure that the "docs" folder is present in your current working directory, which is: "', getwd(), '"\n')})
   foot <- filltemplate(foot.info,"templates/foot.html")
   makehtml <- function # Make HTML documentation
   ## Make plots and HTML for documentation website.
