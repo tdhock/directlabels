@@ -6,7 +6,8 @@
   <head>
 	<meta http-equiv="Content-Type" content="text/html;
 	charset=UTF-8" />
-  <link href="../../estilo1.css" rel="stylesheet" type="text/css" />
+	<link href="../../../estilo1.css"
+	rel="stylesheet" type="text/css" />
 	<title>directlabels documentation - dl.combine</title>
   </head>
 
@@ -33,7 +34,7 @@ dl.combine &lt;- structure(function # Combine output of several methods
       if(!"cex"%in%names(df)){
         df$cex &lt;- 1
       }
-      
+
       ## we need to do merge to keep all the columns around.
       if(nrow(res))res &lt;- merge(df,res,all=TRUE)
       else res &lt;- df
@@ -83,7 +84,7 @@ dl.combine &lt;- structure(function # Combine output of several methods
     j &lt;- which.max(ycor) # variables in active set, starts with most correlated
     alpha.total &lt;- 0
     out &lt;- data.frame()
-    
+
     while(1){## lar loop
       xak &lt;- xscale[,j] # current variables
       r &lt;- y-xscale%*%b # current residual
@@ -104,7 +105,7 @@ dl.combine &lt;- structure(function # Combine output of several methods
 
       if(sum(abs(intercept)) &lt; epsilon)#corr==0 so we are done
         return(transform(out,s=arclength/max(arclength)))
-      
+
       ## If there are more variables we can enter into the regression,
       ## then see which one will cross the highest correlation line
       ## first, and record the alpha value of where the lines cross.
@@ -118,7 +119,7 @@ dl.combine &lt;- structure(function # Combine output of several methods
       subd &lt;- subd[which.min(subd$alpha),]
       nextvar &lt;- subd$variable
       alpha &lt;- if(nrow(subd))subd$alpha else 1
-      
+
       ## If one of the coefficients would hit 0 at a smaller alpha
       ## value, take it out of the regression and continue.
       hit0 &lt;- xor(b[j]&gt;0,delta&gt;0)&amp;b[j]!=0
@@ -128,7 +129,7 @@ dl.combine &lt;- structure(function # Combine output of several methods
         i &lt;- which.min(alpha0)
         alpha &lt;- alpha0[i]
       }
-      
+
       b[j] &lt;- b[j]+alpha*delta ## evolve parameters
       alpha.total &lt;- alpha.total+alpha
       ## add or remove a variable from the active set

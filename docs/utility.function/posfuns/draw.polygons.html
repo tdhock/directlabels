@@ -6,7 +6,8 @@
   <head>
 	<meta http-equiv="Content-Type" content="text/html;
 	charset=UTF-8" />
-  <link href="../../estilo1.css" rel="stylesheet" type="text/css" />
+	<link href="../../../estilo1.css"
+	rel="stylesheet" type="text/css" />
 	<title>directlabels documentation - draw.polygons</title>
   </head>
 
@@ -25,7 +26,7 @@ draw.polygons &lt;- function(d,...){
   }
   for(i in 1:nrow(d)){
     with(d[i,], {
-      L &lt;- 
+      L &lt;-
         list(x=c(left.x, left, right, right.x, right, left),
              y=c(left.y, top, top, right.y, bottom, bottom))
       for(xy.name in names(L)){
