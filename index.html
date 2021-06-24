@@ -54,27 +54,27 @@ legends? Why not just add direct labels by hand?</a></li>
 <li><a href="http://stackoverflow.com/search?q=directlabels">Before
 emailing me, please search and post on stackoverflow</a>.</li>
 <li>How to avoid overlapping labels? Use a Positioning Method
-with <a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/calc.boxes.html">calc.boxes</a>
+with <a href="https://tdhock.github.io/directlabels/docs/utility.function/posfuns/calc.boxes.html">calc.boxes</a>
 to compute the label bounding box. For
-example, <a href="http://directlabels.r-forge.r-project.org/docs/scatterplot/posfuns/smart.grid.html">smart.grid</a>
+example, <a href="https://tdhock.github.io/directlabels/docs/scatterplot/posfuns/smart.grid.html">smart.grid</a>
 for scatterplots
-and <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.polygons.html">last.polygons</a>
-or <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.qp.html">last.qp</a>
+and <a href="https://tdhock.github.io/directlabels/docs/lineplot/posfuns/last.polygons.html">last.polygons</a>
+or <a href="https://tdhock.github.io/directlabels/docs/lineplot/posfuns/last.qp.html">last.qp</a>
 for lineplots.</li>
 <li>Can I increase text size? Yes, but do it before calling
 Positioning Methods that calculate the label bounding
 box: <tt>direct.label(p, list(cex=2, "last.qp"))</tt> for a lineplot <tt>p</tt>.</li>
 <li>Why are some labels small when using lineplot labeling methods
-like <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.polygons.html">last.polygons</a>?
+like <a href="https://tdhock.github.io/directlabels/docs/lineplot/posfuns/last.polygons.html">last.polygons</a>?
 Because the labels are automatically resized to fit in the plotting
 area. To increase the text size you can increase the x axis limits as in
-the <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/plots/lars.html">lars</a>
-and <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/plots/ridge.html">ridge</a>
+the <a href="https://tdhock.github.io/directlabels/docs/lineplot/plots/lars.html">lars</a>
+and <a href="https://tdhock.github.io/directlabels/docs/lineplot/plots/ridge.html">ridge</a>
 examples.</li>
 <li>How to adjust all labels left or right?  For example you can
 use <tt>direct.label(p, list(dl.trans(x=x+0.1), "last.qp"))</tt> to
 move labels to the right 0.1cm and then
-apply <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.qp.html">last.qp</a>
+apply <a href="https://tdhock.github.io/directlabels/docs/lineplot/posfuns/last.qp.html">last.qp</a>
 for a lineplot <tt>p</tt>.</li>
 <li>How
 about <tt>fontface</tt>, <tt>fontfamily</tt>, <tt>rot</tt>, <tt>alpha</tt>
@@ -102,7 +102,7 @@ directlabels package introduces the concept of the Positioning Method,
 which is a list that specifies how to transform the data points into
 labels. For example, with the scatterplot above, the default
 Positioning Method is
-<a href="http://directlabels.r-forge.r-project.org/docs/scatterplot/posfuns/smart.grid.html">smart.grid</a>,
+<a href="https://tdhock.github.io/directlabels/docs/scatterplot/posfuns/smart.grid.html">smart.grid</a>,
 which places each label close to the center of the corresponding point
 cloud. The following diagram shows how the data to plot is converted
 to standard form column names and positions in centimeters before the
@@ -119,14 +119,14 @@ Petal.Length Sepal.Length Species
          1.5          4.6  setosa
          1.4          5.0  setosa
          1.7          5.4  setosa
-         ...          ...    ...  
+         ...          ...    ...
 </pre>
 </td>
 <td>
 <pre>
  convert to
  standard form (cm)
----------------------&gt;  
+---------------------&gt;
  direct.label.trellis
  and
  drawDetails.dlgrob
@@ -141,7 +141,7 @@ Petal.Length Sepal.Length Species
 2.269632 1.986922 setosa
 2.021041 3.426721 setosa
 2.766813 4.866519 setosa
-    ...      ...    ...  
+    ...      ...    ...
 </pre>
 </td>
 <td>
@@ -149,7 +149,7 @@ Petal.Length Sepal.Length Species
  calculate label
  positions with
  Positioning Method
----------------------&gt;  
+---------------------&gt;
  smart.grid
 </pre>
 </td>
@@ -199,7 +199,7 @@ using lattice or ggplot2.</p>
 <p>
 <a href="2012-03-29-HOCKING-directlabels-semin-r.pdf">Recent
 advances in direct labeled graphics</a>
-[<a href="http://r-forge.r-project.org/scm/viewvc.php/tex/2012-semin-r/?root=directlabels">source</a>]. Invited talk
+[<a href="https://github.com/tdhock/directlabels/tree/gh-pages/tex/2012-semin-r">source</a>]. Invited talk
 for semin-r, the Paris R user group (2012).
 </p>
 
@@ -209,10 +209,10 @@ labels to
 plots</a>, <a href="http://www.warwick.ac.uk/statsdept/user-2011/">Best
 Student Poster at useR 2011</a>, attempts to motivate the package and
 explain how it works
-[<a href="http://r-forge.r-project.org/scm/viewvc.php/tex/useR-2011/?root=directlabels">source</a>]. Notably,
+[<a href="https://github.com/tdhock/directlabels/tree/gh-pages/tex/useR-2011">source</a>]. Notably,
 the "Optimal Labels" section is basically the only documentation of
 how to implement
-the <a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/qp.labels.html">qp.labels</a>
+the <a href="https://tdhock.github.io/directlabels/docs/utility.function/posfuns/qp.labels.html">qp.labels</a>
 Positioning Method. The details of the "Modular package design"
 section have changed in version 2.0. Rather than
 calling <tt>label.positions</tt> the first time the plot
@@ -244,15 +244,15 @@ on the R Graphical Manual</a>.</p>
 
 
 <p>Return to
-the <a href="http://r-forge.r-project.org/projects/directlabels/"><strong>project
-summary page</strong></a>. </p>
+the <a href="https://github.com/tdhock/directlabels"><strong>GitHub
+repository</strong></a>. </p>
 
 <center>
 <table>
 <tr>
 
 <td>Please send email to <a
-href="http://cbio.ensmp.fr/~thocking/">Toby
+href="toby.hocking@nau.edu">Toby
 Dylan Hocking</a> if you are using directlabels or have ideas to
 contribute, thanks!</td>
 
