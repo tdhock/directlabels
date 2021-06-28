@@ -15,7 +15,7 @@
 
 <body class="normal">
 
-<h1>Easily add direct labels to plots using the directlabels package</h1>
+<h1>Easily add direct labels to plots using the directlabels package!</h1>
 
 <table>
 <tr>
@@ -29,16 +29,14 @@ high-level plotting systems such as lattice and ggplot2. The main
 function that the package provides is <tt>direct.label(p)</tt>, which
 takes a lattice or ggplot2 plot <tt>p</tt> and adds direct labels:</p>
 
-
 <pre>
-install.packages("directlabels", repo="http://r-forge.r-project.org")
+install.packages("directlabels")
 library(lattice)
 library(directlabels)
 direct.label(xyplot(jitter(Sepal.Length)~jitter(Petal.Length),iris,groups=Species))
-    </pre>
-<p>
-directlabels website navigation:
-</p>
+</pre>
+
+<h2>directlabels website navigation</h2>
 
 <ul>
 <li><a href="docs/index.html">Positioning Method examples database</a></li>
