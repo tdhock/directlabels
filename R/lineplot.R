@@ -1,34 +1,34 @@
 ### Label points at the zero before the first nonzero y value.
-lasso.labels <-
-  list(rot=60,
-       gapply.fun({ ## figure out where the path hits 0
-         d <- d[order(d$x),]
-         zero <- d$y[1]
-         i <- which(d$y!=zero)[1]
-         if(!is.na(i)){
-           just <- as.integer(d[i,"y"]>zero)
-           transform(d[i-1,],hjust=just,vjust=just)
-         }
-       }),
-       "calc.boxes",
-       ## calculate how wide the tilted box is
-       dl.trans(hyp=h/sin(2*pi*rot/360)),
-       dl.trans(left=x-hyp/2,right=x+hyp/2),
-       ## avoid collisions between tilted boxes
-       function(d,...){
-         solver <- qp.labels("x","left","right")
-         ## apply the solver independently for top and bottom labels.
-         solution.list <- list()
-         for(vj in c(0,1)){
-           these <- d$vjust == vj
-           if(any(these)){
-             one.side <- d[these,]
-             solved <- solver(one.side)
-             solution.list[[paste(vj)]] <- solved
-           }
-         }
-         do.call(rbind, solution.list)
-       })
+lasso.labels <- list(
+  rot=60,
+  gapply.fun({ ## figure out where the path hits 0
+    d <- d[order(d$x),]
+    zero <- d$y[1]
+    i <- which(d$y!=zero)[1]
+    if(!is.na(i)){
+      just <- as.integer(d[i,"y"]>zero)
+      transform(d[i-1,],hjust=just,vjust=just)
+    }
+  }),
+  "calc.boxes",
+  ## calculate how wide the tilted box is
+  dl.trans(hyp=h/sin(2*pi*rot/360)),
+  dl.trans(left=x-hyp/2,right=x+hyp/2),
+  ## avoid collisions between tilted boxes
+  function(d,...){
+    solver <- qp.labels("x","left","right")
+    ## apply the solver independently for top and bottom labels.
+    solution.list <- list()
+    for(vj in c(0,1)){
+      these <- d$vjust == vj
+      if(any(these)){
+        one.side <- d[these,]
+        solved <- solver(one.side)
+        solution.list[[paste(vj)]] <- solved
+      }
+    }
+    do.call(rbind, solution.list)
+  })
 
 ### Positioning Method for the first of a group of points.
 first.points <- label.endpoints(min,1)
@@ -56,12 +56,6 @@ maxvar.points <- function(d,...){
   else if(diff(vars)<0)"first.points" else "last.points"
   apply.method(FUN,d,...)
 }
-
-### Label last points, bumping labels up if they collide.
-last.bumpup <- list("last.points","bumpup")
-
-### Label first points, bumping labels up if they collide.
-first.bumpup <- list("first.points","bumpup")
 
 ### Label last points from QP solver that ensures labels do not collide.
 last.qp <- vertical.qp("last.points")
@@ -135,5 +129,5 @@ lines2 <- function
 
 ### Draw a box with the label inside, at the point furthest away from
 ### the plot border and any other curve.
-angled.boxes <-
-  list("far.from.others.borders","calc.boxes","enlarge.box","draw.rects")
+angled.boxes <- list(
+  "far.from.others.borders","calc.boxes","enlarge.box","draw.rects")
