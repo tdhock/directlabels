@@ -7,12 +7,10 @@ dldoc <- function # Make directlabels documentation
 (pkgdir=".."
 ### Package directory root.
  ){
-  odir <- setwd(pkgdir)
-  on.exit(setwd(odir))
   docdir <- file.path("tests","doc")
   docdirs <- dir(docdir)
-  plotfiles <- sapply(docdirs,function(d)Sys.glob(file.path(docdir,d,"*.R")))
-  Rfiles <- paste(file.path("R",docdirs),".R",sep="")
+  plotfiles <- sapply(docdirs,function(d)Sys.glob(file.path(pkgdir,docdir,d,"*.R")))
+  Rfiles <- paste(file.path(pkgdir,"R",docdirs),".R",sep="")
   posfuns <- lapply(Rfiles,extract.posfun)
   names(posfuns) <- docdirs
   plots <- lapply(plotfiles,lapply,extract.plot)
@@ -59,7 +57,7 @@ dldoc <- function # Make directlabels documentation
   }
   rd <- apply(m[rownames(m)!="utility.function",],1,makerd)
   rd <- c("\n\\dontrun{",rd,"}")
-  pf.file <- file.path("man","positioning.functions.Rd")
+  pf.file <- file.path(pkgdir,"man","positioning.functions.Rd")
   pflines <- readLines(pf.file)
   exline <- grep("\\\\examples[{]",pflines)[1]
   newrd <- paste(paste(pflines[1:exline],collapse="\n"),
@@ -75,7 +73,7 @@ dldoc <- function # Make directlabels documentation
   version <- read.dcf("DESCRIPTION")[,"Version"]
   git.line <- system('git log -1 --pretty=format:"%h %aD"', intern=TRUE)
   foot.info <- list(version=version,git=as.character(git.line))
-  foot <- filltemplate(foot.info,"docs/templates/foot.html")
+  foot <- filltemplate(foot.info,file.path(pkgdir,"docs/templates/foot.html"))
   makehtml <- function # Make HTML documentation
   ## Make plots and HTML for documentation website.
   (L
@@ -88,13 +86,13 @@ dldoc <- function # Make directlabels documentation
                         sapply(L$plots,function(x)x$name)))
     ## first make plots
     datanames <- names(L)[sapply(L,class)=="list"]
-    tomake <- file.path(subdir,c("",datanames))
+    tomake <- file.path(pkgdir,"docs",subdir,c("",datanames))
     for(d in tomake)
       if(!file.exists(d))dir.create(d,recursive=TRUE)
     for(p in L$plots){
       cat(p$name,":",sep="")
       for(f in L$posfuns){
-        pngfile <- file.path(subdir,paste(p$name,f$name,"png",sep="."))
+        pngfile <- file.path(pkgdir,subdir,paste(p$name,f$name,"png",sep="."))
         pngurls[f$name,p$name] <- pngfile
         if(!file.exists(pngfile)){
           cat(" ",f$name,sep="")
@@ -108,7 +106,7 @@ dldoc <- function # Make directlabels documentation
           })
           dev.off()
         }
-        thumbfile <- file.path(subdir,paste(p$name,f$name,"thumb.png",sep="."))
+        thumbfile <- file.path(pkgdir,subdir,paste(p$name,f$name,"thumb.png",sep="."))
         if(!file.exists(thumbfile)){
           cmd <- paste("convert -geometry 64x64",pngfile,thumbfile)
           cat("*")
@@ -127,16 +125,16 @@ dldoc <- function # Make directlabels documentation
             parname=item$name,
             url=file.path("..",row,paste(f$name,".html",sep="")))
         })
-        rowfile <- paste("docs/templates/",row,"-row.html",sep="")
+        rowfile <- paste(file.path(pkgdir,"docs/templates/"),row,"-row.html",sep="")
         rowhtml <- sapply(tmp,filltemplate,rowfile)
         item$table <- paste(c("<table>",rowhtml,"</table>"),collapse="\n")
       }
       item$type <- L$type
       item$pagetitle <- item$name
-      item$head <- filltemplate(item,"docs/templates/head.html")
+      item$head <- filltemplate(item,file.path(pkgdir,"docs/templates/head.html"))
       item$foot <- foot
-      html <- filltemplate(item,paste("docs/templates/",main,".html",sep=""))
-      write(html,file.path(subdir,main,paste(item$name,".html",sep="")))
+      html <- filltemplate(item,paste(file.path(pkgdir,"docs/templates/"),main,".html",sep=""))
+      write(html,file.path(pkgdir,subdir,main,paste(item$name,".html",sep="")))
       item
     }
     res <- list()
@@ -164,12 +162,12 @@ dldoc <- function # Make directlabels documentation
     },simplify=FALSE)
   }
   links <- apply(m,1,extract.links)
-  tmp <- list(head=filltemplate(list(pagetitle="home"),"docs/templates/head.html"),
+  tmp <- list(head=filltemplate(list(pagetitle="home"),file.path(pkgdir,"docs/templates/head.html")),
               foot=foot)
-  rows <- lapply(links,filltemplate,"docs/templates/index-row.html")
+  rows <- lapply(links,filltemplate,file.path(pkgdir,"docs/templates/index-row.html"))
   tmp$table <- paste(rows,collapse="\n")
-  html <- filltemplate(tmp,"docs/templates/index.html")
-  write(html,"docs/index.html")
+  html <- filltemplate(tmp,file.path(pkgdir,"docs/templates/index.html"))
+  write(html,file.path(pkgdir,"docs/index.html"))
 
   m
 ### Matrix of lists describing example plots and matching builtin
