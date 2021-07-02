@@ -5,10 +5,10 @@ dldoc <- function # Make directlabels documentation
 ### we can automatically assemble a database of example plots from the
 ### code.
 (pkgdir=".."
-### Package directory root.
- ){
+ ### Package directory root.
+){
   docdir <- file.path("tests","doc")
-  docdirs <- dir(docdir)
+  docdirs <- dir(file.path(pkgdir,docdir))
   plotfiles <- sapply(docdirs,function(d)Sys.glob(file.path(pkgdir,docdir,d,"*.R")))
   Rfiles <- paste(file.path(pkgdir,"R",docdirs),".R",sep="")
   posfuns <- lapply(Rfiles,extract.posfun)
@@ -45,7 +45,7 @@ dldoc <- function # Make directlabels documentation
   makerd <- function # Make Rd positioning method description
   (L
    ## List of posfuns and plots to match up
-   ){
+  ){
 
     plotcodes <-
       paste("{\n",sapply(L$plots,"[[","code"),"\n}",sep="",collapse=",\n")
@@ -78,12 +78,12 @@ dldoc <- function # Make directlabels documentation
   ## Make plots and HTML for documentation website.
   (L
    ## List of positioning method and plots to match up.
-   ){
+  ){
     ## all paths are relative to the docs directory
     subdir <- L$type
     pngurls <- matrix("",nrow=length(L$posfuns),ncol=length(L$plots),
                       dimnames=list(names(L$posfuns),
-                        sapply(L$plots,function(x)x$name)))
+                                    sapply(L$plots,function(x)x$name)))
     ## first make plots
     datanames <- names(L)[sapply(L,class)=="list"]
     tomake <- file.path(pkgdir,"docs",subdir,c("",datanames))
@@ -170,18 +170,18 @@ dldoc <- function # Make directlabels documentation
   write(html,file.path(pkgdir,"docs/index.html"))
 
   m
-### Matrix of lists describing example plots and matching builtin
-### Positioning Methods.
+  ### Matrix of lists describing example plots and matching builtin
+  ### Positioning Methods.
 }
 
 extract.posfun <- function # Extract Positioning Method for documentation
 ### Use inlinedocs to extract comments and definitions from code, then
 ### for each item found add the value and its name to the list.
 (f
-### R code file, which should contain only Positioning Methods that
-### can be used with examples defined in the doc/ subdirectory with
-### the same name.
- ){
+ ### R code file, which should contain only Positioning Methods that
+ ### can be used with examples defined in the doc/ subdirectory with
+ ### the same name.
+){
   L <- inlinedocs::extract.docs.file(f)
   e <- new.env()
   sys.source(f,e)
@@ -194,16 +194,16 @@ extract.posfun <- function # Extract Positioning Method for documentation
   ## otherwise if one function's name is a substring of another's!
   ##L <- L[order(nchar(names(L)),decreasing=TRUE)]
   L
-### List of lists, each of which describes one Positioning Method
-### defined in f.
+  ### List of lists, each of which describes one Positioning Method
+  ### defined in f.
 }
 
 extract.plot <- function # Extract plot and definition for documentation
 ### Given an R code file, execute it, store the definition, and save
 ### the resulting plot in a variable.
 (f
-### R code file with plot example.
- ){
+ ### R code file with plot example.
+){
   require(directlabels)
   code <- readLines(f)
   i <- max(grep("^\\w",code))
@@ -220,12 +220,12 @@ extract.plot <- function # Extract plot and definition for documentation
 rhtmlescape <- function
 ### for standards compliance we should escape <>&
 (code
-### R code to be displayed on a HTML page between pre tags.
- ){
+ ### R code to be displayed on a HTML page between pre tags.
+){
   code <- gsub("[&]","&amp;",code)
   code <- gsub("[<]","&lt;",code)
   code <- gsub("[>]","&gt;",code)
-### Standards compliant HTML to display.
+  ### Standards compliant HTML to display.
 }
 
 filltemplate <- function
@@ -236,8 +236,8 @@ filltemplate <- function
   L <- L[sapply(L,class)=="character"&sapply(L,length)>0]
   locs <- gregexpr("OBJ[$]([a-z]+)\\b",txt)[[1]]
   keywords <- sapply(seq_along(locs),function(i)
-                     substr(txt,locs[i]+4,locs[i]+
-                            attr(locs,"match.length")[i]-1))
+    substr(txt,locs[i]+4,locs[i]+
+             attr(locs,"match.length")[i]-1))
   FIND <- sapply(keywords,function(x)paste("OBJ[$]",x,sep=""))
   REP <- unlist(ifelse(keywords%in%names(L),L[keywords],""))
   for(i in seq_along(FIND)){
@@ -245,4 +245,3 @@ filltemplate <- function
   }
   txt
 }
-
