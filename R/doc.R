@@ -8,7 +8,6 @@ dldoc <- function # Make directlabels documentation
  ### Package directory root.
 ){
   odir <- setwd(pkgdir)
-  on.exit(setwd(odir))
   docdir <- file.path("tests","doc")
   docdirs <- dir(docdir)
   plotfiles <- sapply(docdirs,function(d)Sys.glob(file.path(docdir,d,"*.R")))
@@ -52,7 +51,7 @@ dldoc <- function # Make directlabels documentation
     plotcodes <- paste("{\n",sapply(L$plots,"[[","code"),"\n}",sep="",collapse=",\n")
     forloop <- paste("\nfor(p in list(",plotcodes,"))",sep="")
     dlines <- paste(paste('print(direct.label(p,"',
-                  names(L$posfuns),'"))',sep=""),collapse="\n  ")
+                          names(L$posfuns),'"))',sep=""),collapse="\n  ")
     sprintf("### %s Positioning Methods%s{\n  %s\n}\n",L$type,forloop,dlines)
   }
   rd <- apply(m[rownames(m)!="utility.function",],1,makerd)
