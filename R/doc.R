@@ -5,7 +5,7 @@ dldoc <- function # Make directlabels documentation
 ### we can automatically assemble a database of example plots from the
 ### code.
 (pkgdir=".."
- ### Package directory root.
+### Package directory root.
 ){
   odir <- setwd(pkgdir)
   docdir <- file.path("tests","doc")
@@ -169,17 +169,17 @@ dldoc <- function # Make directlabels documentation
   write(html,"docs/index.html")
 
   m
-  ### Matrix of lists describing example plots and matching builtin
-  ### Positioning Methods.
+### Matrix of lists describing example plots and matching builtin
+### Positioning Methods.
 }
 
 extract.posfun <- function # Extract Positioning Method for documentation
 ### Use inlinedocs to extract comments and definitions from code, then
 ### for each item found add the value and its name to the list.
 (f
- ### R code file, which should contain only Positioning Methods that
- ### can be used with examples defined in the doc/ subdirectory with
- ### the same name.
+### R code file, which should contain only Positioning Methods that
+### can be used with examples defined in the doc/ subdirectory with
+### the same name.
 ){
   L <- inlinedocs::extract.docs.file(f)
   e <- new.env()
@@ -193,15 +193,15 @@ extract.posfun <- function # Extract Positioning Method for documentation
   ## otherwise if one function's name is a substring of another's!
   ##L <- L[order(nchar(names(L)),decreasing=TRUE)]
   L
-  ### List of lists, each of which describes one Positioning Method
-  ### defined in f.
+### List of lists, each of which describes one Positioning Method
+### defined in f.
 }
 
 extract.plot <- function # Extract plot and definition for documentation
 ### Given an R code file, execute it, store the definition, and save
 ### the resulting plot in a variable.
 (f
- ### R code file with plot example.
+### R code file with plot example.
 ){
   require(directlabels)
   code <- readLines(f)
@@ -219,12 +219,12 @@ extract.plot <- function # Extract plot and definition for documentation
 rhtmlescape <- function
 ### for standards compliance we should escape <>&
 (code
- ### R code to be displayed on a HTML page between pre tags.
+### R code to be displayed on a HTML page between pre tags.
 ){
   code <- gsub("[&]","&amp;",code)
   code <- gsub("[<]","&lt;",code)
   code <- gsub("[>]","&gt;",code)
-  ### Standards compliant HTML to display.
+### Standards compliant HTML to display.
 }
 
 filltemplate <- function
