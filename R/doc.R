@@ -6,7 +6,7 @@ dldoc <- function # Make directlabels documentation
 ### code.
 (pkgdir=".."
 ### Package directory root.
-){
+ ){
   odir <- setwd(pkgdir)
   docdir <- file.path("tests","doc")
   docdirs <- dir(docdir)
@@ -46,12 +46,14 @@ dldoc <- function # Make directlabels documentation
   makerd <- function # Make Rd positioning method description
   (L
    ## List of posfuns and plots to match up
-  ){
+   ){
 
-    plotcodes <- paste("{\n",sapply(L$plots,"[[","code"),"\n}",sep="",collapse=",\n")
+    plotcodes <-
+      paste("{\n",sapply(L$plots,"[[","code"),"\n}",sep="",collapse=",\n")
     forloop <- paste("\nfor(p in list(",plotcodes,"))",sep="")
-    dlines <- paste(paste('print(direct.label(p,"',
-                          names(L$posfuns),'"))',sep=""),collapse="\n  ")
+    dlines <-
+      paste(paste('print(direct.label(p,"',
+                  names(L$posfuns),'"))',sep=""),collapse="\n  ")
     sprintf("### %s Positioning Methods%s{\n  %s\n}\n",L$type,forloop,dlines)
   }
   rd <- apply(m[rownames(m)!="utility.function",],1,makerd)
@@ -82,7 +84,7 @@ dldoc <- function # Make directlabels documentation
     subdir <- file.path("docs",L$type)
     pngurls <- matrix("",nrow=length(L$posfuns),ncol=length(L$plots),
                       dimnames=list(names(L$posfuns),
-                                    sapply(L$plots,function(x)x$name)))
+                        sapply(L$plots,function(x)x$name)))
     ## first make plots
     datanames <- names(L)[sapply(L,class)=="list"]
     tomake <- file.path(subdir,c("",datanames))
@@ -180,7 +182,7 @@ extract.posfun <- function # Extract Positioning Method for documentation
 ### R code file, which should contain only Positioning Methods that
 ### can be used with examples defined in the doc/ subdirectory with
 ### the same name.
-){
+ ){
   L <- inlinedocs::extract.docs.file(f)
   e <- new.env()
   sys.source(f,e)
@@ -202,7 +204,7 @@ extract.plot <- function # Extract plot and definition for documentation
 ### the resulting plot in a variable.
 (f
 ### R code file with plot example.
-){
+ ){
   require(directlabels)
   code <- readLines(f)
   i <- max(grep("^\\w",code))
@@ -220,7 +222,7 @@ rhtmlescape <- function
 ### for standards compliance we should escape <>&
 (code
 ### R code to be displayed on a HTML page between pre tags.
-){
+ ){
   code <- gsub("[&]","&amp;",code)
   code <- gsub("[<]","&lt;",code)
   code <- gsub("[>]","&gt;",code)
@@ -235,8 +237,8 @@ filltemplate <- function
   L <- L[sapply(L,class)=="character"&sapply(L,length)>0]
   locs <- gregexpr("OBJ[$]([a-z]+)\\b",txt)[[1]]
   keywords <- sapply(seq_along(locs),function(i)
-    substr(txt,locs[i]+4,locs[i]+
-             attr(locs,"match.length")[i]-1))
+                     substr(txt,locs[i]+4,locs[i]+
+                            attr(locs,"match.length")[i]-1))
   FIND <- sapply(keywords,function(x)paste("OBJ[$]",x,sep=""))
   REP <- unlist(ifelse(keywords%in%names(L),L[keywords],""))
   for(i in seq_along(FIND)){
