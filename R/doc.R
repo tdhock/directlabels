@@ -79,7 +79,7 @@ dldoc <- function # Make directlabels documentation
   ## Make plots and HTML for documentation website.
   (L
    ## List of positioning method and plots to match up.
-  ){
+   ){
     ## all paths are relative to the docs directory
     subdir <- file.path("docs",L$type)
     pngurls <- matrix("",nrow=length(L$posfuns),ncol=length(L$plots),
