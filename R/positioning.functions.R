@@ -67,12 +67,10 @@ makeContent.dlgrobtree <- function
   }
   text.name <- paste0(
     "directlabels.text.", x$name)
-  tg <- with(cm.data, grid.text(
+  with(cm.data, grid.text(
     label,x,y,hjust=hjust,vjust=vjust,rot=rot,default.units="cm",
     gp=gp,
     name=text.name))
-  sg <- unlist(attr(x$data, 'shapeGrobs'))
-  setChildren(x, gList(tg, sg))
 }
 
 ### This environment holds an integer id that will be incremented to
