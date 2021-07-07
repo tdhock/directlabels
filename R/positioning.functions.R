@@ -88,7 +88,7 @@ dlgrob <- function
   axes2native=identity,
   ...
 ){
-  ## increment dlgrob.id to get a unique name because as explaine on
+  ## increment dlgrob.id to get a unique name because as explained on
   ## ?grid::gTree "Grob names need not be unique in general, but all
   ## children of a gTree must have different names."
   dl.env$dlgrob.id <- dl.env$dlgrob.id+1L
@@ -147,7 +147,7 @@ direct.label <- structure(function # Direct labels for color decoding
   print(direct.label(ratplot))
   ## To put them on the same side, just manually specify the
   ## Positioning Method.
-  print(direct.label(ratplot,"last.qp")) 
+  print(direct.label(ratplot,"last.qp"))
 
   lattice.options(oldopt)
 })
