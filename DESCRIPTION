@@ -23,7 +23,7 @@ Suggests: MASS,
 	  lars, latticeExtra,
 	  dplyr, ggthemes,
 	  testthat
-Imports: grid, quadprog
+Imports: grid (>= 3.0.0), quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
 	 densityplot.R ggplot2.R positioning.functions.R
 	 doc.R lattice.R scatterplot.R contourplot.R
