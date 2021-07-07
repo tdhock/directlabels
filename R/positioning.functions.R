@@ -1,7 +1,7 @@
 ### Process data points using the Positioning Method and draw the
 ### resulting direct labels. This is called for every panel with
 ### direct labels, every time the plot window is resized.
-makeContent.dlgrob <- function
+drawDetails.dlgrob <- function
 (x,
 ### The dlgrob list object. x$method should be a Positioning Method
 ### list and x$data should be a data.frame with the following
@@ -67,12 +67,10 @@ makeContent.dlgrob <- function
   }
   text.name <- paste0(
     "directlabels.text.", x$name)
-  tg <- with(cm.data, textGrob(
+  with(cm.data, grid.text(
     label,x,y,hjust=hjust,vjust=vjust,rot=rot,default.units="cm",
     gp=gp,
     name=text.name))
-  sg <- unlist(attr(x$data, 'shapeGrobs'))
-  setChildren(x, gList(tg, sg))
 }
 
 ### This environment holds an integer id that will be incremented to
@@ -90,13 +88,13 @@ dlgrob <- function
   axes2native=identity,
   ...
 ){
-  ## increment dlgrob.id to get a unique name because as explaine on
+  ## increment dlgrob.id to get a unique name because as explained on
   ## ?grid::gTree "Grob names need not be unique in general, but all
   ## children of a gTree must have different names."
   dl.env$dlgrob.id <- dl.env$dlgrob.id+1L
   mstr <- if(is.character(method))method[1] else "NA"
   name <- sprintf("GRID.dlgrob.%d.%s", dl.env$dlgrob.id, mstr)
-  gTree(data=data,method=method,debug=debug,axes2native=axes2native,
+  grob(data=data,method=method,debug=debug,axes2native=axes2native,
        cl="dlgrob",
        name=name,...)
 }
