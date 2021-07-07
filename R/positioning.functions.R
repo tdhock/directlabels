@@ -1,7 +1,7 @@
 ### Process data points using the Positioning Method and draw the
 ### resulting direct labels. This is called for every panel with
 ### direct labels, every time the plot window is resized.
-drawDetails.dlgrob <- function
+makeContent.dlgrobtree <- function
 (x,
 ### The dlgrob list object. x$method should be a Positioning Method
 ### list and x$data should be a data.frame with the following
@@ -67,10 +67,12 @@ drawDetails.dlgrob <- function
   }
   text.name <- paste0(
     "directlabels.text.", x$name)
-  with(cm.data, grid.text(
+  tg <- with(cm.data, grid.text(
     label,x,y,hjust=hjust,vjust=vjust,rot=rot,default.units="cm",
     gp=gp,
     name=text.name))
+  sg <- unlist(attr(x$data, 'shapeGrobs'))
+  setChildren(x, gList(tg, sg))
 }
 
 ### This environment holds an integer id that will be incremented to
@@ -94,8 +96,8 @@ dlgrob <- function
   dl.env$dlgrob.id <- dl.env$dlgrob.id+1L
   mstr <- if(is.character(method))method[1] else "NA"
   name <- sprintf("GRID.dlgrob.%d.%s", dl.env$dlgrob.id, mstr)
-  grob(data=data,method=method,debug=debug,axes2native=axes2native,
-       cl="dlgrob",
+  gTree(data=data,method=method,debug=debug,axes2native=axes2native,
+       cl="dlgrobtree",
        name=name,...)
 }
 
@@ -147,7 +149,7 @@ direct.label <- structure(function # Direct labels for color decoding
   print(direct.label(ratplot))
   ## To put them on the same side, just manually specify the
   ## Positioning Method.
-  print(direct.label(ratplot,"last.qp")) 
+  print(direct.label(ratplot,"last.qp"))
 
   lattice.options(oldopt)
 })
