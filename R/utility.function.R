@@ -485,7 +485,7 @@ draw.polygons <- function(d,...){
   if(! "text.color" %in% names(d)){
     d$text.color <- "white"
   }
-  grob.list <- list()
+  groblist <- list()
   for(i in 1:nrow(d))with(d[i,], {
     L <- list(
       x=c(left.x, left, top.x, right, right.x, right, bottom.x, left),
@@ -494,7 +494,7 @@ draw.polygons <- function(d,...){
       xy <- L[[xy.name]]
       L[[xy.name]] <- xy[!is.na(xy)]
     }
-    grob.list[[i]] <- grid::polygonGrob(
+    groblist[[i]] <- grid::polygonGrob(
       L$x, L$y,
       default.units="cm",
       gp=grid::gpar(col=box.color, fill=colour),
@@ -502,7 +502,7 @@ draw.polygons <- function(d,...){
     )
   })
   d$colour <- d$text.color
-  attr(d, 'shapeGrobs') <- grob.list
+  attr(d, 'shapeGrobs') <- groblist
   d
 }
 
@@ -512,15 +512,15 @@ draw.polygons <- function(d,...){
 draw.rects <- function(d,...){
   if(is.null(d$box.color))d$box.color <- "black"
   if(is.null(d$fill))d$fill <- "white"
-  grob.list <- list()
+  groblist <- list()
   for(i in 1:nrow(d)){
-    with(d[i,], grob.list[[i]] <- grid::rectGrob(
+    with(d[i,], groblist[[i]] <- grid::rectGrob(
       gp = gpar(col = box.color, fill = fill),
       vp = viewport(x, y, w, h, "cm", c(hjust, vjust), angle=rot),
       name="directlabels.draw.rects"
     ))
   }
-  attr(d, 'shapeGrobs') <- grob.list
+  attr(d, 'shapeGrobs') <- groblist
   d
 }
 
