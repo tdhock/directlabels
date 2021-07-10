@@ -72,7 +72,7 @@ makeContent.dlgrob <- function
     gp=gp,
     name=text.name))
   sg <- unlist(attr(x$data, 'shapeGrobs'))
-  setChildren(x, gList(tg, sg))
+  setChildren(x, eval(bquote(gList(..(sg), tg), splice = TRUE)))
 }
 
 ### This environment holds an integer id that will be incremented to
