@@ -494,7 +494,7 @@ draw.polygons <- function(d,...){
       xy <- L[[xy.name]]
       L[[xy.name]] <- xy[!is.na(xy)]
     }
-    groblist[[i]] <- grid::polygonGrob(
+    groblist[[i]] <<- grid::polygonGrob(
       L$x, L$y,
       default.units="cm",
       gp=grid::gpar(col=box.color, fill=colour),
@@ -514,7 +514,7 @@ draw.rects <- function(d,...){
   if(is.null(d$fill))d$fill <- "white"
   groblist <- list()
   for(i in 1:nrow(d)){
-    with(d[i,], groblist[[i]] <- grid::rectGrob(
+    with(d[i,], groblist[[i]] <<- grid::rectGrob(
       gp = gpar(col = box.color, fill = fill),
       vp = viewport(x, y, w, h, "cm", c(hjust, vjust), angle=rot),
       name="directlabels.draw.rects"
