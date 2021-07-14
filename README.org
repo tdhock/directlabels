@@ -1,4 +1,4 @@
-[[https://travis-ci.org/tdhock/directlabels][https://api.travis-ci.org/tdhock/directlabels.svg?branch=master]]
+[[https://travis-ci.org/tdhock/directlabels][https://api.travis-ci.org/tdhock/directlabels.svg?branch=master]] [![Codecov test coverage](https://codecov.io/gh/tdhock/directlabels/branch/master/graph/badge.svg)](https://codecov.io/gh/tdhock/directlabels?branch=master)
 
 ** Installation from CRAN
 
