@@ -4,3 +4,4 @@ revdep
 ^\.travis\.yml$
 ^README\.org$
 build.sh
+^codecov\.yml$
