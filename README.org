@@ -20,7 +20,7 @@ Changes are listed in [[file:NEWS]].
 
 ** Usage examples
 
-Please see [[http://directlabels.r-forge.r-project.org/][the directlabels page on R-Forge]].
+Please check [[https://tdhock.github.io/directlabels/docs/index.html][the documentation page]] (with links to examples for specific methods) and [[https://tdhock.github.io/directlabels/examples.html][the page with several advanced examples]].
 
 ** Development and documentation
 
@@ -32,11 +32,10 @@ devtools::install_github("tdhock/inlinedocs")
 inlinedocs::package.skeleton.dx("path/to/directlabels")
 #+END_SRC
 
-The [[http://directlabels.r-forge.r-project.org/docs/index.html][directlabels documentation examples web site]] can be generated
-using
+The [[https://tdhock.github.io/directlabels/docs/index.html][directlabels documentation examples site]] can be generated via the [[https://github.com/tdhock/directlabels/tree/gh-pages][gh-pages]] branch by using:
 
 #+BEGIN_SRC R
-directlabels::dldoc("~/R/directlabels/pkg/directlabels")
+directlabels::dldoc("path/to/directlabels")
 #+END_SRC
 
 Be careful about what you put in each of the R code files -- they are
