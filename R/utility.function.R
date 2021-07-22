@@ -485,8 +485,8 @@ draw.polygons <- function(d,...){
   if(! "text.color" %in% names(d)){
     d$text.color <- "white"
   }
-  xpos <- list()
-  ypos <- list()
+  xpos <- vector()
+  ypos <- vector()
   for(i in 1:nrow(d))with(d[i,], {
     L <- list(
       x=c(left.x, left, top.x, right, right.x, right, bottom.x, left),
@@ -497,10 +497,9 @@ draw.polygons <- function(d,...){
     }
     xpos <<- c(xpos, L$x)
     ypos <<- c(ypos, L$y)
-    #browser()
   })
   attr(d, 'shapeGrobs') <- grid::polygonGrob(
-    unlist(xpos), unlist(ypos),
+    xpos, ypos,
     id=rep(1:nrow(d),5),
     default.units="cm",
     gp=grid::gpar(col=box.color, fill=colour),
