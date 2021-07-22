@@ -14,24 +14,16 @@ Description: An extensible framework
  and inferring an appropriate Positioning Method.
 URL: https://github.com/tdhock/directlabels
 LazyData: true
-Suggests: 
-    MASS,
-    knitr,
-    markdown,
-    inlinedocs,
-    RColorBrewer,
-    ggplot2 (>= 2.0),
-    rlang,
-    lattice,
-    alphahull,
-    nlme,
-    lars,
-    latticeExtra,
-    dplyr,
-    ggthemes,
-    testthat,
-    covr
-Imports: grid, quadprog
+Suggests: MASS,
+	  knitr, markdown,
+	  inlinedocs,
+	  RColorBrewer,
+	  ggplot2 (>= 2.0), rlang,
+	  lattice, alphahull, nlme,
+	  lars, latticeExtra,
+	  dplyr, ggthemes,
+	  testthat
+Imports: grid (>= 3.0.0), quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
 	 densityplot.R ggplot2.R positioning.functions.R
 	 doc.R lattice.R scatterplot.R contourplot.R
