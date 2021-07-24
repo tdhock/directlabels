@@ -487,7 +487,9 @@ draw.polygons <- function(d,...){
   }
   xpos <- vector()
   ypos <- vector()
-  totalpoints <- 0
+  totalpoints <- NULL
+  boxcolor <- NULL
+  fillcolour <- NULL
   for(i in 1:nrow(d))with(d[i,], {
     L <- list(
       x=c(left.x, left, top.x, right, right.x, right, bottom.x, left),
@@ -498,15 +500,18 @@ draw.polygons <- function(d,...){
     }
     xpos <<- c(xpos, L$x)
     ypos <<- c(ypos, L$y)
+    boxcolor <<- box.color
+    fillcolour <<- colour
     totalpoints <<- length(L$x)
   })
   attr(d, 'shapeGrobs') <- grid::polygonGrob(
     xpos, ypos,
     id=rep(1:nrow(d),totalpoints),
     default.units="cm",
-    gp=grid::gpar(col=box.color, fill=colour),
+    gp=grid::gpar(col=boxcolor, fill=fillcolour),
     name="directlabels.draw.polygon"
   )
+  browser()
   d$colour <- d$text.color
   d
 }
