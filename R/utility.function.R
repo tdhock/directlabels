@@ -487,9 +487,9 @@ draw.polygons <- function(d,...){
   }
   xpos <- vector()
   ypos <- vector()
-  totalpoints <- NULL
-  boxcolors <- NULL
-  fillcolours <- NULL
+  totalpoints <- 0
+  boxcolors <- vector()
+  fillcolours <- vector()
   for(i in 1:nrow(d))with(d[i,], {
     L <- list(
       x=c(left.x, left, top.x, right, right.x, right, bottom.x, left),
