@@ -10,7 +10,7 @@ far.from.others.borders <- function(all.groups,...,debug=FALSE){
     one.group <- group.data[[groups]]
     approx.list <- with(one.group, approx(x, y))
     if(debug){
-      with(approx.list, grid.points(x, y, default.units="cm"))
+      with(approx.list, grid::pointsGrob(x, y, default.units="cm"))
     }
     group.list[[groups]] <- data.frame(
       approx.list,
@@ -331,7 +331,7 @@ calc.boxes <- function
     as.numeric(sapply(seq_along(d$groups),function(i){
       if("cex"%in%names(d))vp$gp <- gpar(cex=d$cex[i])
       pushViewport(vp)
-      if(debug)grid.rect() ##highlight current viewport
+      if(debug) grid::rectGrob() ##highlight current viewport
       cm <- conv(stri(as.character(d$label[i])),"cm")
       popViewport()
       cm
@@ -485,6 +485,11 @@ draw.polygons <- function(d,...){
   if(! "text.color" %in% names(d)){
     d$text.color <- "white"
   }
+  xpos <- vector()
+  ypos <- vector()
+  totalpoints <- 0
+  boxcolors <- vector()
+  fillcolours <- vector()
   for(i in 1:nrow(d))with(d[i,], {
     L <- list(
       x=c(left.x, left, top.x, right, right.x, right, bottom.x, left),
@@ -493,13 +498,19 @@ draw.polygons <- function(d,...){
       xy <- L[[xy.name]]
       L[[xy.name]] <- xy[!is.na(xy)]
     }
-    grid::grid.polygon(
-      L$x, L$y,
-      default.units="cm",
-      gp=grid::gpar(col=box.color, fill=colour),
-      name="directlabels.draw.polygon"
-    )
+    xpos <<- c(xpos, L$x)
+    ypos <<- c(ypos, L$y)
+    totalpoints <<- length(L$x)
+    fillcolours <<- c(fillcolours, rep(colour, totalpoints))
+    boxcolors <<- c(boxcolors, rep(box.color, totalpoints))
   })
+  attr(d, 'shapeGrobs') <- grid::polygonGrob(
+    xpos, ypos,
+    id=rep(1:nrow(d),totalpoints),
+    default.units="cm",
+    gp=grid::gpar(col=boxcolors, fill=fillcolours),
+    name="directlabels.draw.polygon"
+  )
   d$colour <- d$text.color
   d
 }
@@ -510,13 +521,15 @@ draw.polygons <- function(d,...){
 draw.rects <- function(d,...){
   if(is.null(d$box.color))d$box.color <- "black"
   if(is.null(d$fill))d$fill <- "white"
+  groblist <- list()
   for(i in 1:nrow(d)){
-    with(d[i,], grid.rect(
+    with(d[i,], groblist[[i]] <<- grid::rectGrob(
       gp = gpar(col = box.color, fill = fill),
       vp = viewport(x, y, w, h, "cm", c(hjust, vjust), angle=rot),
       name="directlabels.draw.rects"
     ))
   }
+  attr(d, 'shapeGrobs') <- groblist
   d
 }
 
@@ -912,7 +925,7 @@ project.onto.segments <- function
   i <- which.min(h$d)
   result <- with(h[i,],data.frame(x=xopt,y=yopt))
   if(debug){
-    grid.segments(
+    grid::segmentsGrob(
       m$x,m$y,result$x,result$y,default.units="cm",
       name="directlabels.segments.project.onto.segments"
     )
@@ -1263,7 +1276,7 @@ empty.grid <- function
     (-expand:(hboxes+expand-1))*r[,w]+r[,w]/2+min(ranges[[x]])
   }
   if(debug)with(label.targets,{
-    grid.points(
+    grid::pointsGrob(
       x,y,default.units="cm",gp=gpar(col="green"),
       name="directlabels.points.empty.grid.label.targets"
     )
@@ -1271,7 +1284,7 @@ empty.grid <- function
   draw <- function(g){
     gridlines <- with(g,list(x=unique(c(left,right)),y=unique(c(top,bottom))))
     drawlines <- function(a,b,c,d,name)
-      grid.segments(a,b,c,d,"cm",name=name,gp=gpar(col="grey"))
+      grid::segmentsGrob(a,b,c,d,"cm",name=name,gp=gpar(col="grey"))
     with(gridlines,drawlines(
       min(x),y,max(x),y,"directlabels.segments.empty.grid.vertical"))
     with(gridlines,drawlines(
@@ -1322,7 +1335,7 @@ empty.grid <- function
     })
     all.points <- rbind(all.points,newpts)
   }
-  if(debug)with(all.points,grid.points(
+  if(debug)with(all.points, grid::pointsGrob(
     x,y,default.units="cm",name="directlabels.points.empty.grid.all.points"))
   res
 ### Data frame with columns groups x y, 1 line for each group, giving
