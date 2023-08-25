@@ -46,28 +46,30 @@ if(require(ggplot2)){
     geom_dl(aes(label=demographic),method="top.qp")
   print(p)
   ## add color:
-  p+aes(colour=demographic)+
+  p.color <- p+aes(colour=demographic)+
     scale_colour_discrete(guide="none")
+  print(p.color)
   ## add linetype:
-  p+aes(linetype=demographic)+
+  p.linetype <- p+aes(linetype=demographic)+
     scale_linetype(guide="none")
+  print(p.linetype)
   ## no color, just direct labels
-  library(nlme)
-  bwbase <- ggplot(BodyWeight,aes(Time,weight,label=Rat))+
-    geom_line(aes(group=Rat))+
-    facet_grid(.~Diet)
-  bw <- bwbase+geom_dl(method="last.qp")
-  print(bw)
-  ## add some more direct labels
-  bw2 <- bw+geom_dl(method="first.qp")
-  print(bw2)
-  ## add color
-  colored <- bw2+aes(colour=Rat)+
-    scale_colour_discrete(guide="none")
-  print(colored)
-  ## or just use direct.label if you use color:
-  direct.label(bwbase+aes(colour=Rat),dl.combine("first.qp","last.qp"))
-
+  if(require(nlme)){
+    bwbase <- ggplot(BodyWeight,aes(Time,weight,label=Rat))+
+      geom_line(aes(group=Rat))+
+      facet_grid(.~Diet)
+    bw <- bwbase+geom_dl(method="last.qp")
+    print(bw)
+    ## add some more direct labels
+    bw2 <- bw+geom_dl(method="first.qp")
+    print(bw2)
+    ## add color
+    colored <- bw2+aes(colour=Rat)+
+      scale_colour_discrete(guide="none")
+    print(colored)
+    ## or just use direct.label if you use color:
+    print(direct.label(bwbase+aes(colour=Rat),dl.combine("first.qp","last.qp")))
+  }
   ## iris data example
   giris <- ggplot(iris,aes(Petal.Length,Sepal.Length))+
     geom_point(aes(shape=Species))
@@ -79,4 +81,5 @@ if(require(ggplot2)){
   print(giris.labeled)
   ##dev.off()
 }
+
 }

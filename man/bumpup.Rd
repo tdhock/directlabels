@@ -5,9 +5,8 @@
 collide with the label underneath.}
 \usage{bumpup(d, ...)}
 \arguments{
-  \item{d}{d}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

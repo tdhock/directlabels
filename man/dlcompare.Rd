@@ -28,9 +28,6 @@ columns. Otherwise, do the opposite.}
 
 
 \examples{
-library(lattice)
-oldopt <- lattice.options(panel.error=NULL)
-
 ## Compare two plots of the same data using lattice and ggplot2.
 deaths.by.sex <- list(male=mdeaths, female=fdeaths)
 deaths.list <- list()
@@ -42,14 +39,17 @@ for(sex in names(deaths.by.sex)){
                deaths=as.integer(deaths.ts))
 }
 deaths <- do.call(rbind, deaths.list)
-death.plot.list <-
-  list(lattice=xyplot(deaths~year,deaths,groups=sex,type="l"))
-if(require(ggplot2)){
-  death.plot.list$ggplot2 <- 
-    qplot(year,deaths,data=deaths,colour=sex,geom="line")
+death.plot.list <- list()
+if(require(lattice)){
+  oldopt <- lattice.options(panel.error=NULL)
+  death.plot.list[["lattice"]] <- xyplot(
+    deaths~year,deaths,groups=sex,type="l")
 }
-
-if(names(dev.cur())!="postscript"){##to avoid error on pkg check.
+if(require(ggplot2)){
+  death.plot.list[["ggplot2"]] <- qplot(
+    year,deaths,data=deaths,colour=sex,geom="line")
+}
+if(length(death.plot.list) && names(dev.cur())!="postscript"){##to avoid error on pkg check.
   ## Use some exotic labeling options with different rotation, font
   ## face, family, and alpha transparency.
   exotic <- list("last.points",
@@ -60,15 +60,13 @@ if(names(dev.cur())!="postscript"){##to avoid error on pkg check.
                  alpha=c(0.25,1))
   dlcompare(death.plot.list, list(exotic))
 }
-  
-lattice.options(oldopt)
-
+if(require(lattice))lattice.options(oldopt)
 ## Compare a legend with direct labels on the same plot.
-library(nlme)
-if(require(ggplot2)){
+if(require(ggplot2) && require(nlme)){
   ggrat <- qplot(Time,weight,data=BodyWeight,
                  colour=Rat,geom="line",facets=.~Diet)
   pfuns <- list("legend","direct labels"="last.qp")
   dlcompare(list(ggrat),pfuns,rects=FALSE,row.items="posfuns")
 }
+
 }

@@ -5,8 +5,8 @@
 complain about this version of :::}
 \usage{pkgFun(fun, pkg = "ggplot2")}
 \arguments{
-  \item{fun}{fun}
-  \item{pkg}{pkg}
+  \item{fun}{fun }
+  \item{pkg}{pkg }
 }
 
 

@@ -9,11 +9,10 @@ option to a function like this.}
 \usage{defaultpf.trellis(lattice.fun.name, 
     groups, type, ...)}
 \arguments{
-  \item{lattice.fun.name}{lattice.fun.name}
-  \item{groups}{groups}
-  \item{type}{type}
-  \item{\dots}{
-}
+  \item{lattice.fun.name}{lattice.fun.name }
+  \item{groups}{groups }
+  \item{type}{type }
+  \item{\dots}{\dots }
 }
 
 

@@ -18,21 +18,20 @@ applying each specified Positioning Method.}
 \examples{
 
 ## Simple example: label the start and endpoints
-library(nlme)
-library(lattice)
-ratplot <- xyplot(
-  weight~Time|Diet,BodyWeight,groups=Rat,type='l',layout=c(3,1))
-both <- dl.combine("first.points","last.points")
-rat.both <- direct.label(ratplot,"both")
-print(rat.both)
-
-## same as repeated call to direct.label:
-rat.repeated <-
-  direct.label(direct.label(ratplot,"last.points"),"first.points")
-print(rat.repeated)
+if(require(nlme) && require(lattice)){
+  ratplot <- xyplot(
+    weight~Time|Diet,BodyWeight,groups=Rat,type='l',layout=c(3,1))
+  both <- dl.combine("first.points","last.points")
+  rat.both <- direct.label(ratplot,"both")
+  print(rat.both)
+  ## same as repeated call to direct.label:
+  rat.repeated <-
+    direct.label(direct.label(ratplot,"last.points"),"first.points")
+  print(rat.repeated)
+}
 
 ## same with ggplot2:
-if(require(ggplot2)){
+if(require(nlme) && require(ggplot2)){
   rp2 <- qplot(
     Time,weight,data=BodyWeight,geom="line",facets=.~Diet,colour=Rat)
   print(direct.label(direct.label(rp2,"last.points"),"first.points"))
@@ -108,7 +107,7 @@ mylars <- function
 
 ## Calculate lasso path, plot labels at two points: (1) where the
 ## variable enters the path, and (2) at the end of the path.
-if(require(lars)){
+if(require(lars) && require(lattice)){
   data(diabetes,envir=environment())
   dres <- with(diabetes,mylars(x,y))
   P <- xyplot(coef~arclength,dres,groups=variable,type="l")

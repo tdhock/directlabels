@@ -22,8 +22,7 @@ then we will calculate a new \code{y} value using linear interpolation.}
 
 
 \examples{
-if(require(ggplot2)){
-  library(lattice)
+if(require(ggplot2) && require(lattice)){
   scatter <- xyplot(jitter(cty)~jitter(hwy),mpg,groups=class,aspect=1)
   dlcompare(list(scatter),
             list("extreme.grid",

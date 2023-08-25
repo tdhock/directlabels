@@ -5,8 +5,8 @@
 points and assign a vjust value.}
 \usage{label.pieces(FUN, VJUST)}
 \arguments{
-  \item{FUN}{FUN}
-  \item{VJUST}{VJUST}
+  \item{FUN}{FUN }
+  \item{VJUST}{VJUST }
 }
 
 

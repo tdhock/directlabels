@@ -1,6 +1,7 @@
 Changes in version 2023.8.25
 
-- CRAN NOTE fixes.
+- CRAN NOTE doc fixes.
+- use Suggests conditionally in examples/tests.
 
 Changes in version 2021.2.24
 

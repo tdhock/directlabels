@@ -5,9 +5,8 @@
 average size of label boxes.}
 \usage{default.ahull(d, ...)}
 \arguments{
-  \item{d}{d}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

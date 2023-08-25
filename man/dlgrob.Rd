@@ -8,10 +8,9 @@
 \arguments{
   \item{data}{Data frame including points to plot in native coordinates.}
   \item{method}{Positioning Method.}
-  \item{debug}{debug}
-  \item{axes2native}{axes2native}
-  \item{\dots}{
-}
+  \item{debug}{debug }
+  \item{axes2native}{axes2native }
+  \item{\dots}{\dots }
 }
 
 

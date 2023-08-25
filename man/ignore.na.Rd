@@ -4,9 +4,8 @@
 \description{Remove rows for which either x or y is NA}
 \usage{ignore.na(d, ...)}
 \arguments{
-  \item{d}{d}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

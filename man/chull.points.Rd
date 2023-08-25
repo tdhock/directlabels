@@ -4,9 +4,8 @@
 \description{Calculate the points on the convex hull.}
 \usage{chull.points(d, ...)}
 \arguments{
-  \item{d}{d}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

@@ -5,8 +5,8 @@
 \usage{make.tiebreaker(x.var, 
     tiebreak.var)}
 \arguments{
-  \item{x.var}{x.var}
-  \item{tiebreak.var}{tiebreak.var}
+  \item{x.var}{x.var }
+  \item{tiebreak.var}{tiebreak.var }
 }
 
 

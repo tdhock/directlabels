@@ -8,11 +8,10 @@ outside of the hull.}
     centers, debug = FALSE, 
     ...)}
 \arguments{
-  \item{edges}{edges}
-  \item{centers}{centers}
-  \item{debug}{debug}
-  \item{\dots}{
-}
+  \item{edges}{edges }
+  \item{centers}{centers }
+  \item{debug}{debug }
+  \item{\dots}{\dots }
 }
 
 

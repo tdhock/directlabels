@@ -5,8 +5,7 @@
 the limit argument to \code{\link{qp.labels}}.}
 \usage{ylimits(...)}
 \arguments{
-  \item{\dots}{
-}
+  \item{\dots}{\dots }
 }
 
 
