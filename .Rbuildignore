@@ -1,7 +1,8 @@
+logos
+.github
 revdep
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\.travis\.yml$
 ^README\.org$
 build.sh
 ^codecov\.yml$

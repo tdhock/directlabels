@@ -51,7 +51,7 @@ ratplot <-
 print(direct.label(ratplot))
 ## To put them on the same side, just manually specify the
 ## Positioning Method.
-print(direct.label(ratplot,"last.qp")) 
+print(direct.label(ratplot,"last.qp"))
 
 lattice.options(oldopt)
 }
