@@ -23,7 +23,7 @@ dlcompare <- structure(function # Direct label comparison plot
     N <- names(pos.funs)[i]
     f <- pos.funs[[i]]
     if(!is.null(N)&&N!="")N
-    else if(class(f)=="character")f
+    else if(is.character(f))f
     else ""
   })
   if(sum(names(pos.funs)!="")==0)names(pos.funs) <- NULL
