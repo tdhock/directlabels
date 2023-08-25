@@ -4,10 +4,8 @@
 \description{Positioning Method for the last of a group of points.}
 \usage{last.points(d, ...)}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

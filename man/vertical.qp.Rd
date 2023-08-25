@@ -5,8 +5,7 @@
 line that will be spaced out using \code{\link{qp.labels}}.}
 \usage{vertical.qp(M)}
 \arguments{
-  \item{M}{
-}
+  \item{M}{M }
 }
 
 

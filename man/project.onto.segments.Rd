@@ -12,8 +12,7 @@ distance to the closest point on each segment of the convex
 hull.}
   \item{h}{Data frame describing the line segments of the convex or alpha
 hull.}
-  \item{debug}{
-}
+  \item{debug}{debug }
   \item{\dots}{ignored}
 }
 

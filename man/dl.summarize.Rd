@@ -5,8 +5,7 @@
 \usage{dl.summarize(OLD, ...)}
 \arguments{
   \item{OLD}{data frame}
-  \item{\dots}{
-}
+  \item{\dots}{\dots }
 }
 
 

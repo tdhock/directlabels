@@ -6,10 +6,8 @@ point. Assume \code{d} is the center for each point cloud and then use
 orig.data to calculate hull.}
 \usage{outside.chull(d, ...)}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

@@ -6,10 +6,8 @@ to have previously called \code{\link{calc.boxes}}. Does not edit the data
 frame.}
 \usage{draw.rects(d, ...)}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

@@ -4,8 +4,7 @@
 \description{Extract guides to hide from a ggplot.}
 \usage{legends2hide(p)}
 \arguments{
-  \item{p}{
-}
+  \item{p}{p }
 }
 
 \value{NULL if no legends with colour or fill to hide.}

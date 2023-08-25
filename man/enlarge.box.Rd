@@ -4,10 +4,8 @@
 \description{Make text bounding box larger by some amount.}
 \usage{enlarge.box(d, ...)}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

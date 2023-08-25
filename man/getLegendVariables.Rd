@@ -4,8 +4,7 @@
 \description{get the aes which are variable in one legend.}
 \usage{getLegendVariables(mb)}
 \arguments{
-  \item{mb}{
-}
+  \item{mb}{mb }
 }
 
 

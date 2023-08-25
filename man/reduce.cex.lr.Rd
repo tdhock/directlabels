@@ -5,10 +5,8 @@
 region, then decrease cex until it fits.}
 \usage{reduce.cex.lr(d, ...)}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

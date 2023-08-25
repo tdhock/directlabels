@@ -4,10 +4,8 @@
 \description{Point in the middle of the min and max for each group.}
 \usage{visualcenter(d, ...)}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

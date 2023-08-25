@@ -4,10 +4,8 @@
 \description{Positioning Method for the top of a group of points.}
 \usage{top.pieces(d, ...)}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
 }
 
 

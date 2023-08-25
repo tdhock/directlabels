@@ -25,8 +25,7 @@ gpar.}
 } Additionally, x$debug should be set to TRUE or
 FALSE, and x$axestonative should be a function that converts units
 shown on the axes to native units of x$data[,c("x","y")].}
-  \item{recording}{
-}
+  \item{recording}{recording }
 }
 
 

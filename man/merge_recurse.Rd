@@ -4,10 +4,8 @@
 \description{Copied from reshape.}
 \usage{merge_recurse(dfs, ...)}
 \arguments{
-  \item{dfs}{
-}
-  \item{\dots}{
-}
+  \item{dfs}{dfs }
+  \item{\dots}{\dots }
 }
 
 

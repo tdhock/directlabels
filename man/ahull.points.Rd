@@ -5,12 +5,9 @@
 \usage{ahull.points(d, ..., 
     ahull = default.ahull(d))}
 \arguments{
-  \item{d}{
-}
-  \item{\dots}{
-}
-  \item{ahull}{
-}
+  \item{d}{d }
+  \item{\dots}{\dots }
+  \item{ahull}{ahull }
 }
 
 

@@ -4,8 +4,7 @@
 \description{Point halfway between the min and max}
 \usage{midrange(x)}
 \arguments{
-  \item{x}{
-}
+  \item{x}{x }
 }
 
 
