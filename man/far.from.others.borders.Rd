@@ -6,9 +6,10 @@ plot border or to another curve.}
 \usage{far.from.others.borders(all.groups, 
     ..., debug = FALSE)}
 \arguments{
-  \item{all.groups}{all.groups }
-  \item{\dots}{\dots }
-  \item{debug}{debug }
+  \item{all.groups}{all.groups}
+  \item{\dots}{
+}
+  \item{debug}{debug}
 }
 
 

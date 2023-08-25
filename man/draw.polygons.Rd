@@ -4,8 +4,9 @@
 \description{Draw polygons around label positions.}
 \usage{draw.polygons(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

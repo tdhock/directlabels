@@ -5,8 +5,9 @@
 there is only 1 unique value.}
 \usage{only.unique.vals(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

@@ -5,10 +5,11 @@
 \usage{static.labels(x, y, groups, 
     ...)}
 \arguments{
-  \item{x}{x }
-  \item{y}{y }
-  \item{groups}{groups }
-  \item{\dots}{\dots }
+  \item{x}{x}
+  \item{y}{y}
+  \item{groups}{groups}
+  \item{\dots}{
+}
 }
 
 

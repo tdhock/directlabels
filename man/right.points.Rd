@@ -4,8 +4,9 @@
 \description{Positioning Method for the last of a group of points.}
 \usage{right.points(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

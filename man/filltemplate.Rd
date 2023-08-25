@@ -5,8 +5,8 @@
 in R of L$item.}
 \usage{filltemplate(L, template)}
 \arguments{
-  \item{L}{L }
-  \item{template}{template }
+  \item{L}{L}
+  \item{template}{template}
 }
 
 

@@ -6,9 +6,10 @@ side to avoid collisions with points.}
 \usage{top.bumptwice(d, debug = FALSE, 
     ...)}
 \arguments{
-  \item{d}{d }
-  \item{debug}{debug }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{debug}{debug}
+  \item{\dots}{
+}
 }
 
 

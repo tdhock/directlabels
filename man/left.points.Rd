@@ -4,8 +4,9 @@
 \description{Positioning Method for the first of a group of points.}
 \usage{left.points(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

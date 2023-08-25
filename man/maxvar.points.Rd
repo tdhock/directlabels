@@ -4,8 +4,9 @@
 \description{Do first or last, whichever has points most spread out.}
 \usage{maxvar.points(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

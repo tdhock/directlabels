@@ -5,8 +5,9 @@
 and put it outside that point.}
 \usage{outside.ahull(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

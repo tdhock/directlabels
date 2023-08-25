@@ -5,8 +5,9 @@
 plotting region, then decrease cex until it fits.}
 \usage{reduce.cex.tb(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

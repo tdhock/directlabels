@@ -4,8 +4,8 @@
 \description{Calculate how many points fall in a \code{box}.}
 \usage{in1box(p, box)}
 \arguments{
-  \item{p}{p }
-  \item{box}{box }
+  \item{p}{p}
+  \item{box}{box}
 }
 
 

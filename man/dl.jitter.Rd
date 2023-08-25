@@ -4,8 +4,9 @@
 \description{Jitter the label positions.}
 \usage{dl.jitter(d, ...)}
 \arguments{
-  \item{d}{d }
-  \item{\dots}{\dots }
+  \item{d}{d}
+  \item{\dots}{
+}
 }
 
 

@@ -4,8 +4,9 @@
 \description{summarize which preserves important columns for direct labels.}
 \usage{dl.summarize(OLD, ...)}
 \arguments{
-  \item{OLD}{data frame}
-  \item{\dots}{\dots }
+  \item{...}{...}
+  \item{\dots}{
+}
 }
 
 
