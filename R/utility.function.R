@@ -119,21 +119,20 @@ dl.combine <- structure(function # Combine output of several methods
 },ex=function(){
 
   ## Simple example: label the start and endpoints
-  library(nlme)
-  library(lattice)
-  ratplot <- xyplot(
-    weight~Time|Diet,BodyWeight,groups=Rat,type='l',layout=c(3,1))
-  both <- dl.combine("first.points","last.points")
-  rat.both <- direct.label(ratplot,"both")
-  print(rat.both)
-
-  ## same as repeated call to direct.label:
-  rat.repeated <-
-    direct.label(direct.label(ratplot,"last.points"),"first.points")
-  print(rat.repeated)
-
+  if(require(nlme) && require(lattice)){
+    ratplot <- xyplot(
+      weight~Time|Diet,BodyWeight,groups=Rat,type='l',layout=c(3,1))
+    both <- dl.combine("first.points","last.points")
+    rat.both <- direct.label(ratplot,"both")
+    print(rat.both)
+    ## same as repeated call to direct.label:
+    rat.repeated <-
+      direct.label(direct.label(ratplot,"last.points"),"first.points")
+    print(rat.repeated)
+  }
+  
   ## same with ggplot2:
-  if(require(ggplot2)){
+  if(require(nlme) && require(ggplot2)){
     rp2 <- qplot(
       Time,weight,data=BodyWeight,geom="line",facets=.~Diet,colour=Rat)
     print(direct.label(direct.label(rp2,"last.points"),"first.points"))
@@ -209,7 +208,7 @@ dl.combine <- structure(function # Combine output of several methods
 
   ## Calculate lasso path, plot labels at two points: (1) where the
   ## variable enters the path, and (2) at the end of the path.
-  if(require(lars)){
+  if(require(lars) && require(lattice)){
     data(diabetes,envir=environment())
     dres <- with(diabetes,mylars(x,y))
     P <- xyplot(coef~arclength,dres,groups=variable,type="l")
@@ -236,8 +235,9 @@ gapply.fun <- structure(function # Direct label groups independently
   complicated <- list(dl.trans(x=x+10),
                       gapply.fun(d[-2,]),
                       rot=c(30,180))
-  library(lattice)
-  direct.label(dotplot(VADeaths,type="o"),complicated,TRUE)
+  if(require(lattice)){
+    direct.label(dotplot(VADeaths,type="o"),complicated,TRUE)
+  }
 })
 
 dl.trans <- structure(function # Direct label data transform
@@ -255,8 +255,9 @@ dl.trans <- structure(function # Direct label data transform
   complicated <- list(dl.trans(x=x+10),
                       gapply.fun(d[-2,]),
                       rot=c(30,180))
-  library(lattice)
-  direct.label(dotplot(VADeaths,type="o"),complicated,TRUE)
+  if(require(lattice)){
+    direct.label(dotplot(VADeaths,type="o"),complicated,TRUE)
+  }
 })
 
 dl.move <- structure(function # Manually move a direct label
@@ -300,8 +301,7 @@ dl.move <- structure(function # Manually move a direct label
   pf
 ### A Positioning Function that moves a label into a good spot.
 },ex=function(){
-  if(require(ggplot2)){
-    library(lattice)
+  if(require(ggplot2) && require(lattice)){
     scatter <- xyplot(jitter(cty)~jitter(hwy),mpg,groups=class,aspect=1)
     dlcompare(list(scatter),
               list("extreme.grid",
