@@ -1,3 +1,7 @@
+Changes in version 2024.1.21
+
+- fix legends2hide issue with ggplot2 3.5.0.
+
 Changes in version 2023.8.25
 
 - CRAN NOTE doc fixes.
