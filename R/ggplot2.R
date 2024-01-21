@@ -195,6 +195,22 @@ pkgFun <- function(fun, pkg="ggplot2") {
 ### Extract guides to hide from a ggplot.
 legends2hide <- function(p){
   plistextra <- ggplot2::ggplot_build(p)
+
+  if ("get_guide_data" %in% getNamespaceExports("ggplot2")) {
+    # Using clunky get here to avoid R cmd check warnings in earlier versions
+    # of ggplot2
+    get_guide_data <- get("get_guide_data", envir = asNamespace("ggplot2"))
+    for (aes in c("colour", "fill"))  {
+      guide_data <- get_guide_data(plistextra, aes)
+      if (!is.null(guide_data)) {
+        hide <- colnames(guide_data)
+        hide <- hide[!grepl("^\\.", hide)]
+        return(list(colour = aes, hide = hide, data = guide_data))
+      }
+    }
+    return()
+  }
+
   plot <- plistextra$plot
   scales = plot$scales
   layers = plot$layers
