@@ -941,7 +941,7 @@ make.tiebreaker <- function(x.var,tiebreak.var){
     }
     xvals <- xvals[order(abs(xvals-x))]
     group.dfs <- split(orig,orig$groups)
-    m <- do.call(cbind,lapply(d$groups,function(g){
+    glist <- lapply(d$groups,function(g){
       df <- group.dfs[[as.character(g)]]
       group.x <- df[,x.var]
       group.y <- df[,tiebreak.var]
@@ -957,9 +957,12 @@ make.tiebreaker <- function(x.var,tiebreak.var){
         ## this is required to get a good ordering in some cases.
         approx(group.x, group.y, xvals, rule=2)$y
       }else{
-        group.y
+        iord <- order(abs(group.x-x))
+        closest <- iord[1]
+        rep(group.y[closest], length(xvals))
       }
-    }))
+    })
+    m <- do.call(cbind,glist)
     ## useful for debugging:
     ##print(m)
     L <- lapply(1:nrow(m),function(i)m[i,])
