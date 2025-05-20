@@ -16,7 +16,7 @@ then we will calculate a new \code{y} value using linear interpolation.}
 
 \value{A Positioning Function that moves a label into a good spot.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

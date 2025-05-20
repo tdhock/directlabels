@@ -15,7 +15,7 @@ the Positioning Method is not necessarily a function (but can be).}
 
 \value{data frame of results after applying FUN to each group in \code{d}.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

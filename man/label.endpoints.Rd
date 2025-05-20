@@ -12,7 +12,7 @@ example you can use which.min or which.max.}
 
 \value{A Positioning Method like \code{\link{first.points}} or \code{\link{last.points}}.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

@@ -17,7 +17,7 @@ the input data points. Makes use of attr(d,"orig.data").}
 \value{Data frame with columns groups x y, 1 line for each group, giving
 the positions on the grid closest to each cluster.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

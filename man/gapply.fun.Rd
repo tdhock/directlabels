@@ -11,7 +11,7 @@ only a single group, and returns the direct label position.}
 
 \value{A Positioning Function.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

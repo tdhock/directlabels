@@ -10,7 +10,7 @@
 \value{A Positioning Method that returns the combined data frame after
 applying each specified Positioning Method.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

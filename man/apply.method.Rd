@@ -53,7 +53,7 @@ direct label data.frame that results from its evaluation.}
 \value{The final data frame returned after applying all of the items in
 the Positioning Method list, with x and y in units of cm.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

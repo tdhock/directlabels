@@ -1,7 +1,12 @@
 Package: directlabels
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
-Author: Toby Dylan Hocking
-Version: 2024.4.16
+Authors@R: person(
+ given = c("Toby", "Dylan"),
+ family = "Hocking",
+ role = c("aut", "cre"),
+ email = "toby.hocking@r-project.org",
+ comment = c(ORCID="0000-0002-3146-0865"))
+Version: 2025.5.20
 BugReports: https://github.com/tdhock/directlabels/issues
 License: GPL-3
 Title: Direct Labels for Multicolor Plots

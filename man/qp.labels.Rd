@@ -27,7 +27,7 @@ labels's \code{upper.var}. Or NULL for no \code{limits}.}
 of the label bounding boxes, as specified by \code{upper.var} and
 \code{lower.var}.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 

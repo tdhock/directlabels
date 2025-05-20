@@ -11,7 +11,7 @@ left right top bottom.}
 
 \value{Vector of point counts for each box.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre] (ORCID: <https://orcid.org/0000-0002-3146-0865>)}
 
 
 
