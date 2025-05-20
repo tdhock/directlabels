@@ -1,6 +1,6 @@
 Changes in version 2024.4.16
 
-- fix make.tiebreaker issue with constant data.
+- fix make.tiebreaker issue with constant data, was Warning: number of rows of result is not a multiple of vector length (arg 1).
 
 Changes in version 2024.1.21
 
