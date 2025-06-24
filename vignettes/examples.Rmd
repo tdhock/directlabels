@@ -108,14 +108,12 @@ if(require(ggplot2)){
   span <- 0.3
   ggplot(df.2, aes(year, match_count, group=n_gram, color=n_gram)) +
     geom_line(alpha = I(7/10), color="grey") +
-    stat_smooth(size=2, span=span, se=F) +
+    stat_smooth(linewidth=2, span=span, se=F) +
     directlabels::geom_dl(aes(
       label=n_gram),
-      ## method should be passed to geom_dl but ggplot2 (mistakenly?)
-      ## passes it to stat_smooth, which rightly raises a warning about
-      ## an unknown smoothing function.
-      method = "last.qp", 
-      stat="smooth", span=span) +
+      method = "last.qp",
+      stat="smooth",
+      span=span) +
     xlim(c(100,220))+
     guides(colour="none")
 }
