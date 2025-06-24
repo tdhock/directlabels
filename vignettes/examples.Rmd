@@ -114,7 +114,7 @@ if(require(ggplot2)){
       ## method should be passed to geom_dl but ggplot2 (mistakenly?)
       ## passes it to stat_smooth, which rightly raises a warning about
       ## an unknown smoothing function.
-      method = "last.qp", 
+      method = directlabels::last.qp, 
       stat="smooth", span=span) +
     xlim(c(100,220))+
     guides(colour="none")
