@@ -30,7 +30,7 @@ geom_dl <- structure(function
 ### ggproto object implementing direct labels.
   GeomDl <- ggplot2::ggproto(
     "GeomDl", ggplot2::Geom,
-    draw_panel = function(data, panel_scales, coord, method = NULL, debug = FALSE) {
+    draw_panel = function(data, panel_scales, coord, dl.method = NULL, debug = FALSE) {
       data$rot <- as.numeric(data[["angle"]])
       groups.col <- if(all(is.na(data[["label.group"]])))"label" else "label.group"
       data$groups <- data[[groups.col]]
@@ -42,7 +42,7 @@ geom_dl <- structure(function
       ## user does not specify one in aes.
       dldata <- converted[, names(converted) != "group"]
       dlgrob(
-        dldata, method, debug = debug, axes2native = axes2native)
+        dldata, dl.method, debug = debug, axes2native = axes2native)
     },
     draw_legend = ggplot2::draw_key_text,
     required_aes = c("x", "y", "label"),
@@ -61,7 +61,7 @@ geom_dl <- structure(function
     show.legend = FALSE, # since direct labels replace a legend.
     inherit.aes = inherit.aes,
     params = list(
-      method = method,
+      dl.method = method,
       debug = debug,
       ...)
   )
