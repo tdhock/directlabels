@@ -600,12 +600,6 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
 
   function(d,...){
 
-    ## If there is only 1 label, there is no collision detection to
-    ## do, so just return it.
-    if(nrow(d)==1)return(d)
-
-    ##browser()
-
     ## Reality checks.
     for(v in essential){
       if(! v %in% names(d)){
