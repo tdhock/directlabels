@@ -16,41 +16,6 @@
 \author{Toby Dylan Hocking <toby.hocking@inria.fr>}
 \examples{
 \dontrun{
-### contourplot Positioning Methods
-for(p in list({
-## Example from help(contourplot)
-require(stats)
-require(lattice)
-attach(environmental)
-ozo.m <- loess((ozone^(1/3)) ~ wind * temperature * radiation,
-               parametric = c("radiation", "wind"), span = 1, degree = 2)
-w.marginal <- seq(min(wind), max(wind), length.out = 50)
-t.marginal <- seq(min(temperature), max(temperature), length.out = 50)
-r.marginal <- seq(min(radiation), max(radiation), length.out = 4)
-wtr.marginal <- list(wind = w.marginal, temperature = t.marginal,
-                     radiation = r.marginal)
-grid <- expand.grid(wtr.marginal)
-grid[, "fit"] <- c(predict(ozo.m, grid))
-detach(environmental)
-library(ggplot2)
-p <- ggplot(grid,aes(wind,temperature,z=fit))+
-  stat_contour(aes(colour=..level..))+
-  facet_wrap(~radiation)
-
-},
-{
-## example from help(stat_contour)
-library(reshape2)
-volcano3d <- melt(volcano)
-names(volcano3d) <- c("x", "y", "z")
-library(ggplot2)
-p <- ggplot(volcano3d, aes(x, y, z = z))+
-  stat_contour(aes(colour = ..level..))
-})){
-  print(direct.label(p,"bottom.pieces"))
-  print(direct.label(p,"top.pieces"))
-}
-
 ### densityplot Positioning Methods
 for(p in list({
 data(Chem97,package="mlmRev")

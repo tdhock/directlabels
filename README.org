@@ -29,6 +29,8 @@ Changes are listed in [[file:NEWS]].
 
 ** Usage examples
 
+Contour/isolines: prefer [[https://isoband.r-lib.org/articles/isoband3.html][isoband labeled isolines]] (better label placement; line cropping around labels).
+
 Please check [[https://tdhock.github.io/directlabels/docs/index.html][the documentation page]] (with links to examples for specific methods) and [[https://tdhock.github.io/directlabels/examples.html][the page with several advanced examples]].
 
 ** Development and documentation
