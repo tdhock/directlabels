@@ -82,7 +82,7 @@ dldoc <- function # Make directlabels documentation
    ## List of positioning method and plots to match up.
    ){
     ## all paths are relative to the docs directory
-    subdir <- file.path("docs",L$type)
+    subdir <- file.path("site","docs",L$type)
     pngurls <- matrix("",nrow=length(L$posfuns),ncol=length(L$plots),
                       dimnames=list(names(L$posfuns),
                         sapply(L$plots,function(x)x$name)))
@@ -170,7 +170,7 @@ dldoc <- function # Make directlabels documentation
   rows <- lapply(links,filltemplate,"templates/index-row.html")
   tmp$table <- paste(rows,collapse="\n")
   html <- filltemplate(tmp,"templates/index.html")
-  write(html,"docs/index.html")
+  write(html,"site/docs/index.html")
   m
 ### Matrix of lists describing example plots and matching builtin
 ### Positioning Methods.

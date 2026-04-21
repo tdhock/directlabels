@@ -1,0 +1,236 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en   ">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>directlabels motivation</title>
+	<link href="estilo1.css" rel="stylesheet" type="text/css" />
+  </head>
+
+<body>
+
+<h2>Do not live with confusing legends any longer. Instead, use direct
+labels.</h2>
+
+<p>The idea is very simple. You just made a figure where you drew a
+bunch of lines or points in different colors, according to some
+categorical variable. Now when you look at the figure, how do you
+figure out which color corresponds to which value of that
+variable?</p>
+
+<p>In most statistical packages the answer to this question is given
+by a legend or key that you have to decode. Legends can be at best,
+hard to decode, or at worst, downright confusing. Here is a very
+confusing example that motivates the use of direct labeling:</p>
+
+<pre>
+library(lattice)
+loci &lt;- data.frame(ppp=c(rbeta(800,10,10),rbeta(100,0.15,1),rbeta(100,1,0.15)),
+                   type=factor(c(rep("NEU",800),rep("POS",100),rep("BAL",100))))
+densityplot(~ppp,loci,groups=type,auto.key=list(space="top",columns=3))
+</pre>
+
+<img src="confusing.png" alt="confusing legend" />
+
+<p>Look closely. Is the curve for BAL on the left or right? One way to
+fix this possible decoding problem would be by putting the label right
+next to the colored lines. Then we would be using the data for label
+positioning, which is inherently more intuitive and obvious to
+decode.</p>
+
+<p>"But," you say, "lattice and ggplot2 make it so easy to make these
+legends!  Direct labeling is a lot of tedious work! I can live with
+these confusing legends!"</p>
+
+<p><b>Don't live with these confusing legends any more!</b> To add
+direct labels, just put <tt>direct.label()</tt> around your
+plot:</p>
+
+<pre>
+library(directlabels)
+direct.label(densityplot(~ppp,loci,groups=type,n=500))
+direct.label(qplot(ppp,data=loci,colour=type,geom="density"))
+</pre>
+
+<table><tr>
+<td><img src="density.png" alt="lattice densityplot" /></td>
+<td><img src="densityplot-ggplot2.png" alt="densityplot in ggplot2" /></td>
+</tr>
+</table>
+
+<p>It couldn't be easier, and the clarity of the results is often
+dramatic.</p>
+
+<h2>Adding direct labels by hand is difficult. Instead, use the
+directlabels package.</h2>
+
+<p>There are 2 major reasons why the directlabels package is so
+useful:</p>
+
+<ul>
+
+  <li>Direct labeling is difficult to do "by hand" using standard
+  base/lattice/ggplot2 plotting functions. The directlabels package
+  allows you to define your direct labels in terms of a simple
+  Positioning Method. This makes your code simpler, more readable,
+  and less repetitive.</li>
+
+  <li>The functions that you will use to direct label a plot "by hand"
+  depend on the plot package you use. The directlabels package offers
+  a unified interface for both lattice and ggplot2 plots, thus greatly
+  simplifying your code.</li>
+
+</ul>
+
+<h2>Densityplot example</h2>
+
+<pre>
+loci &lt;- data.frame(ppp=c(rbeta(800,10,10),rbeta(100,0.15,1),rbeta(100,1,0.15)),
+                   type=factor(c(rep("NEU",800),rep("POS",100),rep("BAL",100))))
+</pre>
+
+
+<table><tr>
+<td><img src="density.png" alt="lattice densityplot" /></td>
+<td><img src="densityplot-ggplot2.png" alt="densityplot in ggplot2" /></td>
+</tr>
+</table>
+
+<p>Here's how we would go about making this plot in lattice without help
+from the directlabels package:</p>
+
+<pre>
+library(lattice)
+## unlabeled lattice plot
+dp &lt;- densityplot(~ppp,loci,groups=type,n=500)
+## we will add direct labels using this panel.groups function
+label.densityplot &lt;- function(x,group.number,col.line,...){
+  panel.densityplot(x=x,group.number=group.number,col.line=col.line,...)
+  d &lt;- density(x)
+  i &lt;- which.max(d$y)
+  ltext(d$x[i],d$y[i],levels(loci$type)[group.number],adj=c(0.5,0),col=col.line)
+}
+## update the lattice plot with the new panel.groups function
+update(dp,panel=panel.superpose,panel.groups=label.densityplot)
+</pre>
+
+<p>As you can see, this is rather difficult using just plain lattice
+functions. It is also rather difficult in ggplot2:</p>
+
+<pre>
+library(ggplot2)
+library(plyr)
+## ggplot2 with usual legend
+dp &lt;- qplot(ppp,data=loci,colour=type,geom="density")
+## first we need to create a data frame of direct label positions
+dens &lt;- ddply(loci,.(type),function(l)
+              subset(data.frame(density(l$ppp)[c("x","y")]),y==max(y)))
+## add the direct labels and hide the legend
+dp+geom_text(aes(x,y,label=type,vjust=0),dens)+opts(legend.position="none")
+</pre>
+
+<p>The directlabels package greatly simplifies the code necessary for
+direct labeling. And it works the same with both lattice and ggplot2,
+try it! Several different (but equivalent) positioning methods are
+shown, in order to give you a better feel about how the system
+works. Each of the following will create the same direct labeled plot
+above.</p>
+
+<pre>
+install.packages("directlabels", repos="http://R-Forge.R-project.org")
+library(directlabels)
+## The simplest kind of Positioning Method is just a function 
+## of the data points that returns the label positions.
+direct.label(dp,function(d,...)transform(gapply(d,subset,y==max(y)),vjust=0))
+## The built-in top.points Positioning Method does exactly this
+direct.label(dp,"top.points")
+## The default for density plots is similar, and prevents label overlap
+direct.label(dp)
+</pre>
+
+<h2>Lineplot over several panels example</h2>
+
+<pre>
+data(BodyWeight,package="nlme")
+library(lattice)
+lp &lt;- xyplot(weight~Time|Diet,BodyWeight,groups=Rat,type="l",layout=c(3,1))
+label.lineplot &lt;- function(x,y,group.number,col.line,...){
+  panel.xyplot(x=x,y=y,group.number=group.number,col.line=col.line,...)
+  i &lt;- which.min(x)
+  ltext(x[i],y[i],levels(BodyWeight$Rat)[group.number],
+        adj=c(1,0.5),col=col.line)
+}
+update(lp,panel=panel.superpose,panel.groups=label.lineplot)
+</pre>
+
+<p>Using lattice to plot these data with direct labels is tiresome,
+since you have to construct a custom panel.groups function.</p>
+
+<img src="longitudinal.png" alt="rat body weights with direct labels" />
+
+<p>Adding direct labels by hand in ggplot2 also tiresome, since you
+have to construct a data.frame for the labels:</p>
+
+<pre>
+lp &lt;- qplot(Time,weight,data=BodyWeight,colour=Rat,geom="line",facets=.~Diet)
+ratlabs &lt;- ddply(BodyWeight,.(Rat),function(d)d[which.min(d$Time),])
+lp+
+  geom_text(aes(label=Rat),hjust=1,data=ratlabs)+
+  opts(legend.position="none")
+</pre>
+
+<img src="rat-ggplot2.png" alt="rat body weights with direct labels
+using ggplot2" />
+
+<p>The directlabels package offers an interface that is simpler and
+uniform between lattice and ggplot2. Any of the following lines of
+code make the same direct labeled figure:</p>
+
+<pre>
+install.packages("directlabels", repos="http://R-Forge.R-project.org")
+library(directlabels)
+## You can use any function that will return the label positions
+direct.label(lp,function(d,...)transform(gapply(d,subset,x==min(x)),hjust=1))
+## first.points is a Positioning Method that comes with the directlabels package
+direct.label(lp,"first.points")
+## You can avoid label collisions using first.qp
+direct.label(lp,"first.qp")
+## The default Positioning Method for lineplots is similar
+direct.label(lp)
+</pre>
+
+<h2>Conclusion</h2>
+
+<p>Using the <tt>direct.label</tt> function is significantly simpler
+than doing it by hand using lattice or ggplot2. Instead of several
+lines of code, you can almost always add your direct labels using just
+1 line! Furthermore, the directlabels package
+includes <a href="smart.html">sophisticated Positioning Methods</a>
+that you can use for everyday plots.
+
+</p>
+
+<p>Back to <a href=".">directlabels home</a>.</p>
+
+
+<center>
+<table>
+<tr><td>Please send email
+to <a href="http://cbio.ensmp.fr/~thocking/">Toby
+Dylan Hocking</a> if you are using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a> or have ideas to
+contribute, thanks!</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>
