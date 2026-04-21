@@ -1,10 +1,10 @@
 on:
   push:
     branches:
-      - main
+      - [main, master]
   pull_request:
     branches:
-      - main
+      - [main, master]
 
 name: Build docs
 
