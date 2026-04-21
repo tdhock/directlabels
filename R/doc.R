@@ -9,7 +9,7 @@ dldoc <- function # Make directlabels documentation
  ){
   odir <- setwd(pkgdir)
   on.exit(setwd(odir))
-  docdir <- file.path("tests","doc")
+  docdir <- "tests-doc"
   docdirs <- dir(docdir)
   plotfiles <- sapply(docdirs,function(d)Sys.glob(file.path(docdir,d,"*.R")))
   Rfiles <- paste(file.path("R",docdirs),".R",sep="")

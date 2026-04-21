@@ -16,41 +16,6 @@
 \author{Toby Dylan Hocking <toby.hocking@inria.fr>}
 \examples{
 \dontrun{
-### contourplot Positioning Methods
-for(p in list({
-## Example from help(contourplot)
-require(stats)
-require(lattice)
-attach(environmental)
-ozo.m <- loess((ozone^(1/3)) ~ wind * temperature * radiation,
-               parametric = c("radiation", "wind"), span = 1, degree = 2)
-w.marginal <- seq(min(wind), max(wind), length.out = 50)
-t.marginal <- seq(min(temperature), max(temperature), length.out = 50)
-r.marginal <- seq(min(radiation), max(radiation), length.out = 4)
-wtr.marginal <- list(wind = w.marginal, temperature = t.marginal,
-                     radiation = r.marginal)
-grid <- expand.grid(wtr.marginal)
-grid[, "fit"] <- c(predict(ozo.m, grid))
-detach(environmental)
-library(ggplot2)
-p <- ggplot(grid,aes(wind,temperature,z=fit))+
-  stat_contour(aes(colour=..level..))+
-  facet_wrap(~radiation)
-
-},
-{
-## example from help(stat_contour)
-library(reshape2)
-volcano3d <- melt(volcano)
-names(volcano3d) <- c("x", "y", "z")
-library(ggplot2)
-p <- ggplot(volcano3d, aes(x, y, z = z))+
-  stat_contour(aes(colour = ..level..))
-})){
-  print(direct.label(p,"bottom.pieces"))
-  print(direct.label(p,"top.pieces"))
-}
-
 ### densityplot Positioning Methods
 for(p in list({
 data(Chem97,package="mlmRev")
@@ -66,11 +31,17 @@ library(lattice)
 p <- densityplot(~value|variable,iris2,groups=Species,scales="free")
 },
 {
-loci <- data.frame(ppp=c(rbeta(800,10,10),rbeta(100,0.15,1),rbeta(100,1,0.15)),
-                   type=factor(c(rep("NEU",800),rep("POS",100),rep("BAL",100))))
+set.seed(1)
+loci <- data.frame(
+  ppp=c(rbeta(800,10,10),rbeta(100,0.15,1),rbeta(100,1,0.15)),
+  type=factor(c(rep("NEU",800),rep("POS",100),rep("BAL",100))))
 library(ggplot2)
-p <- qplot(ppp,data=loci,colour=type,geom="density")
+p <- ggplot()+
+  geom_density(aes(
+    ppp, colour=type),
+    data=loci)
 })){
+  print(direct.label(p,"bottom.points"))
   print(direct.label(p,"top.bumptwice"))
   print(direct.label(p,"top.bumpup"))
   print(direct.label(p,"top.points"))
@@ -85,7 +56,10 @@ p <- dotplot(VADeaths,xlim=c(8,85),type="o")
 vad <- as.data.frame.table(VADeaths)
 names(vad) <- c("age","demographic","deaths")
 library(ggplot2)
-p <- qplot(deaths,age,data=vad,group=demographic,geom="line",colour=demographic)+
+p <- ggplot()+
+  geom_point(aes(
+    deaths, age, group=demographic, color=demographic),
+    data=vad)+
   xlim(8,80)
 })){
   print(direct.label(p,"angled.endpoints"))
@@ -112,23 +86,24 @@ p <- qqmath(~gcsescore,Chem97,groups=gender,
        type=c("l","g"),f.value=ppoints(100))
 },
 {
-data(prostate,package="ElemStatLearn")
-pros <- subset(prostate,select=-train,train==TRUE)
+data(prostate, package="directlabels")
+pros <- subset(prostate, train==TRUE, -train)
 ycol <- which(names(pros)=="lpsa")
-x <- as.matrix(pros[-ycol])
+x <- as.matrix(pros)[, -ycol]
 y <- pros[[ycol]]
-library(lars)
-fit <- lars(x,y,type="lasso")
-beta <- scale(coef(fit),FALSE,1/fit$normx)
-arclength <- rowSums(abs(beta))
-library(reshape2)
-path <- data.frame(melt(beta),arclength)
-names(path)[1:3] <- c("step","variable","standardized.coef")
+fit <- lars::lars(x,y,type="lasso")
+beta.mat <- scale(coef(fit),FALSE,1/fit[["normx"]])
+arclength <- rowSums(abs(beta.mat))
+path <- data.frame(
+  arclength,
+  variable=colnames(beta.mat)[as.integer(col(beta.mat))],
+  standardized.coef=as.numeric(beta.mat),
+  step=as.integer(row(beta.mat)))
 library(ggplot2)
 p <- ggplot(path,aes(arclength,standardized.coef,colour=variable))+
   geom_line(aes(group=variable))+
-  ggtitle("LASSO path for prostate cancer data calculated using the LARS")+
-  xlim(0,20)
+  ggtitle("LASSO path for prostate cancer data")+
+  xlim(-1,21)
 },
 {
 data(projectionSeconds, package="directlabels")
@@ -158,7 +133,7 @@ myridge <- function(f,data,lambda=c(exp(-seq(-15,15,l=200)),0)){
   limpts <- transform(subset(molt,lambda==0),lambda=Inf,df=0,value=0)
   rbind(limpts,molt)
 }
-data(prostate,package="ElemStatLearn")
+data(prostate)
 pros <- subset(prostate,train==TRUE,select=-train)
 m <- myridge(lpsa~.,pros)
 library(lattice)
@@ -178,31 +153,39 @@ p <- xyplot(value~df,m,groups=variable,type="o",pch="+",
 library(ggplot2)
 tx <- time(mdeaths)
 Time <- ISOdate(floor(tx),round(tx%%1 * 12)+1,1,0,0,0)
-uk.lung <- rbind(data.frame(Time,sex="male",deaths=as.integer(mdeaths)),
-                 data.frame(Time,sex="female",deaths=as.integer(fdeaths)))
-p <- qplot(Time,deaths,data=uk.lung,colour=sex,geom="line")+
+uk.lung <- rbind(
+  data.frame(Time,sex="male",deaths=as.integer(mdeaths)),
+  data.frame(Time,sex="female",deaths=as.integer(fdeaths)))
+p <- ggplot()+
+  geom_line(aes(
+    Time, deaths, colour=sex),
+    data=uk.lung)+
   xlim(ISOdate(1973,9,1),ISOdate(1980,4,1))
 })){
   print(direct.label(p,"angled.boxes"))
-  print(direct.label(p,"first.bumpup"))
+  print(direct.label(p,"bottom.polygons"))
   print(direct.label(p,"first.points"))
   print(direct.label(p,"first.polygons"))
   print(direct.label(p,"first.qp"))
   print(direct.label(p,"lasso.labels"))
-  print(direct.label(p,"last.bumpup"))
   print(direct.label(p,"last.points"))
   print(direct.label(p,"last.polygons"))
   print(direct.label(p,"last.qp"))
+  print(direct.label(p,"left.points"))
+  print(direct.label(p,"left.polygons"))
   print(direct.label(p,"lines2"))
   print(direct.label(p,"maxvar.points"))
   print(direct.label(p,"maxvar.qp"))
+  print(direct.label(p,"right.points"))
+  print(direct.label(p,"right.polygons"))
+  print(direct.label(p,"top.polygons"))
 }
 
 ### scatterplot Positioning Methods
 for(p in list({
 data(mpg,package="ggplot2")
 m <- lm(cty~displ,data=mpg)
-mpgf <- fortify(m,mpg)
+mpgf <- broom::augment(m,mpg)
 library(lattice)
 library(latticeExtra)
 p <- xyplot(cty~hwy|manufacturer,mpgf,groups=class,aspect="iso",
@@ -212,7 +195,7 @@ p <- xyplot(cty~hwy|manufacturer,mpgf,groups=class,aspect="iso",
 {
 data(mpg,package="ggplot2")
 m <- lm(cty~displ,data=mpg)
-mpgf <- fortify(m,mpg)
+mpgf <- broom::augment(m,mpg)
 library(lattice)
 p <- xyplot(jitter(.resid)~jitter(.fitted),mpgf,groups=factor(cyl))
 },
@@ -221,16 +204,19 @@ library(lattice)
 p <- xyplot(jitter(Sepal.Length)~jitter(Petal.Length),iris,groups=Species)
 },
 {
+library(ggplot2)
+data(mpg,package="ggplot2")
+p <- ggplot()+
+  geom_point(aes(
+    jitter(hwy), jitter(cty), colour=class),
+    data=mpg)+
+  ggtitle("Fuel efficiency depends on car size")
+},
+{
 data(mpg,package="ggplot2")
 library(lattice)
 p <- xyplot(jitter(cty)~jitter(hwy),mpg,groups=class,
        main="Fuel efficiency depends on car size")
-},
-{
-library(ggplot2)
-data(mpg,package="ggplot2")
-p <- qplot(jitter(hwy),jitter(cty),data=mpg,colour=class,
-      main="Fuel efficiency depends on car size")
 },
 {
 data(normal.l2.cluster,package="directlabels")

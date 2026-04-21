@@ -27,7 +27,7 @@ Suggests: MASS,
 	  lattice, alphahull, nlme,
 	  lars, latticeExtra,
 	  dplyr, ggthemes,
-	  testthat
+	  testthat, mlmRev
 Imports: grid (>= 3.0.0), quadprog
 Collate: utility.function.R compare.R dotplot.R lineplot.R
 	 densityplot.R ggplot2.R positioning.functions.R
