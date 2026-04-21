@@ -18,7 +18,7 @@ jobs:
       - name: Install package
         run: R CMD build . && R CMD INSTALL *.tar.gz
       - name: dldoc
-        run: R -e 'directlabels::dldoc(".")'
+        run: R -e 'library(directlabels);dldoc(".")'
       - name: netlify deploy
         uses: animint/animint-actions/netlify-deploy-comment@main
         with:
