@@ -75,7 +75,7 @@ dldoc <- function # Make directlabels documentation
   version <- read.dcf("DESCRIPTION")[,"Version"]
   git.line <- system('git log -1 --pretty=format:"%h %aD"', intern=TRUE)
   foot.info <- list(version=version,git=as.character(git.line))
-  foot <- filltemplate(foot.info,"docs/templates/foot.html")
+  foot <- filltemplate(foot.info,"templates/foot.html")
   makehtml <- function # Make HTML documentation
   ## Make plots and HTML for documentation website.
   (L
@@ -110,9 +110,10 @@ dldoc <- function # Make directlabels documentation
         }
         thumbfile <- file.path(subdir,paste(p$name,f$name,"thumb.png",sep="."))
         if(!file.exists(thumbfile)){
-          cmd <- paste("convert -geometry 64x64",pngfile,thumbfile)
+          full <- magick::image_read(pngfile)
+          thumb <- magick::image_resize(full, "64x64")
+          magick::image_write(thumb, thumbfile)
           cat("*")
-          system(cmd)
         }
       }
       cat("\n")
@@ -123,19 +124,19 @@ dldoc <- function # Make directlabels documentation
         tmp <- lapply(items,function(f){
           pngurl <- if("fun"%in%names(f))pngurls[f$name,item$name]
           else pngurls[item$name,f$name]
-          c(f,pngurl=file.path("..","..",pngurl),
+          c(f,pngurl=file.path("..","..","..",pngurl),
             parname=item$name,
             url=file.path("..",row,paste(f$name,".html",sep="")))
         })
-        rowfile <- paste("docs/templates/",row,"-row.html",sep="")
+        rowfile <- paste("templates/",row,"-row.html",sep="")
         rowhtml <- sapply(tmp,filltemplate,rowfile)
         item$table <- paste(c("<table>",rowhtml,"</table>"),collapse="\n")
       }
       item$type <- L$type
       item$pagetitle <- item$name
-      item$head <- filltemplate(item,"docs/templates/head.html")
+      item$head <- filltemplate(item,"templates/head.html")
       item$foot <- foot
-      html <- filltemplate(item,paste("docs/templates/",main,".html",sep=""))
+      html <- filltemplate(item,paste("templates/",main,".html",sep=""))
       write(html,file.path(subdir,main,paste(item$name,".html",sep="")))
       item
     }
@@ -164,13 +165,12 @@ dldoc <- function # Make directlabels documentation
     },simplify=FALSE)
   }
   links <- apply(m,1,extract.links)
-  tmp <- list(head=filltemplate(list(pagetitle="home"),"docs/templates/head.html"),
+  tmp <- list(head=filltemplate(list(pagetitle="home"),"templates/head.html"),
               foot=foot)
-  rows <- lapply(links,filltemplate,"docs/templates/index-row.html")
+  rows <- lapply(links,filltemplate,"templates/index-row.html")
   tmp$table <- paste(rows,collapse="\n")
-  html <- filltemplate(tmp,"docs/templates/index.html")
+  html <- filltemplate(tmp,"templates/index.html")
   write(html,"docs/index.html")
-
   m
 ### Matrix of lists describing example plots and matching builtin
 ### Positioning Methods.

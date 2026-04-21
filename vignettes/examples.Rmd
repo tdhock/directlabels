@@ -13,7 +13,6 @@ knitr::opts_chunk$set(
 # Polygon methods
 
 ```{r}
-
 param.df <- data.frame(
   mean=c(0, 0, 2),
   sd=c(1, 2, 1))
@@ -348,8 +347,7 @@ if(require(ggplot2)){
 ## white or black text on colored background
 
 The weighted method for rgb to grayscale conversion is used for the
-default `text.color` in `polygon.method`, and explained here
-https://www.tutorialspoint.com/dip/grayscale_to_rgb_conversion.htm
+default `text.color` in `polygon.method`, and [explained here](https://web.archive.org/web/20251006105353/https://www.tutorialspoint.com/dip/grayscale_to_rgb_conversion.htm).
 
 ```{r}
 if(require(RColorBrewer) && require(ggplot2)){
