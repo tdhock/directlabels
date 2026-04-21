@@ -7,7 +7,7 @@ on:
 name: Build docs
 
 jobs:
-  litedown:
+  dldoc:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
