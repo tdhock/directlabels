@@ -124,7 +124,7 @@ dldoc <- function # Make directlabels documentation
         tmp <- lapply(items,function(f){
           pngurl <- if("fun"%in%names(f))pngurls[f$name,item$name]
           else pngurls[item$name,f$name]
-          c(f,pngurl=file.path("..","..","..",pngurl),
+          c(f,pngurl=sub(".*(?=/)", "..", pngurl, perl=TRUE),
             parname=item$name,
             url=file.path("..",row,paste(f$name,".html",sep="")))
         })
