@@ -32,7 +32,7 @@ devtools::install_github("tdhock/inlinedocs")
 inlinedocs::package.skeleton.dx("path/to/directlabels")
 #+END_SRC
 
-The [[https://tdhock.github.io/directlabels/docs/index.html][directlabels documentation examples site]] can be generated via the [[https://github.com/tdhock/directlabels/tree/gh-pages][gh-pages]] branch by using:
+The [[https://directlabels.netlify.app/docs/index.html][directlabels documentation examples site]] can be generated in the =site= directory by using:
 
 #+BEGIN_SRC R
 directlabels::dldoc("path/to/directlabels")
@@ -40,7 +40,7 @@ directlabels::dldoc("path/to/directlabels")
 
 Be careful about what you put in each of the R code files -- they are
 used to generate the documentation. For example, [[file:R/dotplot.R][R/dotplot.R]] defines
-just two R objects: angled.endpoints and top.qp. Don't add anything to
+just two R objects: =angled.endpoints= and =top.qp=. Don't add anything to
 this file unless you want it to show up in the docs as another
 Positioning Method for dotplots. Miscellaneous functions that could be
 helpful for constructing Positioning Methods should be put in
