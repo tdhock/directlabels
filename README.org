@@ -1,13 +1,4 @@
 [[./logos/directlabels logo (orange).png]]
-#+BEGIN_HTML
-<p align = "center">
-    <a href = "https://api.travis-ci.org/tdhock/directlabels.svg?branch=master">
-    <img src = "https://travis-ci.org/tdhock/directlabels.svg?branch=master" alt = "Build Status (Travis)"> </a>
-    <a href = "https://codecov.io/gh/tdhock/directlabels?branch=master">
-    <img src = "https://codecov.io/gh/tdhock/directlabels/branch/master/graph/badge.svg" alt = "Code Coverage (Codecov)"> </a>       
-</p> 
-<hr>
-#+END_HTML
 
 ** Installation from CRAN
 
