@@ -22,7 +22,7 @@ LazyData: true
 Suggests: MASS,
 	  knitr, markdown,
 	  inlinedocs,
-	  magick,
+	  magick, broom,
 	  RColorBrewer,
 	  reshape2,
 	  ggplot2 (>= 2.0), rlang,
