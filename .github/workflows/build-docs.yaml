@@ -1,0 +1,29 @@
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: Build docs
+
+jobs:
+  dldoc:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Install package
+        run: R CMD build . && R CMD INSTALL *.tar.gz
+      - name: dldoc
+        run: R -e 'library(directlabels);dldoc(".")'
+      - name: netlify deploy
+        uses: animint/animint-actions/netlify-deploy-comment@main
+        with:
+          netlify_auth_token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          netlify_site_id: ${{ secrets.NETLIFY_SITE_ID }}
+          pat_github_pr: ${{ secrets.PAT_GITHUB_PR }}
+          path: site
+          netlify_url: directlabels.netlify.app

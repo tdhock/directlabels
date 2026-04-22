@@ -1,6 +1,7 @@
+docs
+site
 revdep
 .Rproj.user
 .Rhistory
 .RData
 *~
-.svn

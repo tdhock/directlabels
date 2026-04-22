@@ -1,0 +1,271 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>directlabels - advanced examples</title>
+	<link href="estilo1.css" rel="stylesheet" type="text/css" />
+  </head>
+				   
+<body>
+
+<h2>Customizable defaults for Positioning Functions</h2>
+
+<p>Normally sensible default label positions are chosen for you
+automatically when you call <tt>direct.label(p)</tt> with a
+plot <tt>p</tt>. But what if you don't like the defaults? For
+individual plots you can always specify a particular Positioning
+Function <tt>f</tt> by using the second
+argument: <tt>direct.label(p,f)</tt>.</p>
+
+<p>But what if you consistently think that the default choice is bad,
+and you would like to redefine it once and for all? You can define a
+custom function that chooses the default direct label positions, in
+the following manner. Put the following code in your ~/.Rprofile, and
+edit it to reflect your desired defaults for lattice and/or ggplot2
+plots:</p>
+
+<pre>
+options(
+directlabels.defaultpf.trellis=function(lattice.fun.name,groups,type,...){
+  ldefault &lt;- if(nlevels(groups)==2)"lines2" else "maxvar.points"
+  switch(lattice.fun.name,
+         dotplot=ldefault,
+         xyplot=switch(type,p="smart.grid",ldefault),
+         densityplot="top.points",
+         qqmath=ldefault,
+         rug="rug.mean",
+         stop("No default direct label placement method for '",
+              lattice.fun.name,"'.\nPlease specify method."))
+},
+directlabels.defaultpf.ggplot=function(geom,...){
+  switch(geom,
+    density="top.points",
+    line="maxvar.points",
+    point="empty.grid.2",
+    path="bottom.points",
+    stop("No default label placement for this type of ggplot."))
+})
+</pre>
+
+<h2>Labeling several positions</h2>
+
+<p>What if it makes sense to put a group label at more than one place
+for increased clarity? Then all you have to do is construct a
+Positioning Function that returns several rows for each group.</p>
+
+<p>A special case: if you want to combine the output from several
+existing Positioning Functions, there is a shortcut function that can
+help! <a href="docs/utility.function/posfuns/dl.combine.html">dl.combine</a>
+is included in the directlabels package, and it works like this:</p>
+
+<pre>
+data(BodyWeight,package="nlme")
+library(lattice)
+P &lt;- xyplot(weight~Time|Diet,BodyWeight,groups=Rat,type="l",layout=c(3,1))
+library(directlabels)
+direct.label(P,dl.combine(first.points,last.qp))
+</pre>
+
+<img src="rat-both.png" alt="rat data labeled on both sides" />
+
+<p>See also: <tt>example(dl.combine)</tt></p>
+
+<h2>Labeling black and white plots for printout</h2>
+
+<table>
+<tr>
+<td>
+<pre>
+library(lattice)
+trellis.par.set(standard.theme(color=FALSE))
+p &lt;- xyplot(jitter(Sepal.Length)~jitter(Petal.Length),iris,groups=Species)
+direct.label(p)
+</pre>
+
+<img src="scatter-bw.png" alt="direct labeled black and white scatterplot" />
+</td>
+<td>
+<pre>
+library(ggplot2)
+ggplot(iris,aes(Petal.Length,Sepal.Length))+
+  geom_point(aes(shape=Species))+
+  geom_dl(aes(label=Species),method="smart.grid")+
+  scale_shape_manual(values=c(setosa=1,virginica=6,versicolor=3),guide="none")
+</pre>
+<img src="scatter-bw-ggplot2.png" alt="direct labeled black and white
+scatterplot in ggplot2" />
+</td>
+</tr>
+</table>
+
+<p>See also: <tt>example(geom_dl)</tt></p>
+
+
+<h2>Custom panel and panel.groups functions for the rat body weight data</h2>
+
+<p>If you want to use a custom display in lattice panels, you need to
+write a custom panel or panel.groups function. For something you want
+to draw once for each panel, use a custom panel function, and for
+something that you want to draw for each group, use a custom
+panel.groups function. When you use a custom panel.groups function,
+you need to explicitly specify the Positioning Function for the direct
+labels. This series of examples should should illustrate how to
+effectively create custom direct labeled displays.</p>
+
+<pre>
+library(directlabels)
+data(BodyWeight,package="nlme")
+## Say we want to use a simple linear model to explain rat body weight:
+fit &lt;- lm(weight~Time+Diet+Rat,BodyWeight)
+bw &lt;- fortify(fit,BodyWeight)
+
+## Custom panel function which highlights min and max values:
+panel.range &lt;- function(y,...){
+  panel.abline(h=range(y))
+  panel.superpose(y=y,...)
+}
+direct.label(xyplot(weight~Time|Diet,bw,groups=Rat,type="l",
+                    layout=c(3,1),panel=panel.range))
+</pre>
+
+<img alt="direct labeled display with custom panel function"
+src="longitudinal-custom-panel.png" />
+
+<pre>
+## This panel.groups function will display the model fits:
+panel.model &lt;- function(x,subscripts,col.line,...){
+  panel.xyplot(x=x,subscripts=subscripts,col.line=col.line,...)
+  llines(x,bw[subscripts,".fitted"],col=col.line,lty=2)
+}
+x &lt;- xyplot(weight~Time|Diet,bw,groups=Rat,type="l",layout=c(3,1),
+            panel=panel.superpose,panel.groups=panel.model)
+direct.label(x,"first.points")
+</pre>
+
+<img alt="direct labeled display with custom panel.groups function"
+src="longitudinal-custom-panel-groups.png" />
+
+<pre>
+## Custom panel and panel.groups functions:
+x &lt;- xyplot(weight~Time|Diet,bw,groups=Rat,type="l",layout=c(3,1),
+            panel=panel.range,panel.groups=panel.model)
+direct.label(x,"first.points")
+</pre>
+<img alt="direct labeled diplay with custom panel and panel.groups
+functions" src="longitudinal-custom-both.png" />
+
+<h2>Using the panel.superpose.dl panel function</h2>
+
+<p>The panel.superpose.dl function can be used in place of
+panel.superpose in your lattice plots. It behaves just like
+panel.superpose, but it intelligently adds direct labels. If you
+specify panel.groups as a character rather than a function, then we
+can guess a Positioning Function. If not, you can always specify a
+Positioning Function with the method= argument.</p>
+
+<pre>
+xyplot(weight~Time|Diet,bw,groups=Rat,type="l",layout=c(3,1),
+       panel=panel.superpose.dl,panel.groups="panel.xyplot")
+</pre>
+<img alt="you can add direct labels using the panel.superpose.dl panel
+function" src="longitudinal.png" />
+
+<p>Here we use a custom panel.groups function so the Positioning
+Function must be specified using the method= argument:</p>
+
+<pre>
+xyplot(weight~Time|Diet,bw,groups=Rat,type="l",layout=c(3,1),
+       panel=panel.superpose.dl,panel.groups=panel.model,method="first.points")
+</pre>
+<img alt="you must explicitly specify the Positioning Function if you
+use a custom panel.groups function"
+src="longitudinal-custom-panel-groups.png" />
+
+<h2>Specifying the positioning method as a list</h2>
+
+<p>Since the input and output of a Positioning Function is the same
+sort of data frame, you can chain Positioning Functions together. To
+illustrate how this works, consider the following contrived
+example:</p>
+
+<pre>
+complicated &lt;- list(<a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/dl.trans.html">dl.trans</a>(x=x+1), ## shift every point to the right 1cm
+                    <a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/gapply.fun.html">gapply.fun</a>(d[-2,]), ## delete the 2nd point of every group
+                    rot=c(30,180)) ## rotate by alternately 30 and 180 degrees
+direct.label(dotplot(VADeaths,type="o"),complicated)
+</pre>
+
+<img src="method2.png" alt="contrived direct labels" />
+
+<p>When method is specified as a list, the arguments will be applied
+in sequence, starting from the data frame of all plotted points. In
+this example, </p>
+
+<ol>
+
+<li>In Positioning Methods the x and y units are centimeters on the
+plotting device. The first list element <tt>dl.trans(x=x+1)</tt> is a
+function that adds 1 to every x value, and has the effect of shifting
+the labels to the right 1cm. </li>
+
+<li>The second element is a call to <tt>gapply.fun</tt>, which lets
+you specify an expression to apply to each group, as a function of the
+data <tt>d</tt>. In this case <tt>d[-2,]</tt> means delete the second
+row from each group.</li>
+
+<li>Named elements are copied to the data frame, so the third element,
+<tt>rot=c(30,180)</tt>, adds a <tt>rot</tt> column to the data.frame,
+with values 30 and 180 for every other row. This has the effect of
+rotating every label by 30 or 180 degrees. Text display parameters
+<tt>alpha</tt>, <tt>fontsize</tt>, <tt>fontfamily</tt>, 
+<tt>fontface</tt>, <tt>lineheight</tt>, and <tt>cex</tt> can also be
+specified in this manner (see the help pages for <tt>grid::gpar</tt>
+for an exhaustive description and <tt>directlabels::dlcompare</tt> for
+an example).
+</li>
+
+</ol>
+
+<h2>Compare several plots and methods</h2>
+
+<p>Several different labeling methods can be compared for any mix of
+ggplot2 and/or lattice plots.</p>
+
+<pre>
+library(directlabels)
+library(reshape2)
+dts &lt;- cbind(male=mdeaths,female=fdeaths,time=1:length(mdeaths))
+ddf &lt;- melt(as.data.frame(dts),id="time")
+names(ddf) &lt;- c("time","sex","deaths")
+plots &lt;- list(lattice=
+              xyplot(deaths~time,ddf,groups=sex,type="l",xlim=c(-15,80)),
+              ggplot2=
+              qplot(time,deaths,data=ddf,colour=sex,geom="line")+xlim(-10,80))
+dlcompare(plots,list("first.points","lines2"))
+</pre>
+
+<img alt="lattice and ggplot2 plots can be compared"
+src="compare-new.png" />
+
+<center>
+<table>
+<tr><td>Please send email
+to <a href="http://cbio.ensmp.fr/~thocking/">Toby
+Dylan Hocking</a> if you are using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a> or have ideas to
+contribute, thanks!</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>Some notes on extending ggplot2 using custom grid grobs</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-08-31 11:50:02 CEST"/>
+<meta name="author" content="Toby HOCKING"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+<div id="content">
+
+<h1 class="title">Some notes on extending ggplot2 using custom grid grobs</h1>
+<p>For the directlabels package, since there is not a lot of documentation on extending ggplot2, I had to look through the code quite a bit to understand how it works. This document tries to summarize a few things I learned in this process that can be applicable to writing geoms in the future.
+</p>
+<p>
+First, download the most recent version of the ggplot2 source from github:
+</p>
+
+
+
+<pre class="src src-shell-script"><span style="color: #da70d6;">cd</span>
+mkdir R
+<span style="color: #da70d6;">cd</span> R
+git clone git://github.com/hadley/ggplot2.git
+</pre>
+
+
+
+<p>
+Then you can look at how the geoms are implemented, in <code>ggplot2/R/geom-*.r</code>. For directlabels, I basically modified GeomText in <code>geom-text.r</code>.
+</p>
+<p>
+The most important method is <code>draw</code> (from <a href="https://r-forge.r-project.org/scm/viewvc.php/pkg/directlabels/R/ggplot2.R?view=markup&amp;root=directlabels">directlabels/R/ggplot2.R</a>):
+</p>
+
+
+
+<pre class="src src-R">GeomDirectLabel <span style="color: #5f9ea0;">&lt;-</span> proto(Geom, {
+  <span style="color: #0000ff;">draw</span> <span style="color: #5f9ea0;">&lt;-</span> <span style="color: #a020f0;">function</span>(., data, scales, coordinates,
+                   method=<span style="color: #228b22;">NULL</span>,debug=<span style="color: #228b22;">FALSE</span>, ...) {
+    data$rot <span style="color: #5f9ea0;">&lt;-</span> as.integer(data$angle)
+    data$groups <span style="color: #5f9ea0;">&lt;-</span> data$label
+    dlgrob(subset(coordinates$transform(data, scales),select=-group),
+           method,debug=debug,
+           axes2native=<span style="color: #a020f0;">function</span>(data){
+             coordinates$transform(data, scales)
+           })
+  }
+})
+</pre>
+
+
+
+<ul>
+<li>The ggplot2 system works by calling <code>draw</code> for the data in every facet when you <code>print</code> a ggplot object. The <code>draw</code> function must return some grid grobs that will be plotted later.
+
+</li>
+<li>Standard grobs can be created using functions like <code>textGrob</code>, <code>rectGrob</code>, or <code>linesGrob</code>. 
+
+</li>
+<li>I made a custom grob with <code>grob(cl="dlgrob",...)</code> inside the <code>dlgrob</code> function. For making custom grobs, all you have to know is that a grob is basically a list, and you can stick whatever you want inside that list using named arguments to <code>grob</code> that will be intercepted by the <code>...</code> argument and stored in that list. 
+
+</li>
+<li>When you call <code>grid.draw</code> on a grob, grid will plot the grob in the current viewport, calling <code>drawDetails</code> on the grob for doing the actual plotting.
+
+</li>
+<li>The directlabels package calculates the size of text labels before they are drawn by exploiting the fact that <code>drawDetails</code> is called in the plotting viewport. I wrote a <code>drawDetails.dlgrob</code> function that is called to plot dlgrobs.
+
+</li>
+<li>One tricky part about plotting using ggplot2 is that the native plotting coordinates do not match the coordinates of the data, or the axes labels. So you have to make sure to call <code>coordinates$transform(data,scales)</code> to convert axes units to native units, that you can plot in grobs as <code>unit(x,"native")</code>.
+
+</li>
+<li>If you define more arguments to <code>draw</code>, i.e. <code>method</code> and <code>debug</code>
+  above, these arguments can be specified when you instantiate the
+  geom. For example,
+  <code>GeomDirectLabel$new(aes(Petal.Length,Sepal.Length,label=Species),method=smart.grid)</code>
+  means that inside <code>draw</code>,
+  <code>data=data.frame(x=Petal.Length,y=Sepal.Length,label=Species)</code> and
+  <code>method=smart.grid</code>
+</li>
+</ul>
+<div id="postamble">
+<p class="author">Author: Toby HOCKING</p>
+<p class="creator">Org version 7.5 with Emacs version 22</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+</div>
+</div>
+</body>
+</html>

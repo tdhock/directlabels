@@ -1,3 +1,8 @@
+Changes in version 2026.4.21
+
+- dldoc: netlify.
+- remove aes_string, thanks to Ben Bolker!
+
 Changes in version 2025.6.24
 
 - geom_dl: change method to dl.method to support stat="smooth".

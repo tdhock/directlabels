@@ -1,0 +1,113 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>directlabels - smart Positioning Methods</title>
+	<link href="estilo1.css" rel="stylesheet" type="text/css" />
+  </head>
+				   
+<body>
+
+<h2>The directlabels package is a framework for development of optimal
+plot labeling algorithms</h2>
+
+<p>The modular design of the directlabels package separates the label
+position calculation from the label drawing. The label positions are
+calculated by a Positioning Method based on the data. On one hand,
+this allows much simpler labeling of everyday plots. You don't have to
+recode the position calculation for each of your plots; you just have
+to remember which Positioning Method to use.</p>
+
+<p>On the other hand, the modular design of the directlabels package
+encourages the development of optimal label position algorithms. This
+page discusses some sophisticated techniques used by the included
+Positioning Methods.</p>
+
+<h2>Using the bounding box around the label</h2>
+
+<p>The key to constructing optimal label positions is knowledge of
+exactly how large the label text will be before it is
+drawn. Fortunately, there are several grid functions that allow
+<a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/calc.boxes.html">calculation
+of the label bounding box</a> from the context of the plotting
+viewport. Then we use this information to construct Positioning
+Methods that are "smart" --- that is, they are aware of the label
+size, so labels do not collide with points or other labels.</p>
+
+<h2>Scatterplots</h2>
+
+<p>For scatterplots, you can define optimal label positions as the
+points where none of the labels overlap any of the points, or each
+other, and each label is as close as possible to its cloud of
+points. More concretely, you can formulate this as an optimization
+problem, where you minimize the sum of squared distances from a label
+to the mean of the point cloud, subject to the non-overlapping
+constraint. However, this optimization problem is non-convex (hard),
+and so the following heuristic is used to give an approximate
+solution.</p>
+
+<p>We iteratively do a grid search using a grid the size of the label
+bounding box, tiled over the whole plot. Then, we put the label in the
+empty box that is closest to the center of the point cloud. This is
+implemented
+in <a href="http://directlabels.r-forge.r-project.org/docs/scatterplot/posfuns/empty.grid.html">empty.grid</a>.</p>
+
+<pre>
+p &lt;- xyplot(jitter(Sepal.Length)~jitter(Petal.Length),iris,groups=Species)
+direct.label(p,<a href="http://directlabels.r-forge.r-project.org/docs/scatterplot/posfuns/smart.grid.html">smart.grid</a>,TRUE)
+</pre>
+
+<img src="iris-debug.png" alt="debug iris scatterplot" />
+
+<p>Here you see the debugging output, which includes the grid used for
+the search in grey, and the points used for collision detection. After
+each label is placed, several points are added to the point cloud that
+is used for collision detection of the following labels. Thus, labels
+are guaranteed not to overlap each other or any points.</p>
+
+<h2>Lineplots</h2>
+
+<p>Lineplots are often most intuitively labeled on the side where the
+lines are more spread out. However, sometimes the lines are too close
+together, so the labels overlap (left). A fix is a small adjustment of
+the labels up or down if the labels are too close to each other
+(right).</p>
+
+<table>
+<tr>
+<td><img src="http://directlabels.r-forge.r-project.org/docs/lineplot/ridge.last.points.png" alt="ridge regression point overlap" /></td>
+<td><img src="http://directlabels.r-forge.r-project.org/docs/lineplot/ridge.last.qp.png" alt="ridge regression point qp positioning" /></td>
+</tr>
+</table>
+
+<p>Technically, the label positions on the right for
+the <a href="http://directlabels.r-forge.r-project.org/docs/lineplot/posfuns/last.qp.html">last.qp</a>
+Positioning Method are calculated as a solution to the constrained
+optimization problem described
+in <a href="http://directlabels.r-forge.r-project.org/docs/utility.function/posfuns/qp.labels.html">qp.labels</a>. Essentially,
+we minimize the sum of squared differences between the last point and
+the label position, subject to the constraint that none of the labels
+overlap.</p>
+
+<center>
+<table>
+<tr><td>Please send email
+to <a href="http://cbio.ensmp.fr/~thocking/">Toby
+Dylan Hocking</a> if you are using <a href="http://directlabels.r-forge.r-project.org/">directlabels</a> or have ideas to
+contribute, thanks!</td>
+</tr>
+<tr>
+<td align="center">
+    <a href="http://validator.w3.org/check?uri=referer">validate</a>
+</td>
+</tr>
+</table>
+
+</center>
+
+</body>
+
+</html>
