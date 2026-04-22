@@ -20,7 +20,7 @@ Changes are listed in [[file:NEWS]].
 
 ** Usage examples
 
-Please check [[https://tdhock.github.io/directlabels/docs/index.html][the documentation page]] (with links to examples for specific methods) and [[https://tdhock.github.io/directlabels/examples.html][the page with several advanced examples]].
+Please check [[https://directlabels.netlify.app/docs/index.html][the documentation page]] (with links to examples for specific methods) and [[https://directlabels.netlify.app/examples.html][the page with several advanced examples]].
 
 ** Development and documentation
 
