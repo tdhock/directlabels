@@ -240,6 +240,41 @@ gapply.fun <- structure(function # Direct label groups independently
   }
 })
 
+dl.add <- structure(function
+### Make a function that adds a constant value to some data columns (typically x,y columns with units in cm).
+(...
+### One or more named arguments. Each name is a column to modify, and each value will be added to that column.
+){
+  add_list <- list(...)
+  function(d, ...){
+    for(col_name in names(add_list)){
+      d[[col_name]] <- d[[col_name]]+add_list[[col_name]]
+    }
+    d
+  }
+}, ex=function(){
+
+  count.dt <- data.frame(people=1:20, Role=rep(c("aut","ctb"),each=10), release=1:10)
+  space.cm <- 0.2 # space between polygon point and data point.
+  geom_dl_poly <- function(position, direction)directlabels::geom_dl(aes(
+    label=people, label.group=release),
+    method=list(
+      paste0(position,".points"),
+      cex=0.7, # text size of direct labels.
+      dl.add(y=direction*space.cm),
+      directlabels::polygon.method(position, offset.cm=0.5)))
+  if(require("ggplot2")){
+    ggplot(count.dt, aes(
+      release, people, color=Role))+
+      geom_line(linewidth=1)+
+      geom_point(shape=21, fill="white")+
+      scale_y_continuous(limits=c(-5, 25))+
+      geom_dl_poly("bottom", -1)+
+      geom_dl_poly("top", 1)
+  }
+  
+})
+
 dl.trans <- structure(function # Direct label data transform
 ### Make a function that transforms the data. This is for conveniently
 ### making a function that calls transform on the data frame, with the
@@ -823,8 +858,9 @@ gapply <- function
   f <- function(d,...){
     res <- apply.method(method,d,columns.to.check=c("x","y"),...)
     if(nrow(res)){
-      res[[groups]] <- d[[groups]][1]
-      res[["label"]] <- d[["label"]][1]
+      for(column in c(groups, "label")){
+        if(is.null(res[[column]]))res[[column]] <- d[[column]][1]
+      }
     }
     res
   }

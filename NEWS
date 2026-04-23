@@ -1,3 +1,8 @@
+Changes in version 2026.4.23
+
+- dl.add() for adding a value to column, typically x,y in cm.
+- bugfix when label.group and label specified.
+
 Changes in version 2026.4.21
 
 - dldoc: netlify.
