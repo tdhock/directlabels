@@ -16,7 +16,8 @@
 
 \examples{
 
-count.dt <- data.frame(people=1:20, Role=rep(c("aut","ctb"),each=10), release=1:10)
+set.seed(1)
+count.df <- data.frame(people=1:20, Role=rep(c("aut","ctb"),each=10), release=runif(10))
 space.cm <- 0.2 # space between polygon point and data point.
 geom_dl_poly <- function(position, direction)directlabels::geom_dl(aes(
   label=people, label.group=release),
@@ -26,7 +27,7 @@ geom_dl_poly <- function(position, direction)directlabels::geom_dl(aes(
     dl.add(y=direction*space.cm),
     directlabels::polygon.method(position, offset.cm=0.5)))
 if(require("ggplot2")){
-  ggplot(count.dt, aes(
+  ggplot(count.df, aes(
     release, people, color=Role))+
     geom_line(linewidth=1)+
     geom_point(shape=21, fill="white")+
