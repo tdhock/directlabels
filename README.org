@@ -1,4 +1,4 @@
-[[./logos/directlabels logo (orange).png]]
+![[https://directlabels.netlify.app][./logos/directlabels logo (orange).png]]
 
 ** Installation from CRAN
 
