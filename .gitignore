@@ -5,3 +5,5 @@ revdep
 .Rhistory
 .RData
 *~
+src/*.so
+src/*.o
