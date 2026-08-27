@@ -24,7 +24,7 @@ test_that("aligned labels error for no data", {
     directlabels::aligned_labels_dp(c(), c(), -100, 100)
   }, "no data")
 })
-test_that("aligned labels error for no data", {
+test_that("aligned labels error for different sizes", {
   expect_error({
     directlabels::aligned_labels_dp(1:2, 1:3, -100, 100)
   }, "target and half.size should have same length")
