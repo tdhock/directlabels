@@ -12,10 +12,9 @@ Rcpp::List isoreg_dp_interface
   Rcpp::IntegerVector cluster_size_vec(N_data);
   Rcpp::NumericVector cluster_mean_vec(N_data);
   int status = isoreg_dp
-    (data_vec.size(),
-     data_vec.begin(),
-     cluster_size_vec.begin(),
-     cluster_mean_vec.begin());
+    (data_vec.size(), data_vec.begin(),
+     // inputs above, outputs below.
+     cluster_size_vec.begin(), cluster_mean_vec.begin());
   if(status == ERROR_DATA_MUST_BE_FINITE){
     Rcpp::stop("data must be finite"); 
   }
