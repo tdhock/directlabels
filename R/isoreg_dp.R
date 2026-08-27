@@ -20,34 +20,3 @@ aligned_labels_dp <- function(target, half.size, B.lo, B.hi){
     default=diff.opt)
   diff.bounded+lo.vec
 }
-
-aligned_labels_qp <- function(){
-  ## These are the standard form matrices described in the
-  ## directlabels poster.
-  target <- d[,target.var]
-  k <- nrow(d)
-  D <- diag(rep(1,k))
-  Ik <- diag(rep(1,k-1))
-  A <- rbind(0,Ik)-rbind(Ik,0)
-  y.up <- d[,upper.var]
-  y.lo <- d[,lower.var]
-  b0 <- (y.up-target)[-k] + (target-y.lo)[-1]
-
-  ## limit constraints.
-  if(is.function(limits)){
-    if(is.finite(l[1])){
-      c.vec <- rep(0,k)
-      c.vec[1] <- 1
-      A <- cbind(A,c.vec)
-      b0 <- c(b0,l[1]+target[1]-y.lo[1])
-    }
-    if(is.finite(l[2])){
-      c.vec <- rep(0,k)
-      c.vec[k] <- -1
-      A <- cbind(A,c.vec)
-      b0 <- c(b0,y.up[k]-target[k]-l[2])
-    }
-  }
-    sol <- solve.QP(D,target,A,b0)
-    sol$solution
-}

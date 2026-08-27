@@ -35,5 +35,5 @@ Collate: utility.function.R compare.R dotplot.R lineplot.R
 	 doc.R lattice.R scatterplot.R contourplot.R
 	 RcppExports.R isoreg_dp.R
 LinkingTo: Rcpp
-Imports: grid (>= 3.0.0), quadprog, Rcpp, data.table
+Imports: grid (>= 3.0.0), Rcpp, data.table
 VignetteBuilder: knitr
