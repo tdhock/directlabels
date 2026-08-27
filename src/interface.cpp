@@ -2,9 +2,7 @@
 #include "isoreg_dp.h"
 
 // [[Rcpp::export]]
-Rcpp::List isoreg_dp_interface
-(const Rcpp::NumericVector data_vec
- ){
+Rcpp::List isoreg_dp_interface(const Rcpp::NumericVector data_vec){
   int N_data = data_vec.size();
   if(N_data<1){
     Rcpp::stop("no data");
