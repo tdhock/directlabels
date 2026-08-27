@@ -654,15 +654,15 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
 
     ## check limits to see if there is enough space, given specified
     ## cex.
-    h <- d[,upper.var]-d[,lower.var]
-    h.occupied <- sum(h)
     if(is.function(limits)){
       l <- limits(d)
       stopifnot(is.numeric(l))
       stopifnot(length(l)==2)
       stopifnot(l[1]<l[2])
       h.available <- l[2] - l[1]
-      if(h.occupied > h.available){ ## then the feasible set is empty.
+      h <- d[,upper.var]-d[,lower.var]
+      h.occupied <- sum(h)
+      if(h.available < h.occupied){ ## then the feasible set is empty.
         ## total hack:
         cex <- h.available / h.occupied  * 0.9
         if("cex" %in% names(d)){
@@ -677,6 +677,7 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
         min(d[,target.var])-h.occupied,
         max(d[,target.var])+h.occupied)
     }
+    h <- d[,upper.var]-d[,lower.var]
     d[,target.var] <- aligned_labels_dp(d[,target.var], h/2, l[1], l[2])
     d
   }
