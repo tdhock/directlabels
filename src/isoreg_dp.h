@@ -4,6 +4,5 @@ int isoreg_dp
 (const int N_data,
  const double *data_ptr,
 // inputs above, outputs below
- int *N_clusters,
  int *size_ptr,
  double *mean_ptr);

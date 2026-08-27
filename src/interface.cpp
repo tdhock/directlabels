@@ -9,21 +9,17 @@ Rcpp::List isoreg_dp_interface
   if(N_data<1){
     Rcpp::stop("no data");
   }
-  int last_cluster;
   Rcpp::IntegerVector cluster_size_vec(N_data);
   Rcpp::NumericVector cluster_mean_vec(N_data);
   int status = isoreg_dp
     (data_vec.size(),
      data_vec.begin(),
-     &last_cluster,
      cluster_size_vec.begin(),
      cluster_mean_vec.begin());
   if(status == ERROR_DATA_MUST_BE_FINITE){
     Rcpp::stop("data must be finite"); 
   }
-  last_cluster++;//R indexing starts at 1 not 0.
   return Rcpp::List::create
-    (Rcpp::Named("N_clusters", last_cluster),
-     Rcpp::Named("cluster_size", cluster_size_vec),
+    (Rcpp::Named("cluster_size", cluster_size_vec),
      Rcpp::Named("cluster_mean", cluster_mean_vec));
 }
