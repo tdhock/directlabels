@@ -1,3 +1,7 @@
+Changes in version 2026.8.27
+
+- qp.labels positioning method now uses aligned_labels_dp() and isoreg_dp(), which is faster than previous quadprog::solve.QP().
+
 Changes in version 2026.4.23
 
 - dl.add() for adding a value to column, typically x,y in cm.

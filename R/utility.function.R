@@ -654,16 +654,15 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
 
     ## check limits to see if there is enough space, given specified
     ## cex.
+    h <- d[,upper.var]-d[,lower.var]
+    h.occupied <- sum(h)
     if(is.function(limits)){
       l <- limits(d)
       stopifnot(is.numeric(l))
       stopifnot(length(l)==2)
       stopifnot(l[1]<l[2])
-
       h.available <- l[2] - l[1]
-      h <- d[,upper.var]-d[,lower.var]
-      h.occupied <- sum(h)
-      if(h.occupied > h.available){ ## then the feasible set is empty.
+      if(h.available < h.occupied){ ## then the feasible set is empty.
         ## total hack:
         cex <- h.available / h.occupied  * 0.9
         if("cex" %in% names(d)){
@@ -673,40 +672,13 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
         }
         d <- calc.boxes(d)
       }
+    }else{
+      l <- c(
+        min(d[,target.var])-h.occupied,
+        max(d[,target.var])+h.occupied)
     }
-
-    ## These are the standard form matrices described in the
-    ## directlabels poster.
-    target <- d[,target.var]
-    k <- nrow(d)
-    D <- diag(rep(1,k))
-    Ik <- diag(rep(1,k-1))
-    A <- rbind(0,Ik)-rbind(Ik,0)
-    y.up <- d[,upper.var]
-    y.lo <- d[,lower.var]
-    b0 <- (y.up-target)[-k] + (target-y.lo)[-1]
-
-    ## limit constraints.
-    if(is.function(limits)){
-      if(is.finite(l[1])){
-        c.vec <- rep(0,k)
-        c.vec[1] <- 1
-        A <- cbind(A,c.vec)
-        b0 <- c(b0,l[1]+target[1]-y.lo[1])
-      }
-      if(is.finite(l[2])){
-        c.vec <- rep(0,k)
-        c.vec[k] <- -1
-        A <- cbind(A,c.vec)
-        b0 <- c(b0,y.up[k]-target[k]-l[2])
-      }
-    }
-
-    ##print(A)
-    ##print(b0)
-    ##browser()
-    sol <- solve.QP(D,target,A,b0)
-    d[,target.var] <- sol$solution
+    h <- d[,upper.var]-d[,lower.var]
+    d[,target.var] <- aligned_labels_dp(d[,target.var], h/2, l[1], l[2])
     d
   }
 ### Positioning Method that adjusts target.var so there is no overlap
@@ -727,7 +699,7 @@ qp.labels <- structure(function# Make a Positioning Method for non-overlapping l
       scale_colour_manual(values=fp.fn.colors)+
       scale_size_manual(values=fp.fn.sizes)+
       scale_x_continuous(limits=c(0,20),breaks=c(1,7,20),minor_breaks=NULL)+
-      theme_bw()+theme(panel.margin=grid::unit(0,"lines"))
+      theme_bw()+theme(panel.spacing=grid::unit(0,"lines"))
 
     ## The usual ggplot without direct labels.
     print(kplot)
