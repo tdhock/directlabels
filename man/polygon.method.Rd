@@ -12,7 +12,7 @@ polygons at the first or last points.}
   \item{offset.cm}{Offset from the polygon to the most extreme data point.}
   \item{padding.cm}{Padding \code{\link{inside}} the polygon.}
   \item{custom.colors}{Positioning method applied just before \code{\link{draw.polygons}}, can set
-box.color and text.color for custom colors.}
+box.color, colour, and text.color for custom colors.}
 }
 
 

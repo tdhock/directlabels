@@ -430,7 +430,7 @@ polygon.method <- function
 ### Padding inside the polygon.
   custom.colors=NULL
 ### Positioning method applied just before draw.polygons, can set
-### box.color and text.color for custom colors.
+### box.color, colour, and text.color for custom colors.
 ){
   if(is.null(custom.colors)){
     custom.colors <- gapply.fun({
