@@ -45,3 +45,11 @@ this file unless you want it to show up in the docs as another
 Positioning Method for dotplots. Miscellaneous functions that could be
 helpful for constructing Positioning Methods should be put in
 [[file:R/utility.function.R][R/utility.function.R]].
+
+** Related work
+
+Similar functionality exists in
+
+- [[https://gofish.graphics/js/api/howto/label-placement.html#name-lines-at-their-ends][GoFish]]
+- [[https://plotly.com/python/text-and-annotations/][plotly]]
+- [[https://animint-manual-en.netlify.app/ch06/#geom-text-aligned][animint2::geom_label_aligned()]]
